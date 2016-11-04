@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityCreateDlg" widgetVar="ActivityCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateActivityTitle}">
+            <h:form id="ActivityCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityId}" for="activityId" />
+                        <p:inputText id="activityId" value="#{activityController.selected.activityId}" title="#{bundle.CreateActivityTitle_activityId}" required="true" requiredMessage="#{bundle.CreateActivityRequiredMessage_activityId}"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityDate}" for="activityDate" />
+                        <p:calendar id="activityDate" pattern="MM/dd/yyyy" value="#{activityController.selected.activityDate}" title="#{bundle.EditActivityTitle_activityDate}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_activityDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityDetails}" for="activityDetails" />
+                        <p:inputText id="activityDetails" value="#{activityController.selected.activityDetails}" title="#{bundle.CreateActivityTitle_activityDetails}" required="true" requiredMessage="#{bundle.CreateActivityRequiredMessage_activityDetails}"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_qty}" for="qty" />
+                        <p:inputText id="qty" value="#{activityController.selected.qty}" title="#{bundle.CreateActivityTitle_qty}" required="true" requiredMessage="#{bundle.CreateActivityRequiredMessage_qty}"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_totalPriceVendor}" for="totalPriceVendor" />
+                        <p:inputText id="totalPriceVendor" value="#{activityController.selected.totalPriceVendor}" title="#{bundle.CreateActivityTitle_totalPriceVendor}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_totalPriceVendorTaxes}" for="totalPriceVendorTaxes" />
+                        <p:inputText id="totalPriceVendorTaxes" value="#{activityController.selected.totalPriceVendorTaxes}" title="#{bundle.CreateActivityTitle_totalPriceVendorTaxes}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_totalPriceAsp}" for="totalPriceAsp" />
+                        <p:inputText id="totalPriceAsp" value="#{activityController.selected.totalPriceAsp}" title="#{bundle.CreateActivityTitle_totalPriceAsp}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_totalUm}" for="totalUm" />
+                        <p:inputText id="totalUm" value="#{activityController.selected.totalUm}" title="#{bundle.CreateActivityTitle_totalUm}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_totalUmPercent}" for="totalUmPercent" />
+                        <p:inputText id="totalUmPercent" value="#{activityController.selected.totalUmPercent}" title="#{bundle.CreateActivityTitle_totalUmPercent}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityComment}" for="activityComment" />
+                        <p:inputText id="activityComment" value="#{activityController.selected.activityComment}" title="#{bundle.CreateActivityTitle_activityComment}" />
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_sysDate}" for="sysDate" />
+                        <p:calendar id="sysDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{activityController.selected.sysDate}" title="#{bundle.EditActivityTitle_sysDate}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_sysDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_taxes}" for="taxes" />
+                        <p:inputText id="taxes" value="#{activityController.selected.taxes}" title="#{bundle.CreateActivityTitle_taxes}" required="true" requiredMessage="#{bundle.CreateActivityRequiredMessage_taxes}"/>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityCode}" for="activityCode" />
+                        <p:selectOneMenu id="activityCode" value="#{activityController.selected.activityCode}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_activityCode}">
+                            <f:selectItems value="#{activityCodeController.itemsAvailableSelectOne}"
+                                           var="activityCodeItem"
+                                           itemValue="#{activityCodeItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_approvalStatus}" for="approvalStatus" />
+                        <p:selectOneMenu id="approvalStatus" value="#{activityController.selected.approvalStatus}" >
+                            <f:selectItems value="#{approvalStatusController.itemsAvailableSelectOne}"
+                                           var="approvalStatusItem"
+                                           itemValue="#{approvalStatusItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_area}" for="area" />
+                        <p:selectOneMenu id="area" value="#{activityController.selected.area}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_area}">
+                            <f:selectItems value="#{areaController.itemsAvailableSelectOne}"
+                                           var="areaItem"
+                                           itemValue="#{areaItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_claimStatus}" for="claimStatus" />
+                        <p:selectOneMenu id="claimStatus" value="#{activityController.selected.claimStatus}" >
+                            <f:selectItems value="#{claimStatusController.itemsAvailableSelectOne}"
+                                           var="claimStatusItem"
+                                           itemValue="#{claimStatusItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_activityType}" for="activityType" />
+                        <p:selectOneMenu id="activityType" value="#{activityController.selected.activityType}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_activityType}">
+                            <f:selectItems value="#{domainNamesController.itemsAvailableSelectOne}"
+                                           var="activityTypeItem"
+                                           itemValue="#{activityTypeItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_phase}" for="phase" />
+                        <p:selectOneMenu id="phase" value="#{activityController.selected.phase}" >
+                            <f:selectItems value="#{phasesController.itemsAvailableSelectOne}"
+                                           var="phaseItem"
+                                           itemValue="#{phaseItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_site}" for="site" />
+                        <p:selectOneMenu id="site" value="#{activityController.selected.site}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_site}">
+                            <f:selectItems value="#{sitesController.itemsAvailableSelectOne}"
+                                           var="siteItem"
+                                           itemValue="#{siteItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_asp}" for="asp" />
+                        <p:selectOneMenu id="asp" value="#{activityController.selected.asp}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_asp}">
+                            <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
+                                           var="aspItem"
+                                           itemValue="#{aspItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_creator}" for="creator" />
+                        <p:selectOneMenu id="creator" value="#{activityController.selected.creator}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_creator}">
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="creatorItem"
+                                           itemValue="#{creatorItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateActivityLabel_vendorOwner}" for="vendorOwner" />
+                        <p:selectOneMenu id="vendorOwner" value="#{activityController.selected.vendorOwner}" required="true" requiredMessage="#{bundle.EditActivityRequiredMessage_vendorOwner}">
+                            <f:selectItems value="#{vendorOwnerController.itemsAvailableSelectOne}"
+                                           var="vendorOwnerItem"
+                                           itemValue="#{vendorOwnerItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{activityController.create}" value="#{bundle.Save}" update="display,:ActivityListForm:datalist,:growl" oncomplete="handleSubmit(args,'ActivityCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ActivityCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AspGrnViewDlg" widgetVar="AspGrnViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewAspGrnTitle}">
+            <h:form id="AspGrnViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{aspGrnController.selected != null}">
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_id}"/>
+                        <h:outputText value="#{aspGrnController.selected.id}" title="#{bundle.ViewAspGrnTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_grnDeserved}"/>
+                        <h:outputText value="#{aspGrnController.selected.grnDeserved}" title="#{bundle.ViewAspGrnTitle_grnDeserved}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_grnFactor}"/>
+                        <h:outputText value="#{aspGrnController.selected.grnFactor}" title="#{bundle.ViewAspGrnTitle_grnFactor}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_grnValue}"/>
+                        <h:outputText value="#{aspGrnController.selected.grnValue}" title="#{bundle.ViewAspGrnTitle_grnValue}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_grnDate}"/>
+                        <h:outputText value="#{aspGrnController.selected.grnDate}" title="#{bundle.ViewAspGrnTitle_grnDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_grnNumber}"/>
+                        <h:outputText value="#{aspGrnController.selected.grnNumber}" title="#{bundle.ViewAspGrnTitle_grnNumber}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_invoiced}"/>
+                        <p:selectBooleanCheckbox value="#{aspGrnController.selected.invoiced}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_remainingInGrn}"/>
+                        <h:outputText value="#{aspGrnController.selected.remainingInGrn}" title="#{bundle.ViewAspGrnTitle_remainingInGrn}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_sysDate}"/>
+                        <h:outputText value="#{aspGrnController.selected.sysDate}" title="#{bundle.ViewAspGrnTitle_sysDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_aspPoId}"/>
+                        <h:outputText value="#{aspGrnController.selected.aspPoId}" title="#{bundle.ViewAspGrnTitle_aspPoId}"/>
+                        <h:outputText value="#{bundle.ViewAspGrnLabel_creator}"/>
+                        <h:outputText value="#{aspGrnController.selected.creator}" title="#{bundle.ViewAspGrnTitle_creator}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="AspGrnViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityCodeViewDlg" widgetVar="ActivityCodeViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewActivityCodeTitle}">
+            <h:form id="ActivityCodeViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityCodeController.selected != null}">
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_materialId}"/>
+                        <h:outputText value="#{activityCodeController.selected.materialId}" title="#{bundle.ViewActivityCodeTitle_materialId}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_description}"/>
+                        <h:outputText value="#{activityCodeController.selected.description}" title="#{bundle.ViewActivityCodeTitle_description}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_quantityRequested}"/>
+                        <h:outputText value="#{activityCodeController.selected.quantityRequested}" title="#{bundle.ViewActivityCodeTitle_quantityRequested}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_vendorPrice}"/>
+                        <h:outputText value="#{activityCodeController.selected.vendorPrice}" title="#{bundle.ViewActivityCodeTitle_vendorPrice}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_subcontractorPrice}"/>
+                        <h:outputText value="#{activityCodeController.selected.subcontractorPrice}" title="#{bundle.ViewActivityCodeTitle_subcontractorPrice}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_um}"/>
+                        <h:outputText value="#{activityCodeController.selected.um}" title="#{bundle.ViewActivityCodeTitle_um}"/>
+                        <h:outputText value="#{bundle.ViewActivityCodeLabel_umPercent}"/>
+                        <h:outputText value="#{activityCodeController.selected.umPercent}" title="#{bundle.ViewActivityCodeTitle_umPercent}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="ActivityCodeViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

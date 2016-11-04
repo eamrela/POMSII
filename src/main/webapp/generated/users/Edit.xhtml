@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsersEditDlg" widgetVar="UsersEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditUsersTitle}">
+            <h:form id="UsersEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usersController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditUsersLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{usersController.selected.id}" title="#{bundle.EditUsersTitle_id}" required="true" requiredMessage="#{bundle.EditUsersRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditUsersLabel_firstName}" for="firstName" />
+                        <p:inputText id="firstName" value="#{usersController.selected.firstName}" title="#{bundle.EditUsersTitle_firstName}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_lastName}" for="lastName" />
+                        <p:inputText id="lastName" value="#{usersController.selected.lastName}" title="#{bundle.EditUsersTitle_lastName}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_email}" for="email" />
+                        <p:inputText id="email" value="#{usersController.selected.email}" title="#{bundle.EditUsersTitle_email}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_pwd}" for="pwd" />
+                        <p:inputText id="pwd" value="#{usersController.selected.pwd}" title="#{bundle.EditUsersTitle_pwd}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_enabled}" for="enabled" />
+                        <p:selectBooleanCheckbox id="enabled" value="#{usersController.selected.enabled}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_tokenExpired}" for="tokenExpired" />
+                        <p:selectBooleanCheckbox id="tokenExpired" value="#{usersController.selected.tokenExpired}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_phoneNumber}" for="phoneNumber" />
+                        <p:inputText id="phoneNumber" value="#{usersController.selected.phoneNumber}" title="#{bundle.EditUsersTitle_phoneNumber}" />
+                        <p:outputLabel value="#{bundle.EditUsersLabel_manager}" for="manager" />
+                        <p:inputText id="manager" value="#{usersController.selected.manager}" title="#{bundle.EditUsersTitle_manager}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{usersController.update}" value="#{bundle.Save}" update="display,:UsersListForm:datalist,:growl" oncomplete="handleSubmit(args, 'UsersEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="UsersEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

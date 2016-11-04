@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="TaxesCreateDlg" widgetVar="TaxesCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateTaxesTitle}">
+            <h:form id="TaxesCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{taxesController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateTaxesLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{taxesController.selected.id}" title="#{bundle.CreateTaxesTitle_id}" required="true" requiredMessage="#{bundle.CreateTaxesRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateTaxesLabel_taxValue}" for="taxValue" />
+                        <p:inputText id="taxValue" value="#{taxesController.selected.taxValue}" title="#{bundle.CreateTaxesTitle_taxValue}" />
+                        <p:outputLabel value="#{bundle.CreateTaxesLabel_activationDate}" for="activationDate" />
+                        <p:calendar id="activationDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{taxesController.selected.activationDate}" title="#{bundle.EditTaxesTitle_activationDate}"  showOn="button"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{taxesController.create}" value="#{bundle.Save}" update="display,:TaxesListForm:datalist,:growl" oncomplete="handleSubmit(args,'TaxesCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="TaxesCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

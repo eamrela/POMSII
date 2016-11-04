@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AspPoEditDlg" widgetVar="AspPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspPoTitle}">
+            <h:form id="AspPoEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poNumber}" for="poNumber" />
+                        <p:inputText id="poNumber" value="#{aspPoController.selected.poNumber}" title="#{bundle.EditAspPoTitle_poNumber}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_poNumber}"/>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poDate}" for="poDate" />
+                        <p:calendar id="poDate" pattern="MM/dd/yyyy" value="#{aspPoController.selected.poDate}" title="#{bundle.EditAspPoTitle_poDate}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_poDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poDescription}" for="poDescription" />
+                        <p:inputText id="poDescription" value="#{aspPoController.selected.poDescription}" title="#{bundle.EditAspPoTitle_poDescription}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_factor}" for="factor" />
+                        <p:inputText id="factor" value="#{aspPoController.selected.factor}" title="#{bundle.EditAspPoTitle_factor}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_serviceValue}" for="serviceValue" />
+                        <p:inputText id="serviceValue" value="#{aspPoController.selected.serviceValue}" title="#{bundle.EditAspPoTitle_serviceValue}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poValue}" for="poValue" />
+                        <p:inputText id="poValue" value="#{aspPoController.selected.poValue}" title="#{bundle.EditAspPoTitle_poValue}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poValueTaxes}" for="poValueTaxes" />
+                        <p:inputText id="poValueTaxes" value="#{aspPoController.selected.poValueTaxes}" title="#{bundle.EditAspPoTitle_poValueTaxes}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_workDone}" for="workDone" />
+                        <p:inputText id="workDone" value="#{aspPoController.selected.workDone}" title="#{bundle.EditAspPoTitle_workDone}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_remainingInPo}" for="remainingInPo" />
+                        <p:inputText id="remainingInPo" value="#{aspPoController.selected.remainingInPo}" title="#{bundle.EditAspPoTitle_remainingInPo}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_sysDate}" for="sysDate" />
+                        <p:calendar id="sysDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{aspPoController.selected.sysDate}" title="#{bundle.EditAspPoTitle_sysDate}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_sysDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poMargin}" for="poMargin" />
+                        <p:inputText id="poMargin" value="#{aspPoController.selected.poMargin}" title="#{bundle.EditAspPoTitle_poMargin}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_poMargin}"/>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_taxes}" for="taxes" />
+                        <p:inputText id="taxes" value="#{aspPoController.selected.taxes}" title="#{bundle.EditAspPoTitle_taxes}" />
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_domainName}" for="domainName" />
+                        <p:selectOneMenu id="domainName" value="#{aspPoController.selected.domainName}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_domainName}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{domainNamesController.itemsAvailableSelectOne}"
+                                           var="domainNameItem"
+                                           itemValue="#{domainNameItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poStatus}" for="poStatus" />
+                        <p:selectOneMenu id="poStatus" value="#{aspPoController.selected.poStatus}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{poStatusController.itemsAvailableSelectOne}"
+                                           var="poStatusItem"
+                                           itemValue="#{poStatusItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_poType}" for="poType" />
+                        <p:selectOneMenu id="poType" value="#{aspPoController.selected.poType}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_poType}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
+                                           var="poTypeItem"
+                                           itemValue="#{poTypeItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_asp}" for="asp" />
+                        <p:selectOneMenu id="asp" value="#{aspPoController.selected.asp}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_asp}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
+                                           var="aspItem"
+                                           itemValue="#{aspItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditAspPoLabel_creator}" for="creator" />
+                        <p:selectOneMenu id="creator" value="#{aspPoController.selected.creator}" required="true" requiredMessage="#{bundle.EditAspPoRequiredMessage_creator}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="creatorItem"
+                                           itemValue="#{creatorItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{aspPoController.update}" value="#{bundle.Save}" update="display,:AspPoListForm:datalist,:growl" oncomplete="handleSubmit(args, 'AspPoEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="AspPoEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

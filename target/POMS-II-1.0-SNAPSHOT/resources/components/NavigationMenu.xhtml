@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <nav role="navigation" class="widget-body">
+            <ul class="acc-menu">
+                <li class="nav-separator">
+                    <span>Navigation</span>
+                </li>
+                <li>
+                    <a  class="withripple" href="#{request.contextPath}/vfe/index.xhtml">
+                        <span class="icon">
+                            <i class="material-icons">home</i>
+                        </span>
+                        <span>Dashboard</span>
+                        <!--<span class="badge badge-teal">2</span>-->
+                    </a>
+                </li>
+                <li>
+                    <a  class="withripple" href="#{request.contextPath}/vfe/app/system_admin/settings.xhtml">
+                        <span class="icon">
+                            <i class="material-icons">settings</i>
+                        </span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a  class="withripple" href="javascript:;">
+                        <span class="icon">
+                            <i class="material-icons">local_activity</i>
+                        </span>
+                        <span>Activities</span>
+                    </a>
+                    <ul class="acc-menu">
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/business_provider/create_activity.xhtml">Create Activity</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/business_provider/crud_activity.xhtml">View/Edit Activity</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a  class="withripple" href="javascript:;">
+                        <span class="icon">
+                            <i class="material-icons">sim_card</i>
+                        </span>
+                        <span>Vendor</span>
+                    </a>
+                    <ul class="acc-menu">
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/finance_admin/create_v_po.xhtml">Create PO</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/finance_admin/crud_v_po.xhtml">View/Edit PO</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a  class="withripple" href="javascript:;">
+                        <span class="icon">
+                            <i class="material-icons">business_center</i>
+                        </span>
+                        <span>Sub-contractors</span>
+                    </a>
+                    <ul class="acc-menu">
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/finance_admin/create_asp_po.xhtml">Create PO</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/vfe/app/finance_admin/crud_asp_po.xhtml">View/Edit PO</a></li>
+                    </ul>
+                </li>
+
+
+
+
+            </ul>
+        </nav>
+    </cc:implementation>
+</html>

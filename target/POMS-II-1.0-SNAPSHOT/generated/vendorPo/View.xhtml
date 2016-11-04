@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorPoViewDlg" widgetVar="VendorPoViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewVendorPoTitle}">
+            <h:form id="VendorPoViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorPoController.selected != null}">
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poNumber}"/>
+                        <h:outputText value="#{vendorPoController.selected.poNumber}" title="#{bundle.ViewVendorPoTitle_poNumber}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poDate}"/>
+                        <h:outputText value="#{vendorPoController.selected.poDate}" title="#{bundle.ViewVendorPoTitle_poDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poDescription}"/>
+                        <h:outputText value="#{vendorPoController.selected.poDescription}" title="#{bundle.ViewVendorPoTitle_poDescription}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_factor}"/>
+                        <h:outputText value="#{vendorPoController.selected.factor}" title="#{bundle.ViewVendorPoTitle_factor}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_serviceValue}"/>
+                        <h:outputText value="#{vendorPoController.selected.serviceValue}" title="#{bundle.ViewVendorPoTitle_serviceValue}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poValue}"/>
+                        <h:outputText value="#{vendorPoController.selected.poValue}" title="#{bundle.ViewVendorPoTitle_poValue}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poValueTaxes}"/>
+                        <h:outputText value="#{vendorPoController.selected.poValueTaxes}" title="#{bundle.ViewVendorPoTitle_poValueTaxes}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_workDone}"/>
+                        <h:outputText value="#{vendorPoController.selected.workDone}" title="#{bundle.ViewVendorPoTitle_workDone}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_remainingInPo}"/>
+                        <h:outputText value="#{vendorPoController.selected.remainingInPo}" title="#{bundle.ViewVendorPoTitle_remainingInPo}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_sysDate}"/>
+                        <h:outputText value="#{vendorPoController.selected.sysDate}" title="#{bundle.ViewVendorPoTitle_sysDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_taxes}"/>
+                        <h:outputText value="#{vendorPoController.selected.taxes}" title="#{bundle.ViewVendorPoTitle_taxes}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_domainName}"/>
+                        <h:outputText value="#{vendorPoController.selected.domainName}" title="#{bundle.ViewVendorPoTitle_domainName}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poStatus}"/>
+                        <h:outputText value="#{vendorPoController.selected.poStatus}" title="#{bundle.ViewVendorPoTitle_poStatus}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_poType}"/>
+                        <h:outputText value="#{vendorPoController.selected.poType}" title="#{bundle.ViewVendorPoTitle_poType}"/>
+                        <h:outputText value="#{bundle.ViewVendorPoLabel_creator}"/>
+                        <h:outputText value="#{vendorPoController.selected.creator}" title="#{bundle.ViewVendorPoTitle_creator}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="VendorPoViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

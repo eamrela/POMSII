@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AspGrnCreateDlg" widgetVar="AspGrnCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateAspGrnTitle}">
+            <h:form id="AspGrnCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{aspGrnController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{aspGrnController.selected.id}" title="#{bundle.CreateAspGrnTitle_id}" required="true" requiredMessage="#{bundle.CreateAspGrnRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_grnDeserved}" for="grnDeserved" />
+                        <p:inputText id="grnDeserved" value="#{aspGrnController.selected.grnDeserved}" title="#{bundle.CreateAspGrnTitle_grnDeserved}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_grnFactor}" for="grnFactor" />
+                        <p:inputText id="grnFactor" value="#{aspGrnController.selected.grnFactor}" title="#{bundle.CreateAspGrnTitle_grnFactor}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_grnValue}" for="grnValue" />
+                        <p:inputText id="grnValue" value="#{aspGrnController.selected.grnValue}" title="#{bundle.CreateAspGrnTitle_grnValue}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_grnDate}" for="grnDate" />
+                        <p:calendar id="grnDate" pattern="MM/dd/yyyy" value="#{aspGrnController.selected.grnDate}" title="#{bundle.EditAspGrnTitle_grnDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_grnNumber}" for="grnNumber" />
+                        <p:inputText id="grnNumber" value="#{aspGrnController.selected.grnNumber}" title="#{bundle.CreateAspGrnTitle_grnNumber}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_invoiced}" for="invoiced" />
+                        <p:selectBooleanCheckbox id="invoiced" value="#{aspGrnController.selected.invoiced}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_remainingInGrn}" for="remainingInGrn" />
+                        <p:inputText id="remainingInGrn" value="#{aspGrnController.selected.remainingInGrn}" title="#{bundle.CreateAspGrnTitle_remainingInGrn}" />
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_sysDate}" for="sysDate" />
+                        <p:calendar id="sysDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{aspGrnController.selected.sysDate}" title="#{bundle.EditAspGrnTitle_sysDate}" required="true" requiredMessage="#{bundle.EditAspGrnRequiredMessage_sysDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_aspPoId}" for="aspPoId" />
+                        <p:selectOneMenu id="aspPoId" value="#{aspGrnController.selected.aspPoId}" >
+                            <f:selectItems value="#{aspPoController.itemsAvailableSelectOne}"
+                                           var="aspPoIdItem"
+                                           itemValue="#{aspPoIdItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateAspGrnLabel_creator}" for="creator" />
+                        <p:selectOneMenu id="creator" value="#{aspGrnController.selected.creator}" required="true" requiredMessage="#{bundle.EditAspGrnRequiredMessage_creator}">
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="creatorItem"
+                                           itemValue="#{creatorItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{aspGrnController.create}" value="#{bundle.Save}" update="display,:AspGrnListForm:datalist,:growl" oncomplete="handleSubmit(args,'AspGrnCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="AspGrnCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListAspPoTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="AspPoListForm">
+                <p:panel header="#{bundle.ListAspPoTitle}">
+                    <p:dataTable id="datalist" value="#{aspPoController.items}" var="item"
+                                 selectionMode="single" selection="#{aspPoController.selected}"
+                                 paginator="true"
+                                 rowKey="#{item.poNumber}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 >
+
+                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poNumber}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poNumber}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poDate}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poDate}">
+                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poDescription}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poDescription}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_factor}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.factor}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_serviceValue}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.serviceValue}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poValue}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poValue}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poValueTaxes}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poValueTaxes}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_workDone}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.workDone}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_remainingInPo}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.remainingInPo}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_sysDate}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.sysDate}">
+                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poMargin}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poMargin}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_taxes}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.taxes}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_domainName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.domainName}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poStatus}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poStatus}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_poType}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poType}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_asp}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.asp}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListAspPoTitle_creator}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.creator}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{aspPoController.prepareCreate}" update=":AspPoCreateForm" oncomplete="PF('AspPoCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":AspPoViewForm" oncomplete="PF('AspPoViewDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspPoEditForm" oncomplete="PF('AspPoEditDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle.Delete}" actionListener="#{aspPoController.destroy}" update=":growl,datalist" disabled="#{empty aspPoController.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="View.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityViewDlg" widgetVar="ActivityViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewActivityTitle}">
+            <h:form id="ActivityViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityController.selected != null}">
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityId}"/>
+                        <h:outputText value="#{activityController.selected.activityId}" title="#{bundle.ViewActivityTitle_activityId}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityDate}"/>
+                        <h:outputText value="#{activityController.selected.activityDate}" title="#{bundle.ViewActivityTitle_activityDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityDetails}"/>
+                        <h:outputText value="#{activityController.selected.activityDetails}" title="#{bundle.ViewActivityTitle_activityDetails}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_qty}"/>
+                        <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendor}"/>
+                        <h:outputText value="#{activityController.selected.totalPriceVendor}" title="#{bundle.ViewActivityTitle_totalPriceVendor}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendorTaxes}"/>
+                        <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="#{bundle.ViewActivityTitle_totalPriceVendorTaxes}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
+                        <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
+                        <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
+                        <h:outputText value="#{activityController.selected.totalUmPercent}" title="#{bundle.ViewActivityTitle_totalUmPercent}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityComment}"/>
+                        <h:outputText value="#{activityController.selected.activityComment}" title="#{bundle.ViewActivityTitle_activityComment}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_sysDate}"/>
+                        <h:outputText value="#{activityController.selected.sysDate}" title="#{bundle.ViewActivityTitle_sysDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewActivityLabel_taxes}"/>
+                        <h:outputText value="#{activityController.selected.taxes}" title="#{bundle.ViewActivityTitle_taxes}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityCode}"/>
+                        <h:outputText value="#{activityController.selected.activityCode}" title="#{bundle.ViewActivityTitle_activityCode}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_approvalStatus}"/>
+                        <h:outputText value="#{activityController.selected.approvalStatus}" title="#{bundle.ViewActivityTitle_approvalStatus}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_area}"/>
+                        <h:outputText value="#{activityController.selected.area}" title="#{bundle.ViewActivityTitle_area}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_claimStatus}"/>
+                        <h:outputText value="#{activityController.selected.claimStatus}" title="#{bundle.ViewActivityTitle_claimStatus}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_activityType}"/>
+                        <h:outputText value="#{activityController.selected.activityType}" title="#{bundle.ViewActivityTitle_activityType}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_phase}"/>
+                        <h:outputText value="#{activityController.selected.phase}" title="#{bundle.ViewActivityTitle_phase}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_site}"/>
+                        <h:outputText value="#{activityController.selected.site}" title="#{bundle.ViewActivityTitle_site}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_asp}"/>
+                        <h:outputText value="#{activityController.selected.asp}" title="#{bundle.ViewActivityTitle_asp}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_creator}"/>
+                        <h:outputText value="#{activityController.selected.creator}" title="#{bundle.ViewActivityTitle_creator}"/>
+                        <h:outputText value="#{bundle.ViewActivityLabel_vendorOwner}"/>
+                        <h:outputText value="#{activityController.selected.vendorOwner}" title="#{bundle.ViewActivityTitle_vendorOwner}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="ActivityViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

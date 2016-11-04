@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsersCreateDlg" widgetVar="UsersCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateUsersTitle}">
+            <h:form id="UsersCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usersController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{usersController.selected.id}" title="#{bundle.CreateUsersTitle_id}" required="true" requiredMessage="#{bundle.CreateUsersRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_firstName}" for="firstName" />
+                        <p:inputText id="firstName" value="#{usersController.selected.firstName}" title="#{bundle.CreateUsersTitle_firstName}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_lastName}" for="lastName" />
+                        <p:inputText id="lastName" value="#{usersController.selected.lastName}" title="#{bundle.CreateUsersTitle_lastName}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_email}" for="email" />
+                        <p:inputText id="email" value="#{usersController.selected.email}" title="#{bundle.CreateUsersTitle_email}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_pwd}" for="pwd" />
+                        <p:inputText id="pwd" value="#{usersController.selected.pwd}" title="#{bundle.CreateUsersTitle_pwd}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_enabled}" for="enabled" />
+                        <p:selectBooleanCheckbox id="enabled" value="#{usersController.selected.enabled}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_tokenExpired}" for="tokenExpired" />
+                        <p:selectBooleanCheckbox id="tokenExpired" value="#{usersController.selected.tokenExpired}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_phoneNumber}" for="phoneNumber" />
+                        <p:inputText id="phoneNumber" value="#{usersController.selected.phoneNumber}" title="#{bundle.CreateUsersTitle_phoneNumber}" />
+                        <p:outputLabel value="#{bundle.CreateUsersLabel_manager}" for="manager" />
+                        <p:inputText id="manager" value="#{usersController.selected.manager}" title="#{bundle.CreateUsersTitle_manager}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{usersController.create}" value="#{bundle.Save}" update="display,:UsersListForm:datalist,:growl" oncomplete="handleSubmit(args,'UsersCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="UsersCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

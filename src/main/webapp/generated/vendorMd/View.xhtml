@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorMdViewDlg" widgetVar="VendorMdViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewVendorMdTitle}">
+            <h:form id="VendorMdViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_id}"/>
+                        <h:outputText value="#{vendorMdController.selected.id}" title="#{bundle.ViewVendorMdTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_mdDeserved}"/>
+                        <h:outputText value="#{vendorMdController.selected.mdDeserved}" title="#{bundle.ViewVendorMdTitle_mdDeserved}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_mdFactor}"/>
+                        <h:outputText value="#{vendorMdController.selected.mdFactor}" title="#{bundle.ViewVendorMdTitle_mdFactor}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_mdValue}"/>
+                        <h:outputText value="#{vendorMdController.selected.mdValue}" title="#{bundle.ViewVendorMdTitle_mdValue}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_mdDate}"/>
+                        <h:outputText value="#{vendorMdController.selected.mdDate}" title="#{bundle.ViewVendorMdTitle_mdDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_mdNumber}"/>
+                        <h:outputText value="#{vendorMdController.selected.mdNumber}" title="#{bundle.ViewVendorMdTitle_mdNumber}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_invoiced}"/>
+                        <p:selectBooleanCheckbox value="#{vendorMdController.selected.invoiced}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_remainingInMd}"/>
+                        <h:outputText value="#{vendorMdController.selected.remainingInMd}" title="#{bundle.ViewVendorMdTitle_remainingInMd}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_sysDate}"/>
+                        <h:outputText value="#{vendorMdController.selected.sysDate}" title="#{bundle.ViewVendorMdTitle_sysDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_creator}"/>
+                        <h:outputText value="#{vendorMdController.selected.creator}" title="#{bundle.ViewVendorMdTitle_creator}"/>
+                        <h:outputText value="#{bundle.ViewVendorMdLabel_vendorPoId}"/>
+                        <h:outputText value="#{vendorMdController.selected.vendorPoId}" title="#{bundle.ViewVendorMdTitle_vendorPoId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="VendorMdViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

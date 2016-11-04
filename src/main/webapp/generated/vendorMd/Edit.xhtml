@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorMdEditDlg" widgetVar="VendorMdEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorMdTitle}">
+            <h:form id="VendorMdEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{vendorMdController.selected.id}" title="#{bundle.EditVendorMdTitle_id}" required="true" requiredMessage="#{bundle.EditVendorMdRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_mdDeserved}" for="mdDeserved" />
+                        <p:inputText id="mdDeserved" value="#{vendorMdController.selected.mdDeserved}" title="#{bundle.EditVendorMdTitle_mdDeserved}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_mdFactor}" for="mdFactor" />
+                        <p:inputText id="mdFactor" value="#{vendorMdController.selected.mdFactor}" title="#{bundle.EditVendorMdTitle_mdFactor}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_mdValue}" for="mdValue" />
+                        <p:inputText id="mdValue" value="#{vendorMdController.selected.mdValue}" title="#{bundle.EditVendorMdTitle_mdValue}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_mdDate}" for="mdDate" />
+                        <p:calendar id="mdDate" pattern="MM/dd/yyyy" value="#{vendorMdController.selected.mdDate}" title="#{bundle.EditVendorMdTitle_mdDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_mdNumber}" for="mdNumber" />
+                        <p:inputText id="mdNumber" value="#{vendorMdController.selected.mdNumber}" title="#{bundle.EditVendorMdTitle_mdNumber}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_invoiced}" for="invoiced" />
+                        <p:selectBooleanCheckbox id="invoiced" value="#{vendorMdController.selected.invoiced}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_remainingInMd}" for="remainingInMd" />
+                        <p:inputText id="remainingInMd" value="#{vendorMdController.selected.remainingInMd}" title="#{bundle.EditVendorMdTitle_remainingInMd}" />
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_sysDate}" for="sysDate" />
+                        <p:calendar id="sysDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{vendorMdController.selected.sysDate}" title="#{bundle.EditVendorMdTitle_sysDate}" required="true" requiredMessage="#{bundle.EditVendorMdRequiredMessage_sysDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_creator}" for="creator" />
+                        <p:selectOneMenu id="creator" value="#{vendorMdController.selected.creator}" required="true" requiredMessage="#{bundle.EditVendorMdRequiredMessage_creator}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="creatorItem"
+                                           itemValue="#{creatorItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditVendorMdLabel_vendorPoId}" for="vendorPoId" />
+                        <p:selectOneMenu id="vendorPoId" value="#{vendorMdController.selected.vendorPoId}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{vendorPoController.itemsAvailableSelectOne}"
+                                           var="vendorPoIdItem"
+                                           itemValue="#{vendorPoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{vendorMdController.update}" value="#{bundle.Save}" update="display,:VendorMdListForm:datalist,:growl" oncomplete="handleSubmit(args, 'VendorMdEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="VendorMdEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

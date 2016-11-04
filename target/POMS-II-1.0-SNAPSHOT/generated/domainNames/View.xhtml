@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="DomainNamesViewDlg" widgetVar="DomainNamesViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewDomainNamesTitle}">
+            <h:form id="DomainNamesViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{domainNamesController.selected != null}">
+                        <h:outputText value="#{bundle.ViewDomainNamesLabel_domainName}"/>
+                        <h:outputText value="#{domainNamesController.selected.domainName}" title="#{bundle.ViewDomainNamesTitle_domainName}"/>
+                        <h:outputText value="#{bundle.ViewDomainNamesLabel_description}"/>
+                        <h:outputText value="#{domainNamesController.selected.description}" title="#{bundle.ViewDomainNamesTitle_description}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="DomainNamesViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

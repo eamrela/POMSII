@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="username" required="true"/>
+        <cc:attribute name="email" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="widget" id="widget-profileinfo">
+            <div class="widget-body">
+                <div class="userinfo ">
+                    <div class="info">
+                        <span class="username">#{cc.attrs.username}</span>
+                        <span class="useremail">#{cc.attrs.email}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </cc:implementation>
+</html>
