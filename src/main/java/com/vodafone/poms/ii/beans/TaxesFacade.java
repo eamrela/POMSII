@@ -28,5 +28,9 @@ public class TaxesFacade extends AbstractFacade<Taxes> {
     public TaxesFacade() {
         super(Taxes.class);
     }
+
+    public Taxes findCurrentTaxes() {
+        return (Taxes) em.createNativeQuery("select * from taxes order by activation_date desc limit 1",Taxes.class).getSingleResult();
+    }
     
 }

@@ -121,7 +121,7 @@ public class AreaController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = Area.class)
+    @FacesConverter("AreaControllerConverter")
     public static class AreaControllerConverter implements Converter {
 
         @Override

@@ -5,7 +5,9 @@
  */
 package com.vodafone.poms.ii.beans;
 
+import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.entities.AspPo;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +29,14 @@ public class AspPoFacade extends AbstractFacade<AspPo> {
 
     public AspPoFacade() {
         super(AspPo.class);
+    }
+
+    public List<AspPo> findPOforActivity(Activity selected) {
+        return em.createNativeQuery("select * from asp_po " +
+                                    "where po_type = 'Extra Work' " +
+                                    "and domain_name = '"+selected.getActivityType().getDomainName()+"' " +
+                                    "and asp = '"+selected.getAsp().getSubcontractorName()+"' " +
+                                    "and remaining_in_po >= "+selected.getTotalPriceAsp(),AspPo.class).getResultList();
     }
     
 }

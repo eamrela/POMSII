@@ -6,6 +6,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.ActivityCodeFacade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -121,7 +122,7 @@ public class ActivityCodeController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = ActivityCode.class)
+    @FacesConverter(value="ActivityCodeControllerConverter")
     public static class ActivityCodeControllerConverter implements Converter {
 
         @Override
@@ -162,4 +163,31 @@ public class ActivityCodeController implements Serializable {
 
     }
 
+     public List<ActivityCode> autoCompleteActivityCodeMaterialID(String query) {
+        List<ActivityCode> allCodes = getItems();
+        List<ActivityCode> filteredCodes = new ArrayList<>();
+         
+        for (int i = 0; i < allCodes.size(); i++) {
+            ActivityCode code = allCodes.get(i);
+            if(code.getMaterialId().toLowerCase().startsWith(query)) {
+                filteredCodes.add(code);
+            }
+        }
+         
+        return filteredCodes;
+    }
+    
+    public List<ActivityCode> autoCompleteActivityCodeDescription(String query) {
+        List<ActivityCode> allCodes = getItems();
+        List<ActivityCode> filteredCodes = new ArrayList<>();
+         
+        for (int i = 0; i < allCodes.size(); i++) {
+            ActivityCode code = allCodes.get(i);
+            if( code.getDescription().toLowerCase().contains(query)) {
+                filteredCodes.add(code);
+            }
+        }
+         
+        return filteredCodes;
+    }
 }

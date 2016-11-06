@@ -6,6 +6,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.SitesFacade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -121,7 +122,7 @@ public class SitesController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = Sites.class)
+    @FacesConverter(value="SitesControllerConverter")
     public static class SitesControllerConverter implements Converter {
 
         @Override
@@ -162,4 +163,16 @@ public class SitesController implements Serializable {
 
     }
 
+    public List<Sites> autoCompleteSite(String query) {
+        List<Sites> allSites = getItems();
+        List<Sites> filteredSites = new ArrayList<>();
+         
+        for (int i = 0; i < allSites.size(); i++) {
+            Sites code = allSites.get(i);
+            if(code.getSitePhysical().toLowerCase().contains(query)) {
+                filteredSites.add(code);
+            }
+        }      
+        return filteredSites;
+    }
 }

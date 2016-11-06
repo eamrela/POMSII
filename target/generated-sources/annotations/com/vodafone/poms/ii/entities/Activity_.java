@@ -17,7 +17,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-04T19:02:32")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-05T22:11:53")
 @StaticMetamodel(Activity.class)
 public class Activity_ { 
 
@@ -42,7 +42,7 @@ public class Activity_ {
     public static volatile SingularAttribute<Activity, Subcontractors> asp;
     public static volatile SingularAttribute<Activity, DomainNames> activityType;
     public static volatile SingularAttribute<Activity, Phases> phase;
-    public static volatile SingularAttribute<Activity, Long> taxes;
+    public static volatile SingularAttribute<Activity, Double> taxes;
     public static volatile CollectionAttribute<Activity, AspPo> aspPoCollection;
 
 }

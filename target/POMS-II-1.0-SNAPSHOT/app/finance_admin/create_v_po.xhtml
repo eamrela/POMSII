@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,7 +30,14 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
+        <f:metadata>
+            <f:viewAction action="#{vendorPoController.prepareCreate}"/>
+        </f:metadata>
+        <style>
+            .ui-growl{
+    top:100px;
+}
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -51,11 +60,190 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Vendor PO" smallText="Create vendor PO"/>
+                            <POMSII:PageHeadings largeText="Vendor PO" smallText="Create Vendor PO"/>
                             <div class="container-fluid">
+                                <h:form id="createASPPoForm">
+                                <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
+                                <div class="row">
+                                    
+                                    <div class="col-md-3">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>System Fields</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                             <div class="panel-body">
+                                                 <div class="row">
+                                                     <div class="col-xs-12">
+                                                        <label for="pocreator">Creator</label>
+                                                        <h:inputText required="true" 
+                                                                     requiredMessage="PO Creator is required"
+                                                                     value="#{vendorPoController.selected.creator.email}"
+                                                                     class="form-control" id="pocreator" disabled="true"/>
+                                                     </div>
+                                                     <div class="col-xs-12">
+                                                        <label for="pocreationdate">Creation Date</label>
+                                                        <h:inputText required="true" 
+                                                                     requiredMessage="PO Creation date is required"
+                                                                     value="#{vendorPoController.selected.sysDate}"
+                                                                     class="form-control" id="pocreationdate" disabled="true">
+                                                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                        </h:inputText>
+                                                     </div>
+                                                     <div class="col-xs-12">
+                                                        <label for="remaininginpo">Remaining in PO</label>
+                                                        <h:inputText required="true" 
+                                                                     requiredMessage="PO Remaining is required"
+                                                                     value="#{vendorPoController.selected.poValue}"
+                                                                     class="form-control" id="remaininginpo" disabled="true"/>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Create Vendor PO</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                             <div class="panel-body">
+                                                 <div class="row">
+                                                    <div class="col-xs-3">
+                                                        <label for="ponumber">PO #</label>
+                                                        <h:inputText required="true" 
+                                                                     requiredMessage="PO # is required"
+                                                                     value="#{vendorPoController.selected.poNumber}"
+                                                                     class="form-control" id="ponumber"/>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <label for="podate">Date</label>
+                                                        <p:calendar id="podate" 
+                                                                    required="true"
+                                                                    requiredMessage="PO Date is required"
+                                                                    value="#{vendorPoController.selected.poDate}"
+                                                                    styleClass="form-control"/>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <label for="potype">Type</label>
+                                                        <h:selectOneMenu id="potype" 
+                                                                         value="#{vendorPoController.selected.poType}" 
+                                                                         required="true" 
+                                                                         requiredMessage="PO Type is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
+                                                                           var="poTypeItem"
+                                                                           itemValue="#{poTypeItem}"
+                                                                           itemLabel="#{poTypeItem.typeName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <label for="podomain">Domain</label>
+                                                        <h:selectOneMenu id="podomain" 
+                                                                         value="#{vendorPoController.selected.domainName}" 
+                                                                         required="true" 
+                                                                         requiredMessage="PO Domain is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{domainNamesController.items}"
+                                                                            var="domainItem"
+                                                                           itemValue="#{domainItem}"
+                                                                           itemLabel="#{domainItem.domainName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                    </div>
+                                                 </div>
+                                                 <div class="row">
+                                                    <div class="col-xs-12">
+                                                       <label for="podescription">Description</label>
+                                                       <h:inputTextarea 
+                                                           required="true"
+                                                           requiredMessage="PO Description is required"
+                                                           class="form-control" 
+                                                           rows="3" id="podescription"
+                                                           value="#{vendorPoController.selected.poDescription}"/>
+                                                    </div>
+                                                 </div>
+                                                 <div class="row">
+                                                    <div class="col-xs-4">
+                                                        <div class="col-sm-6" >
+                                                        <label for="pofactor">Factor</label>
+                                                        <h:inputText id="pofactor" 
+                                                                     value="#{vendorPoController.selected.factor}"
+                                                                     required="true"
+                                                                     requiredMessage="Factor is required"
+                                                                     converterMessage="Please enter digits only."
+                                                                     styleClass="form-control"
+                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
+                                                                                    return false;">
+                                                        <p:ajax event="keyup"  
+                                                                update="povalue,povaluetax,remaininginpo" />
+                                                        </h:inputText>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                        <label for="poitemvalue">Item Value</label>
+                                                        <h:inputText id="poitemvalue" 
+                                                                     value="#{vendorPoController.selected.serviceValue}"
+                                                                     required="true"
+                                                                     requiredMessage="Service Value is required"
+                                                                     converterMessage="Please enter digits only."
+                                                                     styleClass="form-control"
+                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
+                                                                                    return false;">
+                                                        <p:ajax event="keyup"  
+                                                                update="povalue,povaluetax,remaininginpo" />
+                                                        </h:inputText>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="povalue">PO Value</label>
+                                                        <h:inputText id="povalue" 
+                                                                     value="#{vendorPoController.selected.poValue}"
+                                                                     required="true"
+                                                                     requiredMessage="PO Value is required"
+                                                                     converterMessage="Please enter digits only."
+                                                                     styleClass="form-control"
+                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
+                                                                                    return false;"
+                                                                    disabled="true">
+                                                            <p:ajax/>
+                                                        </h:inputText>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="povaluetax">PO Value(#{vendorPoController.selected.taxes}%)</label>
+                                                        <h:inputText id="povaluetax" 
+                                                                     value="#{vendorPoController.selected.poValueTaxes}"
+                                                                     required="true"
+                                                                     requiredMessage="PO Value is required"
+                                                                     converterMessage="Please enter digits only."
+                                                                     styleClass="form-control"
+                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
+                                                                                    return false;"
+                                                                    disabled="true"/>
+                                                    </div>
+                                                </div>
+                                             </div>
+                                         </div>
+                                    <div class="pull-right">
+                                        <p:commandButton 
+                                                     class="btn-raised btn-primary btn"
+                                                      value="Create PO"
+                                                      ajax="false"
+                                                      actionListener="#{vendorPoController.create}"
+                                                      update="growl">
+
+                                    </p:commandButton>
+                                    </div>
+                                    </div>
+                                </div>
                                 
                                 <!--page content end here--> 
+                                </h:form>
                             </div>
                         </div>
                     </div>

@@ -28,5 +28,9 @@ public class AspGrnFacade extends AbstractFacade<AspGrn> {
     public AspGrnFacade() {
         super(AspGrn.class);
     }
+
+    public AspGrn merge(AspGrn selected) {
+        return em.merge(selected);
+    }
     
 }

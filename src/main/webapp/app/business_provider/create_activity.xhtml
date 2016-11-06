@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,8 +30,10 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
-
+        <f:metadata>
+            <f:viewAction action="#{activityController.prepareCreate}"/>
+        </f:metadata>
+        
     </h:head>
     <h:body class="animated-content infobar-overlay">
         <POMSII:Header/>
@@ -54,7 +58,320 @@
                             <POMSII:PageHeadings largeText="Create Activity" smallText="Submit Extra work activity"/>
                             <div class="container-fluid">
                                 <!--Page start content here-->
-                                
+                                <h:form id="createActivityForm">
+                                <p:growl id="growl" sticky="true"/>
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Activity Details</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                            <label for="activitysite">Site</label>
+                                                            <p:autoComplete id="activitysite"  
+                                                                        value="#{activityController.selected.site}" 
+                                                                        completeMethod="#{sitesController.autoCompleteSite}" 
+                                                                        var="siteItem" 
+                                                                        itemLabel="#{siteItem.sitePhysical}" 
+                                                                        itemValue="#{siteItem}" 
+                                                                        converter="SitesControllerConverter" 
+                                                                        forceSelection="true"
+                                                                        required="true"
+                                                                        styleClass="form-control"
+                                                                        maxResults="10"/>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activityarea">Area</label>
+                                                        <h:selectOneMenu id="activityarea" 
+                                                                            value="#{activityController.selected.area}" 
+                                                                            required="true" 
+                                                                            requiredMessage="Area is required"
+                                                                            styleClass="form-control">
+                                                               <f:selectItem itemLabel="" 
+                                                                             itemValue="" noSelectionOption="false" />
+                                                               <f:selectItems value="#{areaController.itemsAvailableSelectOne}"
+                                                                              var="areaItem"
+                                                                              itemLabel="#{areaItem.areaName}"
+                                                                              itemValue="#{areaItem}"/>
+                                                        </h:selectOneMenu>
+                                                       </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activityasp">ASP</label>
+                                                        <h:selectOneMenu id="activityasp" 
+                                                                         value="#{activityController.selected.asp}" 
+                                                                         required="true" 
+                                                                         requiredMessage="ASP is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
+                                                                           var="aspItem"
+                                                                           itemLabel="#{aspItem.subcontractorName}"
+                                                                           itemValue="#{aspItem}"/>
+                                                        </h:selectOneMenu>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activityowner">Owner</label>
+                                                        <h:selectOneMenu id="activityowner" 
+                                                                         value="#{activityController.selected.vendorOwner}" 
+                                                                         required="true" 
+                                                                         requiredMessage="Owner is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{vendorOwnerController.itemsAvailableSelectOne}"
+                                                                           var="vendorOwnerItem"
+                                                                           itemLabel="#{vendorOwnerItem.ownerName}"
+                                                                           itemValue="#{vendorOwnerItem}"/>
+                                                        </h:selectOneMenu>
+                                                    </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                        <label for="activitytype">Type</label>
+                                                        <h:selectOneMenu id="activitytype" 
+                                                                         value="#{activityController.selected.activityType}" 
+                                                                         required="true" 
+                                                                         requiredMessage="Type is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{domainNamesController.itemsAvailableSelectOne}"
+                                                                           var="DomainNameItem"
+                                                                           itemLabel="#{DomainNameItem.domainName}"
+                                                                           itemValue="#{DomainNameItem}"/>
+                                                        </h:selectOneMenu>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activitydate">Date</label>
+                                                        <p:calendar id="activitydate" 
+                                                                    value="#{activityController.selected.activityDate}">
+                                                        </p:calendar>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activityphase">Phase</label>
+                                                        <h:selectOneMenu id="activityphase" 
+                                                                         value="#{activityController.selected.phase}" 
+                                                                         required="true" 
+                                                                         requiredMessage="Phase is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{phasesController.itemsAvailableSelectOne}"
+                                                                           var="ItemPhase"
+                                                                           itemLabel="#{ItemPhase.phaseName}"
+                                                                           itemValue="#{ItemPhase}"/>
+                                                        </h:selectOneMenu>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                        <label for="activityclaim">Claim</label>
+                                                        <h:selectOneMenu id="activityclaim" 
+                                                                         value="#{activityController.selected.claimStatus}" 
+                                                                         required="true" 
+                                                                         requiredMessage="Claim is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{claimStatusController.itemsAvailableSelectOne}"
+                                                                           var="ItemClaim"
+                                                                           itemLabel="#{ItemClaim.claimName}"
+                                                                           itemValue="#{ItemClaim}"/>
+                                                        </h:selectOneMenu>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                        <label for="activityapproval">Approval</label>
+                                                        <h:selectOneMenu id="activityapproval" 
+                                                                         value="#{activityController.selected.approvalStatus}" 
+                                                                         required="true" 
+                                                                         requiredMessage="Approval is required"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="" noSelectionOption="false" />
+                                                            <f:selectItems value="#{approvalStatusController.itemsAvailableSelectOne}"
+                                                                           var="ItemApproval"
+                                                                           itemLabel="#{ItemApproval.statusName}"
+                                                                           itemValue="#{ItemApproval}"/>
+                                                        </h:selectOneMenu>
+                                                        </div>
+                                                        <div class="col-xs-9">
+                                                        <label for="activitydetails">Details</label>
+                                                        <h:inputTextarea required="true" 
+                                                                         value="#{activityController.selected.activityDetails}"
+                                                                     class="form-control" id="activitydetails" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-4">
+                                                        <label for="activityQTY">QTY</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.qty}"
+                                                                     class="form-control" 
+                                                                     id="activityQTY"
+                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
+                                                                                    return false;">
+                                                            <p:ajax event="keyup" update="activitytpricev,activitytprivea,
+                                                                    activitypricet,activitytum,activitytump"
+                                                                     oncomplete="removeClasses();"/>
+                                                      </h:inputText>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="activitytpricev">Total Price Vendor</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.totalPriceVendor}"
+                                                                     class="form-control" id="activitytpricev" disabled="true"/>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="activitytprivea">Total Price ASP</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.totalPriceAsp}"
+                                                                     class="form-control" id="activitytprivea" disabled="true"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-4">
+                                                        <label for="activitypricet">Total Price Vendor (#{activityController.selected.taxes})</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.totalPriceVendorTaxes}"
+                                                                     class="form-control" id="activitypricet" disabled="true"/>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="activitysysdate">System date</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.sysDate}"
+                                                                     class="form-control" id="activitysysdate" disabled="true">
+                                                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                        </h:inputText>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <label for="activitycreator">Creator</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.creator.email}"
+                                                                     class="form-control" id="activitycreator" disabled="true"/>
+                                                    </div>
+                                                    </div>
+                                                    <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <label for="activitycomments">Hints/Comments</label>
+                                                        <h:inputText value="#{activityController.selected.activityComment}"
+                                                                     class="form-control" id="activitycomments" />
+                                                    </div>
+                                                    </div>
+                                                    <div class="row">
+                                                    <div class="col-xs-6">
+                                                        <label for="activitytum">Total UM</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.totalUm}"
+                                                                     class="form-control" id="activitytum" disabled="true"/>
+                                                    </div>
+                                                    <div class="col-xs-6">
+                                                        <label for="activitytump">Total UM%</label>
+                                                        <h:inputText required="true" 
+                                                                     value="#{activityController.selected.totalUmPercent}"
+                                                                     class="form-control" id="activitytump" disabled="true"/>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                    <div class="row">
+                                    <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                            <div class="panel-heading">
+                                                    <h2>Activity Code</h2>
+                                                    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                            </div>
+                                            <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <label for="activitycode">Code</label>
+                                                    <p:autoComplete id="activitycode"  
+                                                                    value="#{activityController.selected.activityCode}" 
+                                                                    completeMethod="#{activityCodeController.autoCompleteActivityCodeMaterialID}" 
+                                                                    var="activityItem" 
+                                                                    itemLabel="#{activityItem.materialId}" 
+                                                                    itemValue="#{activityItem}" 
+                                                                    converter="ActivityCodeControllerConverter" 
+                                                                    forceSelection="true"
+                                                                    required="true"
+                                                                    styleClass="form-control"
+                                                                    maxResults="10">
+                                                     <p:ajax event="itemSelect"  update="activitycodedescription,activitycodevunitprice,
+                                                             activitycodeaspunitprice,activitycodeaspunitprice,
+                                                                 activitycodeum,activitycodeump,activitytpricev,activitytprivea,
+                                                                activitypricet,activitytum,activitytump" oncomplete="removeClasses();"/>
+                                                    </p:autoComplete>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <label for="activitycodedescription">Description</label>
+                                                    <p:autoComplete id="activitycodedescription"  
+                                                                    value="#{activityController.selected.activityCode}" 
+                                                                    completeMethod="#{activityCodeController.autoCompleteActivityCodeDescription}" 
+                                                                    var="activityItem" 
+                                                                    itemLabel="#{activityItem.description}" 
+                                                                    itemValue="#{activityItem}" 
+                                                                    converter="ActivityCodeControllerConverter" 
+                                                                    forceSelection="true"
+                                                                    required="true"
+                                                                    styleClass="form-control"
+                                                                    maxResults="10"
+                                                                    >
+                                                         <p:ajax event="itemSelect"  update="activitycode,activitycodevunitprice,
+                                                                 activitycodeaspunitprice,activitycodeaspunitprice,
+                                                                 activitycodeum,activitycodeump,activitytpricev,activitytprivea,
+                                                                 activitypricet,activitytum,activitytump" oncomplete="removeClasses();"/>
+                                                    </p:autoComplete>
+                                                </div> 
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-6">
+                                                    <label for="activitycodevunitprice">Vendor Price</label>
+                                                    <h:inputText required="true" 
+                                                                 value="#{activityController.selected.activityCode.vendorPrice}"
+                                                                 class="form-control" id="activitycodevunitprice" disabled="true"/>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <label for="activitycodeaspunitprice">ASP Price</label>
+                                                    <h:inputText required="true" 
+                                                                 value="#{activityController.selected.activityCode.subcontractorPrice}"
+                                                                 class="form-control" id="activitycodeaspunitprice" disabled="true"/>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-6">
+                                                    <label for="activitycodeum">UM/Unit</label>
+                                                    <h:inputText required="true" 
+                                                                 value="#{activityController.selected.activityCode.um}"
+                                                                 class="form-control" id="activitycodeum" disabled="true"/>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <label for="activitycodeump">UM%/Unit</label>
+                                                    <h:inputText required="true" 
+                                                                 value="#{activityController.selected.activityCode.umPercent}"
+                                                                 class="form-control" id="activitycodeump" disabled="true"/>
+                                                </div>
+                                            </div>     
+                                            </div>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                        <p:commandButton 
+                                                style="margin-left: 25%;"
+                                                     class="btn-raised btn-primary btn"
+                                                      value="Create Activity"
+                                                      ajax="false"
+                                                      actionListener="#{activityController.create}"
+                                                      update="growl">
+
+                                        </p:commandButton>
+                                    </div>
+                                    </div>
+                                </div>
+                                </h:form>
                                 <!--page content end here--> 
                             </div>
                         </div>
@@ -79,7 +396,26 @@
         <script src="#{resource['assets/js/application.js']}"></script>
         <script src="#{resource['assets/plugins/form-daterangepicker/moment.min.js']}"></script>
         <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
+         <script type="text/javascript">
+        //<![CDATA[
+           removeClasses();
+        //]]>
+        function removeClasses(){
+             $('#createActivityForm\\:activitycode_input')
+                    .removeClass()
+                    .addClass( "form-control" );
+            $('#createActivityForm\\:activitycodedescription_input') 
+                    .removeClass()
+                    .addClass( "form-control" );
+            $('#createActivityForm\\:activitysite_input')
+                    .removeClass()
+                    .addClass( "form-control" );
+            $('#createActivityForm\\:activitydate')
+                    .removeClass()
+                    .addClass( "form-control" );
 
+        }
+        </script>
     </h:body>
 
 </html>

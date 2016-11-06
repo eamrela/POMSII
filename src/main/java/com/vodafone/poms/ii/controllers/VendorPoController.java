@@ -6,6 +6,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.VendorPoFacade;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -18,6 +19,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("vendorPoController")
 @SessionScoped
@@ -27,7 +29,14 @@ public class VendorPoController implements Serializable {
     private com.vodafone.poms.ii.beans.VendorPoFacade ejbFacade;
     private List<VendorPo> items = null;
     private VendorPo selected;
-
+    
+    @Inject
+    private TaxesController taxesController;
+    @Inject
+    private UsersController usersController;
+    @Inject
+    private PoStatusController poStatusController;
+    
     public VendorPoController() {
     }
 
@@ -51,6 +60,10 @@ public class VendorPoController implements Serializable {
 
     public VendorPo prepareCreate() {
         selected = new VendorPo();
+        selected.setTaxes(taxesController.getCurrentTaxes());
+        selected.setCreator(usersController.getSelected());
+        selected.setSysDate(new Date());
+        selected.setPoStatus(poStatusController.getInitialStatus());
         initializeEmbeddableKey();
         return selected;
     }
@@ -60,6 +73,7 @@ public class VendorPoController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
+        prepareCreate();
     }
 
     public void update() {
@@ -86,6 +100,9 @@ public class VendorPoController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
+                    if(selected.getPoValue()!=null){
+                        selected.setRemainingInPo(selected.getPoValue());
+                    }
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);

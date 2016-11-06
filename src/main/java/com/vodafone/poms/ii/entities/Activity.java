@@ -92,7 +92,7 @@ public class Activity implements Serializable {
     private Date sysDate;
     @Basic(optional = false)
     @Column(name = "taxes")
-    private long taxes;
+    private Double taxes;
     @JoinTable(name = "asp_po_j_activity", joinColumns = {
         @JoinColumn(name = "activity_id", referencedColumnName = "activity_id")}, inverseJoinColumns = {
         @JoinColumn(name = "asp_po_id", referencedColumnName = "po_number")})
@@ -136,7 +136,7 @@ public class Activity implements Serializable {
         this.activityId = activityId;
     }
 
-    public Activity(Long activityId, Date activityDate, String activityDetails, int qty, Date sysDate, long taxes) {
+    public Activity(Long activityId, Date activityDate, String activityDetails, int qty, Date sysDate, Double taxes) {
         this.activityId = activityId;
         this.activityDate = activityDate;
         this.activityDetails = activityDetails;
@@ -158,6 +158,7 @@ public class Activity implements Serializable {
     }
 
     public void setActivityDate(Date activityDate) {
+        System.out.println("Setting Activity Date: "+activityDate);
         this.activityDate = activityDate;
     }
 
@@ -178,6 +179,9 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalPriceVendor() {
+        if(activityCode!=null){
+        totalPriceVendor = activityCode.getVendorPrice()*qty;
+        }
         return totalPriceVendor;
     }
 
@@ -186,6 +190,9 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalPriceVendorTaxes() {
+        if(totalPriceVendor!=null){
+        totalPriceVendorTaxes = totalPriceVendor+(totalPriceVendor*Float.valueOf(taxes.toString()));
+        }
         return totalPriceVendorTaxes;
     }
 
@@ -194,6 +201,9 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalPriceAsp() {
+        if(activityCode!=null){
+        totalPriceAsp = activityCode.getSubcontractorPrice()*qty;
+        }
         return totalPriceAsp;
     }
 
@@ -202,6 +212,9 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalUm() {
+        if(totalPriceVendor!=null && totalPriceAsp!=null){
+        totalUm = totalPriceVendor-totalPriceAsp;
+        }
         return totalUm;
     }
 
@@ -210,6 +223,9 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalUmPercent() {
+        if(totalUm!=null && totalPriceVendor!=null){
+        totalUmPercent = totalUm/totalPriceVendor;
+        }
         return totalUmPercent;
     }
 
@@ -233,11 +249,11 @@ public class Activity implements Serializable {
         this.sysDate = sysDate;
     }
 
-    public long getTaxes() {
+    public Double getTaxes() {
         return taxes;
     }
 
-    public void setTaxes(long taxes) {
+    public void setTaxes(Double taxes) {
         this.taxes = taxes;
     }
 

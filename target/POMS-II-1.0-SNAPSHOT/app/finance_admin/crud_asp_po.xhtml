@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,7 +30,11 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
+        <style>
+            .ui-growl{
+    top:100px;
+}
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -51,11 +57,381 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="ASP POs" smallText="View and Edit ASP POs"/>
+                            <POMSII:PageHeadings largeText="ASP POs" smallText="View and Edit ASP PO"/>
                             <div class="container-fluid">
+                            <h:form id="ASPPOListForm"> 
+                                <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
-                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>All ASP POs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <p:dataTable id="datalistASPPO" 
+                                                                     value="#{aspPoController.items}" 
+                                                                     var="item"
+                                                                    selectionMode="single" selection="#{aspPoController.selected}"
+                                                                    paginator="true"
+                                                                    rowKey="#{item.poNumber}"
+                                                                    rows="10"
+                                                                    rowsPerPageTemplate="5,10,15,20,25"
+                                                                    >
+
+                                                           <p:ajax event="rowSelect"   update="editButton,
+                                                                                               :ASPPOListForm:selectedASPPOActivities ,
+                                                                                               :ASPPOListForm:selectedASPPOGRN"/>
+
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poNumber}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="PO#"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poNumber}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poDate}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Date"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poDate}">
+                                                                   <f:convertDateTime pattern="MM/dd/yyyy" />
+                                                               </h:outputText>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" filterBy="#{item.poDescription}" 
+                                                                     filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Description"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poDescription}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.factor}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Factor"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.factor}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="ServiceValue"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.serviceValue}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="POValue"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poValue}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="POValueTaxes"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poValueTaxes}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="WorkDone"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.workDone}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.remainingInPo}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Remaining"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.remainingInPo}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poMargin}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Margin"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poMargin}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Taxes"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.taxes}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Domain"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.domainName.domainName}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poType.typeName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Type"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poType.typeName}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.asp.subcontractorName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="ASP"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.asp.subcontractorName}"/>
+                                                           </p:column>
+                                                           <f:facet name="footer">
+                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspPoEditForm" oncomplete="PF('AspPoEditDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                                                           </f:facet>
+                                                       </p:dataTable>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+                                <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated GRNs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                         <p:outputPanel id="selectedASPPOGRN"> 
+                                                             <h:panelGroup rendered="#{aspPoController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedGRN"
+                                                                        var="aspGRN" 
+                                                                        value="#{aspPoController.selected.aspGrnCollection}"
+                                                                        emptyMessage="This PO doesn't have any GRN"
+                                                                        selection="#{aspGrnController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{aspGRN.id}">
+                                                                
+                                                                <p:ajax event="rowSelect" update="editButton"/>
+                                                                
+                                                                <p:column headerText="GRN#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspGRN.grnNumber}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspGRN.grnDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Deserved" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspGRN.grnDeserved}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Factor" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspGRN.grnFactor}" />
+                                                                </p:column>
+                                                                <p:column headerText="GRNValue" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspGRN.grnValue}" />
+                                                                </p:column>
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{aspGRN.remainingInGrn}" />
+                                                                </p:column>
+                                                                <p:column headerText="Invoiced" style="font-size: 9px;">
+                                                                    <h:selectBooleanCheckbox value="#{aspGRN.invoiced}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <label for="grndeserved">GRN Needed</label>
+                                                                     <h:outputText id="grndeserved"
+                                                                                   value="#{aspPoController.selected.grnDeserved}"
+                                                                                   styleClass="form-control"/>
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <h:panelGroup rendered="#{aspPoController.selected.grnDeserved>0}">
+                                                                         <p:commandButton 
+                                                                                     class="btn-raised btn-success btn"
+                                                                                      value="Create GRN"
+                                                                                      ajax="false"
+                                                                                      actionListener="#{aspPoController.createGRN}"
+                                                                                      update="
+                                                                                      :ASPPOListForm:selectedASPPOGRN, 
+                                                                                      :ASPPOListForm:selectedASPPOGRN:associatedGRN,
+                                                                                      :ASPPOListForm:growl">
+
+                                                                        </p:commandButton>
+                                                                     </h:panelGroup>
+                                                                 </div>
+                                                             </h:panelGroup>
+                                                         </p:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated Activities</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                       <p:outputPanel id="selectedASPPOActivities">
+                                                             <h:panelGroup rendered="#{aspPoController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedActivity"
+                                                                        var="aspActivity" 
+                                                                        value="#{aspPoController.selected.activityCollection}"
+                                                                        emptyMessage="This PO doesn't have any Activity"
+                                                                        selection="#{activityController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{aspActivity.activityId}">
+                                                                
+                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                
+                                                                <p:column headerText="Activity#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.activityId}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.activityDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="PriceASP" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.totalPriceAsp}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="PriceVendor" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.totalPriceVendor}" />
+                                                                </p:column>
+                                                                <p:column headerText="UM" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.totalUm}" />
+                                                                </p:column>
+                                                                <p:column headerText="UM%" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.totalUmPercent}" />
+                                                                </p:column>
+                                                                <p:column headerText="Qty" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspActivity.qty}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ActivityViewForm" oncomplete="PF('ActivityViewDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                      </div>
+                                                             </h:panelGroup>
+                                                         </p:outputPanel> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                        
                                 <!--page content end here--> 
+                                </h:form>
+                            <p:dialog id="AspPoEditDlg" widgetVar="AspPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspPoTitle}">
+                                    <h:form id="AspPoEditForm">
+                                        <h:panelGroup id="display">
+                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
+                                                <p:outputLabel value="#{bundle.EditAspPoLabel_workDone}" for="workDone" />
+                                                <p:inputText id="workDone" 
+                                                             value="#{aspPoController.selected.workDone}" 
+                                                             title="#{bundle.EditAspPoTitle_workDone}" >
+                                                    <f:validateDoubleRange minimum="#{aspPoController.selected.workDone}" 
+                                                                           maximum="#{aspPoController.selected.factor}"/>
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                            <p:commandButton actionListener="#{aspPoController.update}" value="#{bundle.Save}" update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
+                                                                                                                                    :ASPPOListForm:selectedASPPOGRN" oncomplete="handleSubmit(args, 'AspPoEditDialog');"/>
+                                            <p:commandButton value="#{bundle.Cancel}" onclick="AspPoEditDialog.hide()"/>
+                                        </h:panelGroup>
+                                    </h:form>
+                            </p:dialog>
+                            <p:dialog id="ActivityViewDlg" widgetVar="ActivityViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewActivityTitle}">
+                                <h:form id="ActivityViewForm">
+                                    <h:panelGroup id="display">
+                                        <p:panelGrid columns="2" rendered="#{activityController.selected != null}">
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityId}"/>
+                                            <h:outputText value="#{activityController.selected.activityId}" title="#{bundle.ViewActivityTitle_activityId}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityDate}"/>
+                                            <h:outputText value="#{activityController.selected.activityDate}" title="#{bundle.ViewActivityTitle_activityDate}">
+                                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityDetails}"/>
+                                            <h:outputText value="#{activityController.selected.activityDetails}" title="#{bundle.ViewActivityTitle_activityDetails}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_qty}"/>
+                                            <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendor}"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="#{bundle.ViewActivityTitle_totalPriceVendor}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendorTaxes}"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="#{bundle.ViewActivityTitle_totalPriceVendorTaxes}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
+                                            <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
+                                            <h:outputText value="#{activityController.selected.totalUmPercent}" title="#{bundle.ViewActivityTitle_totalUmPercent}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityComment}"/>
+                                            <h:outputText value="#{activityController.selected.activityComment}" title="#{bundle.ViewActivityTitle_activityComment}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_sysDate}"/>
+                                            <h:outputText value="#{activityController.selected.sysDate}" title="#{bundle.ViewActivityTitle_sysDate}">
+                                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_taxes}"/>
+                                            <h:outputText value="#{activityController.selected.taxes}" title="#{bundle.ViewActivityTitle_taxes}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityCode}"/>
+                                            <h:outputText value="#{activityController.selected.activityCode.materialId}" title="#{bundle.ViewActivityTitle_activityCode}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_approvalStatus}"/>
+                                            <h:outputText value="#{activityController.selected.approvalStatus.statusName}" title="#{bundle.ViewActivityTitle_approvalStatus}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_area}"/>
+                                            <h:outputText value="#{activityController.selected.area.areaName}" title="#{bundle.ViewActivityTitle_area}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_claimStatus}"/>
+                                            <h:outputText value="#{activityController.selected.claimStatus.claimName}" title="#{bundle.ViewActivityTitle_claimStatus}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityType}"/>
+                                            <h:outputText value="#{activityController.selected.activityType.domainName}" title="#{bundle.ViewActivityTitle_activityType}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_phase}"/>
+                                            <h:outputText value="#{activityController.selected.phase.phaseName}" title="#{bundle.ViewActivityTitle_phase}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_site}"/>
+                                            <h:outputText value="#{activityController.selected.site.sitePhysical}" title="#{bundle.ViewActivityTitle_site}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_asp}"/>
+                                            <h:outputText value="#{activityController.selected.asp.subcontractorName}" title="#{bundle.ViewActivityTitle_asp}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_creator}"/>
+                                            <h:outputText value="#{activityController.selected.creator.email}" title="#{bundle.ViewActivityTitle_creator}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_vendorOwner}"/>
+                                            <h:outputText value="#{activityController.selected.vendorOwner.ownerName}" title="#{bundle.ViewActivityTitle_vendorOwner}"/>
+                                        </p:panelGrid>
+                                        <p:commandButton value="#{bundle.Close}" onclick="ActivityViewDialog.hide()"/>
+                                    </h:panelGroup>
+                                </h:form>
+                            </p:dialog>
+                            <p:dialog id="AspGrnEditDlg" widgetVar="AspGrnEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspGrnTitle}">
+                            <h:form id="AspGrnEditForm">
+                                <h:panelGroup id="display">
+                                    <p:panelGrid columns="2" rendered="#{aspGrnController.selected != null}">
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_grnFactor}" for="grnFactor"/>
+                                        <p:inputText id="grnFactor" value="#{aspGrnController.selected.grnFactor}" 
+                                                     title="#{bundle.EditAspGrnTitle_grnFactor}" 
+                                                     required="true" requiredMessage="GRN Factor is required">
+                                            <p:ajax update="grnValue,remainingInGrn"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_grnValue}" for="grnValue" />
+                                        <p:inputText id="grnValue" value="#{aspGrnController.selected.grnValue}" title="#{bundle.EditAspGrnTitle_grnValue}"
+                                                     required="true" requiredMessage="GRN Value is required">
+                                             <p:ajax update="grnFactor,remainingInGrn"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_grnDate}" for="grnDate" />
+                                        <p:calendar id="grnDate" pattern="MM/dd/yyyy" value="#{aspGrnController.selected.grnDate}" title="#{bundle.EditAspGrnTitle_grnDate}"  showOn="button"
+                                                    required="true" requiredMessage="GRN Date is required"/>
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_grnNumber}" for="grnNumber" />
+                                        <p:inputText id="grnNumber" value="#{aspGrnController.selected.grnNumber}" title="#{bundle.EditAspGrnTitle_grnNumber}" />
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_invoiced}" for="invoiced"/>
+                                        <p:selectBooleanCheckbox id="invoiced" value="#{aspGrnController.selected.invoiced}" />
+                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_remainingInGrn}" for="remainingInGrn" />
+                                        <p:inputText id="remainingInGrn" value="#{aspGrnController.selected.remainingInGrn}" title="#{bundle.EditAspGrnTitle_remainingInGrn}" disabled="true"/>
+                                    </p:panelGrid>
+                                    <p:commandButton actionListener="#{aspGrnController.update}" value="#{bundle.Save}" 
+                                                     ajax="false" update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:selectedASPPOGRN,:ASPPOListForm:growl,:ASPPOListForm:selectedASPPOGRN:associatedGRN" oncomplete="handleSubmit(args, 'AspGrnEditDialog');"/>
+                                    <p:commandButton value="#{bundle.Cancel}" ajax="false" onclick="AspGrnEditDialog.hide()" update="display,:ASPPOListForm:datalistASPPO,
+                                                                            :ASPPOListForm:selectedASPPOGRN,:ASPPOListForm:growl,:ASPPOListForm:selectedASPPOGRN:associatedGRN"/>
+                                </h:panelGroup>
+                            </h:form>
+                        </p:dialog>
                             </div>
                         </div>
                     </div>

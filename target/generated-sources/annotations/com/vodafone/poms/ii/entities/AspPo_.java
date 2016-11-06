@@ -15,7 +15,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-04T19:02:32")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-05T22:11:53")
 @StaticMetamodel(AspPo.class)
 public class AspPo_ { 
 
@@ -30,6 +30,7 @@ public class AspPo_ {
     public static volatile CollectionAttribute<AspPo, AspGrn> aspGrnCollection;
     public static volatile SingularAttribute<AspPo, Users> creator;
     public static volatile SingularAttribute<AspPo, Date> poDate;
+    public static volatile SingularAttribute<AspPo, BigInteger> grnDeserved;
     public static volatile CollectionAttribute<AspPo, Activity> activityCollection;
     public static volatile SingularAttribute<AspPo, Date> sysDate;
     public static volatile SingularAttribute<AspPo, BigInteger> poValueTaxes;

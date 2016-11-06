@@ -121,7 +121,7 @@ public class VendorOwnerController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = VendorOwner.class)
+    @FacesConverter("VendorOwnerControllerConverter")
     public static class VendorOwnerControllerConverter implements Converter {
 
         @Override

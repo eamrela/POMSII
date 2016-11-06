@@ -32,6 +32,9 @@ public class UsersController implements Serializable {
     }
 
     public Users getSelected() {
+        if(selected==null){
+            selected = getItems().get(0);
+        }
         return selected;
     }
 

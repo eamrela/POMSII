@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,7 +30,11 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
+        <style>
+            .ui-growl{
+    top:100px;
+}
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -53,9 +59,382 @@
                         <div class="page-content">
                             <POMSII:PageHeadings largeText="Activity" smallText="View and Edit Activities"/>
                             <div class="container-fluid">
+                                <h:form id="ActivityListForm">
+                                <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
-                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>All Activities</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                    <p:dataTable id="datalistActivity" 
+                                                                             value="#{activityController.items}" 
+                                                                             var="item"
+                                                                             selectionMode="single" 
+                                                                             selection="#{activityController.selected}"
+                                                                             paginator="true"
+                                                                             rowKey="#{item.activityId}"
+                                                                             rows="10"
+                                                                             rowsPerPageTemplate="5,10,15,20,25"
+                                                                             >
+
+                                                                    <p:ajax event="rowSelect"   
+                                                                            update=":ActivityListForm:selectedActivityCode,
+                                                                                    :ActivityListForm:selectedCorrelation,editButton"/>
+
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.activityId}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Id"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.activityId}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.activityDate}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Date"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.activityDate}">
+                                                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                                                        </h:outputText>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.activityDetails}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Details"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.activityDetails}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Qty"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.qty}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendor}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="PriceVendor"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.totalPriceVendor}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendorTaxes}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="PriceWithTaxes"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.totalPriceVendorTaxes}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.totalPriceAsp}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="ASPPrice"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.totalPriceAsp}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.totalUm}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="TotalUM"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.totalUm}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" sortBy="#{item.totalUmPercent}">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="UM%"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.totalUmPercent}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.activityComment}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Comment"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.activityComment}"/>
+                                                                    </p:column>
+                                                                   
+                                                                    <p:column style="font-size: 9px;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Taxes"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.taxes}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.approvalStatus.statusName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Approval"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.approvalStatus.statusName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.area.areaName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Area"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.area.areaName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.claimStatus.claimName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Claim"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.claimStatus.claimName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.activityType.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Type"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.activityType.domainName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.phase.phaseName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Phase"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.phase.phaseName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.site.sitePhysical}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Site"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.site.sitePhysical}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.asp.subcontractorName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="ASP"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.asp.subcontractorName}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Creator"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.creator.email}"/>
+                                                                    </p:column>
+                                                                    <p:column style="font-size: 9px;" filterBy="#{item.vendorOwner.ownerName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                                        <f:facet name="header">
+                                                                            <h:outputText value="Owner"/>
+                                                                        </f:facet>
+                                                                        <h:outputText value="#{item.vendorOwner.ownerName}"/>
+                                                                    </p:column>
+                                                                    <f:facet name="footer">
+                                                                    <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ActivityEditForm" oncomplete="PF('ActivityEditDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                    </f:facet>
+                                                                </p:dataTable> 
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+                                <div class="row">
+                                        <div class="col-md-6">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Activity Code</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <p:outputPanel id="selectedActivityCode">
+                                                        <h:panelGroup rendered="#{activityController.selected!=null}">
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <label for="activitycode">Code</label>
+                                                                    <h:outputText id="activitycode"
+                                                                                  class="form-control"
+                                                                                  value="#{activityController.selected.activityCode.materialId}"/>
+                                                                </div>
+                                                                <div class="col-xs-12">
+                                                                    <label for="activitycodedescription">Description</label>
+                                                                    <h:outputText id="activitycodedescription" 
+                                                                                  class="form-control"
+                                                                                  value="#{activityController.selected.activityCode.description}"/>
+                                                                </div> 
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-6">
+                                                                    <label for="activitycodevunitprice">Vendor Price</label>
+                                                                    <h:outputText 
+                                                                        value="#{activityController.selected.activityCode.vendorPrice}"
+                                                                        class="form-control" id="activitycodevunitprice"/>
+                                                                </div>
+                                                                <div class="col-xs-6">
+                                                                    <label for="activitycodeaspunitprice">ASP Price</label>
+                                                                    <h:outputText 
+                                                                        value="#{activityController.selected.activityCode.subcontractorPrice}"
+                                                                        class="form-control" id="activitycodeaspunitprice"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-6">
+                                                                    <label for="activitycodeum">UM/Unit</label>
+                                                                    <h:outputText value="#{activityController.selected.activityCode.um}"
+                                                                                 class="form-control" id="activitycodeum"/>
+                                                                </div>
+                                                                <div class="col-xs-6">
+                                                                    <label for="activitycodeump">UM%/Unit</label>
+                                                                    <h:outputText value="#{activityController.selected.activityCode.umPercent}"
+                                                                                 class="form-control" id="activitycodeump"/>
+                                                                </div>
+                                                            </div>   
+                                                        </h:panelGroup>
+                                                    </p:outputPanel>
+                                                </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Correlation</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <p:outputPanel id="selectedCorrelation">
+                                                    <h:panelGroup rendered="#{activityController.selected!=null}">
+                                                        <h:panelGroup rendered="#{activityController.selected.aspPoCollection.size() == 0}">
+                                                            <label for="aspDataTable">Please select a PO to correlate Activity (#{activityController.selected.activityId}) with</label>
+                                                            <p:dataTable 
+                                                                id="aspDataTable"
+                                                                var="aspPO" 
+                                                                value="#{aspPoController.findMatchingPOForActivity()}"
+                                                                emptyMessage="No POs found matching this activity"
+                                                                selection="#{activityController.selectedASPPo}"
+                                                                selectionMode="single"
+                                                                rowKey="#{aspPO.poNumber}">
+                                                                
+                                                                <p:ajax event="rowSelect" update=":ActivityListForm:selectedCorrelationPO"/>
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{aspPO.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{aspPO.remainingInPo}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{aspPO.poValue}" />
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <h:panelGroup id="selectedCorrelationPO">
+                                                            <h:panelGroup rendered="#{activityController.selectedASPPo!=null}">
+                                                            <p:commandButton 
+                                                                         class="btn-raised btn-primary btn"
+                                                                          value="Correlate"
+                                                                          actionListener="#{activityController.correlate}"
+                                                                          update="growl,
+                                                                                 :ActivityListForm:selectedCorrelationPODng, 
+                                                                                 :ActivityListForm:selectedCorrelationPO, 
+                                                                                 :ActivityListForm:selectedCorrelation, 
+                                                                                 :ActivityListForm:datalistActivity">
+
+                                                            </p:commandButton>
+                                                            </h:panelGroup>
+                                                            </h:panelGroup>
+                                                    </h:panelGroup>
+                                                    <h:panelGroup rendered="#{activityController.selected.aspPoCollection.size() > 0}">
+                                                           <p:dataTable 
+                                                                var="aspPO" 
+                                                                value="#{activityController.selected.aspPoCollection}"
+                                                                emptyMessage="This Activity is not correlated to any ASP PO"
+                                                                selection="#{activityController.selectedASPPo}"
+                                                                selectionMode="single"
+                                                                rowKey="#{aspPO.poNumber}">
+                                                                
+                                                                <p:ajax event="rowSelect" update=":ActivityListForm:selectedCorrelationPODng"/>
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{aspPO.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{aspPO.remainingInPo}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{aspPO.poValue}" />
+                                                                </p:column>
+                                                            </p:dataTable> 
+                                                            <h:panelGroup id="selectedCorrelationPODng">
+                                                            <h:panelGroup rendered="#{activityController.selectedASPPo!=null}">
+                                                            <p:commandButton 
+                                                                         class="btn-raised btn-danger btn"
+                                                                          value="unCorrelate"
+                                                                          actionListener="#{activityController.uncorrelate}"
+                                                                          update="growl,
+                                                                                 :ActivityListForm:selectedCorrelationPODng, 
+                                                                                 :ActivityListForm:selectedCorrelationPO, 
+                                                                                 :ActivityListForm:selectedCorrelation, 
+                                                                                 :ActivityListForm:datalistActivity">
+
+                                                            </p:commandButton>
+                                                            </h:panelGroup>
+                                                            </h:panelGroup>
+                                                    </h:panelGroup>
+                                                    </h:panelGroup>
+                                                    </p:outputPanel>
+                                                </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        
                                 <!--page content end here--> 
+                                </h:form>
+                                <p:dialog id="ActivityEditDlg" widgetVar="ActivityEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditActivityTitle}">
+                                    <h:form id="ActivityEditForm">
+                                        <h:panelGroup id="display">
+                                            <p:panelGrid columns="2" rendered="#{activityController.selected != null}">
+                                                
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_activityComment}" for="activityComment" />
+                                                <p:inputText id="activityComment" value="#{activityController.selected.activityComment}" title="#{bundle.EditActivityTitle_activityComment}" />
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_approvalStatus}" for="approvalStatus" />
+                                                <p:selectOneMenu id="approvalStatus" value="#{activityController.selected.approvalStatus}" 
+                                                                 converter="ApprovalStatusControllerConverter">
+                                                    <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                                                    <f:selectItems value="#{approvalStatusController.itemsAvailableSelectOne}"
+                                                                   var="approvalStatusItem"
+                                                                   itemLabel="#{approvalStatusItem.statusName}"
+                                                                   itemValue="#{approvalStatusItem}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_area}" for="area" />
+                                                <p:selectOneMenu id="area" value="#{activityController.selected.area}" 
+                                                                 required="true" 
+                                                                 requiredMessage="#{bundle.EditActivityRequiredMessage_area}"
+                                                                 converter="AreaControllerConverter">
+                                                    <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                                                    <f:selectItems value="#{areaController.itemsAvailableSelectOne}"
+                                                                   var="areaItem"
+                                                                   itemLabel="#{areaItem.areaName}"
+                                                                   itemValue="#{areaItem}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_claimStatus}" for="claimStatus" />
+                                                <p:selectOneMenu id="claimStatus" value="#{activityController.selected.claimStatus}" 
+                                                                 converter="ClaimStatusControllerConverter">
+                                                    <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                                                    <f:selectItems value="#{claimStatusController.itemsAvailableSelectOne}"
+                                                                   var="claimStatusItem"
+                                                                   itemLabel="#{claimStatusItem.claimName}"
+                                                                   itemValue="#{claimStatusItem}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_phase}" for="phase" />
+                                                <p:selectOneMenu id="phase" value="#{activityController.selected.phase}" 
+                                                                 converter="PhasesControllerConverter">
+                                                    <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                                                    <f:selectItems value="#{phasesController.itemsAvailableSelectOne}"
+                                                                   var="phaseItem"
+                                                                   itemLabel="#{phaseItem.phaseName}"
+                                                                   itemValue="#{phaseItem}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="#{bundle.EditActivityLabel_vendorOwner}" for="vendorOwner" />
+                                                <p:selectOneMenu id="vendorOwner" value="#{activityController.selected.vendorOwner}" 
+                                                                 required="true" 
+                                                                 requiredMessage="#{bundle.EditActivityRequiredMessage_vendorOwner}"
+                                                                 converter="VendorOwnerControllerConverter">
+                                                    <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                                                    <f:selectItems value="#{vendorOwnerController.itemsAvailableSelectOne}"
+                                                                   var="vendorOwnerItem"
+                                                                   itemLabel="#{vendorOwnerItem.ownerName}"
+                                                                   itemValue="#{vendorOwnerItem}"/>
+                                                </p:selectOneMenu>
+                                            </p:panelGrid>
+                                            <p:commandButton actionListener="#{activityController.update}" value="#{bundle.Save}" update="display,:ActivityListForm:datalistActivity,:ActivityListForm:growl" oncomplete="handleSubmit(args, 'ActivityEditDialog');"/>
+                                            <p:commandButton value="#{bundle.Cancel}" onclick="ActivityEditDialog.hide()"/>
+                                        </h:panelGroup>
+                                    </h:form>
+                                </p:dialog>
+                                
                             </div>
                         </div>
                     </div>

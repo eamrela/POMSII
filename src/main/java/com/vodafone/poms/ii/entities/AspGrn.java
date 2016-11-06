@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -114,6 +115,8 @@ public class AspGrn implements Serializable {
 
     public void setGrnFactor(Double grnFactor) {
         this.grnFactor = grnFactor;
+        calculateValue();
+        calculateRemaining();
     }
 
     public BigInteger getGrnValue() {
@@ -122,6 +125,8 @@ public class AspGrn implements Serializable {
 
     public void setGrnValue(BigInteger grnValue) {
         this.grnValue = grnValue;
+        calculateFactor();
+        calculateRemaining();
     }
 
     public Date getGrnDate() {
@@ -203,6 +208,21 @@ public class AspGrn implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.AspGrn[ id=" + id + " ]";
+    }
+
+    private void calculateValue() {
+        if(grnFactor!=null)
+        grnValue = BigInteger.valueOf(BigDecimal.valueOf(grnFactor).multiply(BigDecimal.valueOf(grnDeserved.intValue())).intValue());
+    }
+    
+    private void calculateFactor() {
+        if(grnValue!=null)
+        grnFactor = Double.valueOf(new BigInteger("3000").floatValue()/new BigInteger("6000").floatValue());
+    }
+    
+    private void calculateRemaining() {
+        if(grnValue!=null)
+        remainingInGrn = grnDeserved.subtract(grnValue);
     }
     
 }

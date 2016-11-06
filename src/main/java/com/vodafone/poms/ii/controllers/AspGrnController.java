@@ -27,6 +27,7 @@ public class AspGrnController implements Serializable {
     private com.vodafone.poms.ii.beans.AspGrnFacade ejbFacade;
     private List<AspGrn> items = null;
     private AspGrn selected;
+    
 
     public AspGrnController() {
     }
@@ -55,11 +56,12 @@ public class AspGrnController implements Serializable {
         return selected;
     }
 
-    public void create() {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnCreated"));
+    public AspGrn create() {
+        selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
+        return selected;
     }
 
     public void update() {
@@ -81,16 +83,17 @@ public class AspGrnController implements Serializable {
         return items;
     }
 
-    private void persist(PersistAction persistAction, String successMessage) {
+    private AspGrn persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
+                    selected = getFacade().merge(selected);
                 } else {
                     getFacade().remove(selected);
                 }
                 JsfUtil.addSuccessMessage(successMessage);
+                return selected;
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -107,6 +110,7 @@ public class AspGrnController implements Serializable {
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
         }
+        return null;
     }
 
     public AspGrn getAspGrn(java.lang.Long id) {

@@ -121,6 +121,10 @@ public class TaxesController implements Serializable {
         return getFacade().findAll();
     }
 
+    public Double getCurrentTaxes() {
+        return getFacade().findCurrentTaxes().getTaxValue();
+    }
+
     @FacesConverter(forClass = Taxes.class)
     public static class TaxesControllerConverter implements Converter {
 

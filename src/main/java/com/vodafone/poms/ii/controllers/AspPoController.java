@@ -6,6 +6,9 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.AspPoFacade;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -18,6 +21,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("aspPoController")
 @SessionScoped
@@ -27,6 +31,17 @@ public class AspPoController implements Serializable {
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
     private List<AspPo> items = null;
     private AspPo selected;
+    
+    @Inject
+    private ActivityController activityController;
+    @Inject
+    private TaxesController taxesController;
+    @Inject
+    private UsersController usersController;
+    @Inject
+    private PoStatusController poStatusController;
+    @Inject 
+    private AspGrnController aspGrnController;
 
     public AspPoController() {
     }
@@ -51,15 +66,23 @@ public class AspPoController implements Serializable {
 
     public AspPo prepareCreate() {
         selected = new AspPo();
+        selected.setTaxes(taxesController.getCurrentTaxes());
+        selected.setCreator(usersController.getSelected());
+        selected.setSysDate(new Date());
+        selected.setPoStatus(poStatusController.getInitialStatus());
         initializeEmbeddableKey();
         return selected;
     }
 
     public void create() {
+        if(selected.getRemainingInPo()!=null){
+            selected.setRemainingInPo(selected.getPoValue());
+        }
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspPoCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
+        prepareCreate();
     }
 
     public void update() {
@@ -86,6 +109,7 @@ public class AspPoController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
+                    
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);
@@ -162,4 +186,27 @@ public class AspPoController implements Serializable {
 
     }
 
+    public List<AspPo> findMatchingPOForActivity(){
+        List<AspPo> suggestedPOs = new ArrayList<>();
+        if(activityController.getSelected()!=null){
+            suggestedPOs = getFacade().findPOforActivity(activityController.getSelected());
+        }
+        return suggestedPOs;
+    }
+
+    public void createGRN(){
+        if(selected!=null){
+            if(selected.getGrnDeserved().compareTo(BigInteger.ZERO)==1){
+                aspGrnController.prepareCreate();
+                aspGrnController.getSelected().setAspPoId(selected);
+                aspGrnController.getSelected().setCreator(usersController.getSelected());
+                aspGrnController.getSelected().setGrnDeserved(selected.getGrnDeserved());
+                aspGrnController.getSelected().setSysDate(new Date());
+                selected.getAspGrnCollection().add(aspGrnController.create());
+                selected.setGrnDeserved(BigInteger.ZERO);
+                update();
+                
+            }
+        }
+    }
 }

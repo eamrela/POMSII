@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
@@ -71,10 +72,12 @@ public class VendorPo implements Serializable {
     private BigInteger serviceValue;
     @Column(name = "po_value")
     private BigInteger poValue;
+    @Column(name = "md_deserved")
+    private BigInteger mdDeserved;
     @Column(name = "po_value_taxes")
     private BigInteger poValueTaxes;
     @Column(name = "work_done")
-    private BigInteger workDone;
+    private BigInteger workDone= BigInteger.ZERO;;
     @Column(name = "remaining_in_po")
     private BigInteger remainingInPo;
     @Basic(optional = false)
@@ -155,14 +158,29 @@ public class VendorPo implements Serializable {
     }
 
     public BigInteger getPoValue() {
+         if(factor!=null && serviceValue!=null){
+            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
+        }
         return poValue;
     }
 
+    public BigInteger getMdDeserved() {
+        return mdDeserved;
+    }
+
+    public void setMdDeserved(BigInteger mdDeserved) {
+        this.mdDeserved = mdDeserved;
+    }
+
+    
     public void setPoValue(BigInteger poValue) {
         this.poValue = poValue;
     }
 
     public BigInteger getPoValueTaxes() {
+         if(taxes!=null && poValue!=null){
+            poValueTaxes = poValue.add(BigDecimal.valueOf(poValue.intValue()*taxes).toBigInteger());
+        }
         return poValueTaxes;
     }
 

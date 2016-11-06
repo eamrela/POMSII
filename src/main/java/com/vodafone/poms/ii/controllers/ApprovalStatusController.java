@@ -121,7 +121,7 @@ public class ApprovalStatusController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = ApprovalStatus.class)
+    @FacesConverter("ApprovalStatusControllerConverter")
     public static class ApprovalStatusControllerConverter implements Converter {
 
         @Override

@@ -121,7 +121,7 @@ public class PhasesController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = Phases.class)
+    @FacesConverter("PhasesControllerConverter")
     public static class PhasesControllerConverter implements Converter {
 
         @Override

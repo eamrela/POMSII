@@ -121,7 +121,7 @@ public class ClaimStatusController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = ClaimStatus.class)
+    @FacesConverter("ClaimStatusControllerConverter")
     public static class ClaimStatusControllerConverter implements Converter {
 
         @Override

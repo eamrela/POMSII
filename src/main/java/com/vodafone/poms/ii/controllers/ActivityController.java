@@ -4,8 +4,12 @@ import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.ActivityFacade;
+import com.vodafone.poms.ii.entities.AspPo;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -18,15 +22,25 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("activityController")
 @SessionScoped
 public class ActivityController implements Serializable {
-
+    
+    private AspPo selectedASPPo;
+    
     @EJB
     private com.vodafone.poms.ii.beans.ActivityFacade ejbFacade;
     private List<Activity> items = null;
     private Activity selected;
+    
+    @Inject
+    private TaxesController taxesController;
+    @Inject
+    private UsersController usersController;
+    @Inject
+    private AspPoController aspPOController;
 
     public ActivityController() {
     }
@@ -37,7 +51,18 @@ public class ActivityController implements Serializable {
 
     public void setSelected(Activity selected) {
         this.selected = selected;
+        selectedASPPo = null;
     }
+
+    public AspPo getSelectedASPPo() {
+        return selectedASPPo;
+    }
+
+    public void setSelectedASPPo(AspPo selectedASPPo) {
+        this.selectedASPPo = selectedASPPo;
+    }
+    
+    
 
     protected void setEmbeddableKeys() {
     }
@@ -51,6 +76,9 @@ public class ActivityController implements Serializable {
 
     public Activity prepareCreate() {
         selected = new Activity();
+        selected.setTaxes(taxesController.getCurrentTaxes());
+        selected.setCreator(usersController.getSelected());
+        selected.setSysDate(new Date());
         initializeEmbeddableKey();
         return selected;
     }
@@ -60,6 +88,7 @@ public class ActivityController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
+        prepareCreate();
     }
 
     public void update() {
@@ -162,4 +191,35 @@ public class ActivityController implements Serializable {
 
     }
 
+    public void correlate(){
+        if(selected!=null && selectedASPPo!=null){
+            selected.setAspPoCollection(new ArrayList<AspPo>(){{add(selectedASPPo);}});
+            update();
+            selectedASPPo.setActivityCollection(new ArrayList<Activity>(){{add(selected);}});
+            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().add(BigInteger.ONE));
+            selectedASPPo.setRemainingInPo(
+                    selectedASPPo.getRemainingInPo().subtract(
+                            BigInteger.valueOf(selected.getTotalPriceAsp().intValue())));
+            aspPOController.setSelected(selectedASPPo);
+            aspPOController.update();
+            aspPOController.setSelected(null);
+            JsfUtil.addSuccessMessage("Activity "+selected.getActivityId()+" is now correlated to ASP PO "+selectedASPPo.getPoNumber());
+        }
+    }
+    
+    public void uncorrelate(){
+        if(selected!=null && selectedASPPo!=null){
+            selected.setAspPoCollection(null);
+            update();
+            selectedASPPo.getActivityCollection().remove(selected);
+            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().subtract(BigInteger.ONE));
+            selectedASPPo.setRemainingInPo(
+                    selectedASPPo.getRemainingInPo().add(
+                            BigInteger.valueOf(selected.getTotalPriceAsp().intValue())));
+            aspPOController.setSelected(selectedASPPo);
+            aspPOController.update();
+            aspPOController.setSelected(null);
+            JsfUtil.addSuccessMessage("Activity "+selected.getActivityId()+" is now uncorrelated from ASP PO "+selectedASPPo.getPoNumber());
+        }
+    }
 }

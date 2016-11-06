@@ -13,7 +13,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-04T19:02:32")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-05T22:11:53")
 @StaticMetamodel(VendorPo.class)
 public class VendorPo_ { 
 
@@ -22,6 +22,7 @@ public class VendorPo_ {
     public static volatile SingularAttribute<VendorPo, String> poDescription;
     public static volatile SingularAttribute<VendorPo, BigInteger> serviceValue;
     public static volatile CollectionAttribute<VendorPo, VendorMd> vendorMdCollection;
+    public static volatile SingularAttribute<VendorPo, BigInteger> mdDeserved;
     public static volatile SingularAttribute<VendorPo, DomainNames> domainName;
     public static volatile SingularAttribute<VendorPo, String> poNumber;
     public static volatile SingularAttribute<VendorPo, Double> factor;

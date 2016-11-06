@@ -28,5 +28,10 @@ public class PoStatusFacade extends AbstractFacade<PoStatus> {
     public PoStatusFacade() {
         super(PoStatus.class);
     }
+
+    public PoStatus findByValue(String value) {
+        return (PoStatus) em.createNativeQuery("select * from po_status where status_name = '"+value+"'", 
+                PoStatus.class).getSingleResult();
+    }
     
 }
