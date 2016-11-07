@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityCodeEditDlg" widgetVar="ActivityCodeEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditActivityCodeTitle}">
+            <h:form id="ActivityCodeEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityCodeController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_materialId}" for="materialId" />
+                        <h:outputText id="materialId" value="#{activityCodeController.selected.materialId}" title="#{bundle.EditActivityCodeTitle_materialId}"/>
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{activityCodeController.selected.description}" title="#{bundle.EditActivityCodeTitle_description}" />
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_vendorPrice}" for="vendorPrice" />
+                        <p:inputText id="vendorPrice" value="#{activityCodeController.vendorPrice}" title="#{bundle.EditActivityCodeTitle_vendorPrice}" required="true"
+                                              requiredMessage="Vendor price is a manadtory field"
+                                              validatorMessage="Invalid price value" >
+                            <p:ajax event="keydown" delay="100" partialSubmit="true" listener="#{activityCodeController.autoCalculateMargin}" update="um umPercent"
+                                    onstart="PF('blockUIMargin').block()" oncomplete="PF('blockUIMargin').unblock()"/>
+                            <f:validateRegex pattern="^([+]?\d*\.?\d*)$" for="vendorPrice" />
+                        </p:inputText>
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_subcontractorPrice}" for="subcontractorPrice" />
+                        <p:inputText id="subcontractorPrice" value="#{activityCodeController.subcontractorPrice}" title="#{bundle.EditActivityCodeTitle_subcontractorPrice}" required="true" 
+                                     requiredMessage="Subcontractor price is a manadatory field" 
+                                     validatorMessage="Invalid price value" 
+                                     validator="#{activityCodeController.validateSubcontractorPrice()}">
+                            <p:ajax event="keyup" delay="100" partialSubmit="true"  listener="#{activityCodeController.autoCalculateMargin}" update="um umPercent"
+                                    onstart="PF('blockUIMargin').block()" oncomplete="PF('blockUIMargin').unblock(); #{activityCodeController.autoCalculateMargin()}"/>
+                            
+                                
+                                <f:validateRegex  id="regexValidator" pattern="^([+]?\d*\.?\d*)$" for="subcontractorPrice" />
+                        </p:inputText>
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_um}" for="um" />
+                        <h:outputText id="um" value="#{activityCodeController.um}" title="#{bundle.EditActivityCodeTitle_um}" />
+                        <p:outputLabel value="#{bundle.EditActivityCodeLabel_umPercent}" for="umPercent" />
+                        <h:outputText id="umPercent" value="#{activityCodeController.umPercent}" title="#{bundle.EditActivityCodeTitle_umPercent}" />
+                    </p:panelGrid>
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{activityCodeController.update}" value="#{bundle.Save}" update="display, :ActivityCodeListForm:datalist, :ActivityCodeListForm:growl" oncomplete="handleSubmit(args, 'ActivityCodeEditDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}" onclick="ActivityCodeEditDialog.hide()">
+                        <p:resetInput target=":ActivityCodeEditForm"/>
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+            
+            <pe:blockUI  widgetVar="blockUIMargin" target=":ActivityCodeEditForm">
+            <h:panelGrid columns="2">  
+                    <h:graphicImage  url="#{resource['assets/img/ajax-loader.gif']}" 
+                                style="margin-right: 12px; vertical-align: middle;"/>  
+                    <h:outputText value="Calculating Margin" style="white-space: nowrap;"/>  
+                </h:panelGrid>  
+        </pe:blockUI>
+        </p:dialog>
+
+    </ui:composition>
+</html>

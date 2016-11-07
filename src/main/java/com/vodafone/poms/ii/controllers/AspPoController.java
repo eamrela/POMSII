@@ -241,4 +241,7 @@ public class AspPoController implements Serializable {
         }
     }
     
+    public void clearSelected(){
+        selected=null;
+    }
 }

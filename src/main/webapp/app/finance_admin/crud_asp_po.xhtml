@@ -15,8 +15,8 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
-        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> 
+<!--        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
+        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> -->
 
         <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
         <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
@@ -30,6 +30,9 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
+        <f:metadata>
+            <f:viewAction action="#{aspPoController.clearSelected}"/>
+        </f:metadata>
         <style>
             .ui-growl{
     top:100px;

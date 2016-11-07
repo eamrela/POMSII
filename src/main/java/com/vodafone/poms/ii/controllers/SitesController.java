@@ -4,6 +4,8 @@ import com.vodafone.poms.ii.entities.Sites;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.SitesFacade;
+import com.vodafone.poms.ii.helpers.SiteLoader;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.primefaces.event.FileUploadEvent;
 
 @Named("sitesController")
 @SessionScoped
@@ -174,5 +177,50 @@ public class SitesController implements Serializable {
             }
         }      
         return filteredSites;
+    }
+    
+    public void uploadSites(FileUploadEvent event){
+        try {
+            List<Sites> uploadedSites=SiteLoader.readFile(event.getFile().getInputstream());
+            if(uploadedSites!=null?uploadedSites.size()>0:false){
+                persistAll(uploadedSites);
+                JsfUtil.addSuccessMessage(uploadedSites.size()+" Sites Successfully Uploaded.");
+            }else{
+                JsfUtil.addErrorMessage("No Site Items Found");
+                
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityCodeController.class.getName()).log(Level.SEVERE, null, ex);
+            JsfUtil.addErrorMessage(ex, "File Upload Failed");
+        }
+        
+    }
+    
+    private void persistAll(List<Sites> list){
+        if (list!=null?list.size()>0:false) {
+            try {
+                for (int i = 0; i < list.size(); i++) {
+                    getFacade().edit(list.get(i));
+                }
+                JsfUtil.addSuccessMessage("Bulk upload succeeded");
+            } catch (EJBException ex) {
+                String msg = "";
+                Throwable cause = ex.getCause();
+                if (cause != null) {
+                    msg = cause.getLocalizedMessage();
+                }
+                if (msg.length() > 0) {
+                    JsfUtil.addErrorMessage(msg);
+                } else {
+                    JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            }
+        }else{
+            JsfUtil.addErrorMessage("No Sites found to update!");
+            
+        }
     }
 }

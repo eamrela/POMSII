@@ -21,6 +21,7 @@ com\vodafone\poms\ii\entities\ActivityCode.class
 com\vodafone\poms\ii\entities\DomainNames_.class
 com\vodafone\poms\ii\controllers\DomainNamesController.class
 com\vodafone\poms\ii\controllers\UserRoleController$UserRoleControllerConverter.class
+com\vodafone\poms\ii\controllers\ActivityCodeController$NumbersConverter.class
 com\vodafone\poms\ii\controllers\util\JsfUtil$PersistAction.class
 com\vodafone\poms\ii\entities\VendorOwner_.class
 com\vodafone\poms\ii\controllers\AspGrnController.class
