@@ -6,6 +6,9 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.VendorMdFacade;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -22,7 +25,14 @@ import javax.faces.convert.FacesConverter;
 @Named("vendorMdController")
 @SessionScoped
 public class VendorMdController implements Serializable {
-
+    
+    private Double editMdFactor;
+    private BigInteger editMdValue;
+    private BigInteger editMdDeserved;
+    private Date editMdDate;
+    private String editMdNumber;
+    private BigInteger editRemainingInMd;
+    private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.VendorMdFacade ejbFacade;
     private List<VendorMd> items = null;
@@ -55,17 +65,42 @@ public class VendorMdController implements Serializable {
         return selected;
     }
 
-    public void create() {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorMdCreated"));
+    public void prepareEdit(){
+       if(selected!=null){
+       editMdFactor = selected.getMdFactor();
+       editMdValue = selected.getMdValue();
+       editMdDate = selected.getMdDate();
+       editMdNumber = selected.getMdNumber();
+       editInvoiced = selected.getInvoiced();
+       editMdDeserved=selected.getMdDeserved();
+       }
+    }
+    public VendorMd create() {
+        selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorMdCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
+        return selected;
     }
 
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("VendorMdUpdated"));
     }
 
+    public void updateEdit() {
+        if(editMdDate!=null && editMdFactor!=null && editMdValue!=null){
+            if(getFacade().findByMdNumber(editMdNumber).isEmpty()){
+            selected.setMdDate(editMdDate);
+            selected.setMdFactor(editMdFactor);
+            selected.setMdValue(editMdValue);
+            selected.setInvoiced(editInvoiced);
+            selected.setMdNumber(editMdNumber);
+            persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
+            }else{
+                JsfUtil.addErrorMessage("GRN Number already exist");
+            }
+        }
+    }
     public void destroy() {
         persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("VendorMdDeleted"));
         if (!JsfUtil.isValidationFailed()) {
@@ -81,16 +116,17 @@ public class VendorMdController implements Serializable {
         return items;
     }
 
-    private void persist(PersistAction persistAction, String successMessage) {
+    private VendorMd persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
+                    selected = getFacade().merge(selected);
                 } else {
                     getFacade().remove(selected);
                 }
                 JsfUtil.addSuccessMessage(successMessage);
+                return selected;
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -107,6 +143,7 @@ public class VendorMdController implements Serializable {
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
         }
+        return null;
     }
 
     public VendorMd getVendorMd(java.lang.Long id) {
@@ -162,4 +199,78 @@ public class VendorMdController implements Serializable {
 
     }
 
+    public Boolean getEditInvoiced() {
+        return editInvoiced;
+    }
+
+    public Date getEditMdDate() {
+        return editMdDate;
+    }
+
+    public BigInteger getEditMdDeserved() {
+        return editMdDeserved;
+    }
+
+    public Double getEditMdFactor() {
+        return editMdFactor;
+    }
+
+    public String getEditMdNumber() {
+        return editMdNumber;
+    }
+
+    public BigInteger getEditMdValue() {
+        return editMdValue;
+    }
+
+    public BigInteger getEditRemainingInMd() {
+        return editRemainingInMd;
+    }
+
+    public void setEditInvoiced(Boolean editInvoiced) {
+        this.editInvoiced = editInvoiced;
+    }
+
+    public void setEditMdDate(Date editMdDate) {
+        this.editMdDate = editMdDate;
+    }
+
+    public void setEditMdDeserved(BigInteger editMdDeserved) {
+        this.editMdDeserved = editMdDeserved;
+    }
+
+    public void setEditMdFactor(Double editMdFactor) {
+        this.editMdFactor = editMdFactor;
+        calculateValue();
+        calculateRemaining();
+    }
+
+    public void setEditMdNumber(String editMdNumber) {
+        this.editMdNumber = editMdNumber;
+    }
+
+    public void setEditMdValue(BigInteger editMdValue) {
+        this.editMdValue = editMdValue;
+        calculateFactor();
+        calculateRemaining();
+    }
+
+    public void setEditRemainingInMd(BigInteger editRemainingInMd) {
+        this.editRemainingInMd = editRemainingInMd;
+    }
+
+    private void calculateValue() {
+        if(editMdFactor!=null)
+        editMdValue = BigInteger.valueOf(BigDecimal.valueOf(editMdFactor).multiply(BigDecimal.valueOf(editMdDeserved.intValue())).intValue());
+    }
+    
+    private void calculateFactor() {
+        if(editMdValue!=null)
+        editMdFactor = Double.valueOf(editMdValue.floatValue()/editMdDeserved.floatValue());
+    }
+    
+    private void calculateRemaining() {
+        if(editMdValue!=null)
+          editRemainingInMd = editMdDeserved.subtract(editMdValue);
+    }
 }

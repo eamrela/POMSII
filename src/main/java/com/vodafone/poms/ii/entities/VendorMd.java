@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -114,6 +115,8 @@ public class VendorMd implements Serializable {
 
     public void setMdFactor(Double mdFactor) {
         this.mdFactor = mdFactor;
+        calculateValue();
+        calculateRemaining();
     }
 
     public BigInteger getMdValue() {
@@ -122,6 +125,8 @@ public class VendorMd implements Serializable {
 
     public void setMdValue(BigInteger mdValue) {
         this.mdValue = mdValue;
+        calculateFactor();
+        calculateRemaining();
     }
 
     public Date getMdDate() {
@@ -203,6 +208,21 @@ public class VendorMd implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.VendorMd[ id=" + id + " ]";
+    }
+    
+     private void calculateValue() {
+        if(mdFactor!=null)
+        mdValue = BigInteger.valueOf(BigDecimal.valueOf(mdFactor).multiply(BigDecimal.valueOf(mdDeserved.intValue())).intValue());
+    }
+    
+    private void calculateFactor() {
+        if(mdValue!=null)
+        mdFactor = Double.valueOf(mdValue.floatValue()/mdDeserved.floatValue());
+    }
+    
+    private void calculateRemaining() {
+        if(mdValue!=null)
+          remainingInMd = mdDeserved.subtract(mdValue);
     }
     
 }

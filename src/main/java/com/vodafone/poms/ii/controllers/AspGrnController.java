@@ -6,6 +6,9 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.AspGrnFacade;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -23,6 +26,13 @@ import javax.faces.convert.FacesConverter;
 @SessionScoped
 public class AspGrnController implements Serializable {
 
+    private Double editGrnFactor;
+    private BigInteger editGrnValue;
+    private BigInteger editGrnDeserved;
+    private Date editGrnDate;
+    private String editGrnNumber;
+    private BigInteger editRemainingInGrn;
+    private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.AspGrnFacade ejbFacade;
     private List<AspGrn> items = null;
@@ -40,7 +50,7 @@ public class AspGrnController implements Serializable {
         this.selected = selected;
     }
 
-    protected void setEmbeddableKeys() {
+   protected void setEmbeddableKeys() {
     }
 
     protected void initializeEmbeddableKey() {
@@ -55,7 +65,18 @@ public class AspGrnController implements Serializable {
         initializeEmbeddableKey();
         return selected;
     }
-
+    
+    public void prepareEdit(){
+       if(selected!=null){
+       editGrnFactor = selected.getGrnFactor();
+       editGrnValue = selected.getGrnValue();
+       editGrnDate = selected.getGrnDate();
+       editGrnNumber = selected.getGrnNumber();
+       editInvoiced = selected.getInvoiced();
+       editGrnDeserved=selected.getGrnDeserved();
+       }
+    }
+    
     public AspGrn create() {
         selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnCreated"));
         if (!JsfUtil.isValidationFailed()) {
@@ -66,6 +87,21 @@ public class AspGrnController implements Serializable {
 
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
+    }
+    
+    public void updateEdit() {
+        if(editGrnDate!=null && editGrnFactor!=null && editGrnValue!=null){
+            if(getFacade().findByGRNNumber(editGrnNumber).isEmpty()){
+            selected.setGrnDate(editGrnDate);
+            selected.setGrnFactor(editGrnFactor);
+            selected.setGrnValue(editGrnValue);
+            selected.setInvoiced(editInvoiced);
+            selected.setGrnNumber(editGrnNumber);
+            persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
+            }else{
+                JsfUtil.addErrorMessage("GRN Number already exist");
+            }
+        }
     }
 
     public void destroy() {
@@ -166,4 +202,73 @@ public class AspGrnController implements Serializable {
 
     }
 
+    public Date getEditGrnDate() {
+        return editGrnDate;
+    }
+
+    public Double getEditGrnFactor() {
+        return editGrnFactor;
+    }
+
+    public String getEditGrnNumber() {
+        return editGrnNumber;
+    }
+
+    public BigInteger getEditGrnValue() {
+        return editGrnValue;
+    }
+
+    public Boolean getEditInvoiced() {
+        return editInvoiced;
+    }
+
+    public void setEditGrnDate(Date editGrnDate) {
+        this.editGrnDate = editGrnDate;
+    }
+
+    public void setEditGrnFactor(Double editGrnFactor) {
+        this.editGrnFactor = editGrnFactor;
+        calculateValue();
+        calculateRemaining();
+    }
+
+    public void setEditGrnNumber(String editGrnNumber) {
+        this.editGrnNumber = editGrnNumber;
+    }
+
+    public void setEditGrnValue(BigInteger editGrnValue) {
+        this.editGrnValue = editGrnValue;
+        calculateFactor();
+        calculateRemaining();
+    }
+
+    public void setEditInvoiced(Boolean editInvoiced) {
+        this.editInvoiced = editInvoiced;
+    }
+
+    public BigInteger getEditRemainingInGrn() {
+        return editRemainingInGrn;
+    }
+
+    public void setEditRemainingInGrn(BigInteger editRemainingInGrn) {
+        this.editRemainingInGrn = editRemainingInGrn;
+    }
+
+    
+
+    private void calculateValue() {
+        if(editGrnFactor!=null)
+        editGrnValue = BigInteger.valueOf(BigDecimal.valueOf(editGrnFactor).multiply(BigDecimal.valueOf(editGrnDeserved.intValue())).intValue());
+    }
+    
+    private void calculateFactor() {
+        if(editGrnValue!=null)
+        editGrnFactor = Double.valueOf(editGrnValue.floatValue()/editGrnDeserved.floatValue());
+    }
+    
+    private void calculateRemaining() {
+        if(editGrnValue!=null)
+          editRemainingInGrn = editGrnDeserved.subtract(editGrnValue);
+    }
+    
 }

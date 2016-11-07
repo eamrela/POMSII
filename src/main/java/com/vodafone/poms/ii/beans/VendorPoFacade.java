@@ -5,7 +5,10 @@
  */
 package com.vodafone.poms.ii.beans;
 
+import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.math.BigInteger;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +30,17 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
 
     public VendorPoFacade() {
         super(VendorPo.class);
+    }
+
+    public List<VendorPo> findPOforASP(AspPo selected) {
+        return em.createNativeQuery("select * from vendor_po " +
+                                    "where po_type = '"+selected.getPoType().getTypeName()+"' " +
+                                    "and domain_name = '"+selected.getDomainName().getDomainName()+"' " +
+                                    "and remaining_in_po >= "+ 
+                                        BigInteger.valueOf((((Float)(selected.getPoValue().intValue()
+                                                +selected.getPoValue().intValue()*(Float.valueOf(String.valueOf((selected.getPoMargin()/100))))))
+                                                .intValue()))+
+                                    "and (factor-work_done) >=  "+selected.getFactor(),VendorPo.class).getResultList();
     }
     
 }

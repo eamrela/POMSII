@@ -26,9 +26,9 @@ com\vodafone\poms\ii\entities\VendorOwner_.class
 com\vodafone\poms\ii\controllers\AspGrnController.class
 com\vodafone\poms\ii\beans\UsersFacade.class
 com\vodafone\poms\ii\entities\Taxes.class
+com\vodafone\poms\ii\entities\UserPrivilege_.class
 com\vodafone\poms\ii\beans\AbstractFacade.class
 com\vodafone\poms\ii\controllers\UserRoleController.class
-com\vodafone\poms\ii\entities\UserPrivilege_.class
 com\vodafone\poms\ii\entities\VendorPo_.class
 com\vodafone\poms\ii\entities\DomainNames.class
 com\vodafone\poms\ii\controllers\PoStatusController.class
@@ -87,7 +87,9 @@ com\vodafone\poms\ii\entities\PoTypes_.class
 com\vodafone\poms\ii\entities\PoStatus_.class
 com\vodafone\poms\ii\entities\Activity.class
 com\vodafone\poms\ii\controllers\ApprovalStatusController.class
+com\vodafone\poms\ii\controllers\AspPoController$1.class
 com\vodafone\poms\ii\entities\UserPrivilege.class
+com\vodafone\poms\ii\controllers\AspPoController$2.class
 com\vodafone\poms\ii\controllers\ActivityCodeController.class
 com\vodafone\poms\ii\helpers\SiteLoader.class
 com\vodafone\poms\ii\controllers\UserPrivilegeController$UserPrivilegeControllerConverter.class

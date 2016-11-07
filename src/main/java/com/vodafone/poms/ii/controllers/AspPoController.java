@@ -4,6 +4,7 @@ import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.AspPoFacade;
+import com.vodafone.poms.ii.entities.VendorPo;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -27,6 +28,8 @@ import javax.inject.Inject;
 @SessionScoped
 public class AspPoController implements Serializable {
 
+    
+    private VendorPo selectedVendorPo;
     @EJB
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
     private List<AspPo> items = null;
@@ -42,6 +45,8 @@ public class AspPoController implements Serializable {
     private PoStatusController poStatusController;
     @Inject 
     private AspGrnController aspGrnController;
+    @Inject
+    private VendorPoController vendorPoController;
 
     public AspPoController() {
     }
@@ -75,7 +80,7 @@ public class AspPoController implements Serializable {
     }
 
     public void create() {
-        if(selected.getRemainingInPo()!=null){
+        if(selected.getRemainingInPo()==null){
             selected.setRemainingInPo(selected.getPoValue());
         }
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspPoCreated"));
@@ -209,4 +214,31 @@ public class AspPoController implements Serializable {
             }
         }
     }
+
+    public VendorPo getSelectedVendorPo() {
+        return selectedVendorPo;
+    }
+
+    public void setSelectedVendorPo(VendorPo selectedVendorPo) {
+        this.selectedVendorPo = selectedVendorPo;
+    }
+    
+    public void correlate(){
+        if(selectedVendorPo!=null && selected!=null){
+           selected.setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
+            update();
+            selectedVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{add(selected);}});
+            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone().add(BigInteger.valueOf(selected.getFactor().intValue())));
+//            selectedVendorPo.setRemainingInPo(
+//            selectedVendorPo.getRemainingInPo().subtract(
+//                            BigInteger.valueOf((((Float)(selected.getPoValue().intValue()
+//                                                +selected.getPoValue().intValue()*(Float.valueOf(String.valueOf((selected.getPoMargin()/100))))))
+//                                                .intValue()))));
+            vendorPoController.setSelected(selectedVendorPo);
+            vendorPoController.update();
+            vendorPoController.setSelected(null);
+            JsfUtil.addSuccessMessage("ASP PO "+selected.getPoNumber()+" is now correlated to Vendor PO "+selectedVendorPo.getPoNumber());
+        }
+    }
+    
 }

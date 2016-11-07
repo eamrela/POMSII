@@ -6,6 +6,8 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.VendorPoFacade;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,6 +38,10 @@ public class VendorPoController implements Serializable {
     private UsersController usersController;
     @Inject
     private PoStatusController poStatusController;
+    @Inject
+    private VendorMdController vendorMdController;
+    @Inject
+    private AspPoController aspPoController;
     
     public VendorPoController() {
     }
@@ -69,6 +75,9 @@ public class VendorPoController implements Serializable {
     }
 
     public void create() {
+        if(selected.getRemainingInPo()==null){
+                selected.setRemainingInPo(selected.getPoValue());
+        }
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorPoCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
@@ -100,9 +109,7 @@ public class VendorPoController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    if(selected.getPoValue()!=null){
-                        selected.setRemainingInPo(selected.getPoValue());
-                    }
+                    
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);
@@ -179,4 +186,27 @@ public class VendorPoController implements Serializable {
 
     }
 
+    public void createMd(){
+        if(selected!=null){
+            if(selected.getMdDeserved().compareTo(BigInteger.ZERO)==1){
+                vendorMdController.prepareCreate();
+                vendorMdController.getSelected().setVendorPoId(selected);
+                vendorMdController.getSelected().setCreator(usersController.getSelected());
+                vendorMdController.getSelected().setMdDeserved(selected.getMdDeserved());
+                vendorMdController.getSelected().setSysDate(new Date());
+                selected.getVendorMdCollection().add(vendorMdController.create());
+                selected.setMdDeserved(BigInteger.ZERO);
+                update();
+                
+            }
+        }
+    }
+    
+    public List<VendorPo> findMatchingPOForASP(){
+        List<VendorPo> suggestedPOs = new ArrayList<>();
+        if(aspPoController.getSelected()!=null){
+            suggestedPOs = getFacade().findPOforASP(aspPoController.getSelected());
+        }
+        return suggestedPOs;
+    }
 }

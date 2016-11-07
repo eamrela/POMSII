@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.VendorMd;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,14 @@ public class VendorMdFacade extends AbstractFacade<VendorMd> {
 
     public VendorMdFacade() {
         super(VendorMd.class);
+    }
+
+    public List<VendorMd> findByMdNumber(String editMdNumber) {
+        return em.createNativeQuery("select * from vendor_md where md_number='"+editMdNumber+"'",VendorMd.class).getResultList();
+    }
+
+    public VendorMd merge(VendorMd selected) {
+        return em.merge(selected);
     }
     
 }

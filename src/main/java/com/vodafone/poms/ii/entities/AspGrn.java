@@ -217,7 +217,7 @@ public class AspGrn implements Serializable {
     
     private void calculateFactor() {
         if(grnValue!=null)
-        grnFactor = Double.valueOf(new BigInteger("3000").floatValue()/new BigInteger("6000").floatValue());
+        grnFactor = Double.valueOf(grnValue.floatValue()/grnDeserved.floatValue());
     }
     
     private void calculateRemaining() {

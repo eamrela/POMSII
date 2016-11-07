@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,7 +30,11 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
+        <style>
+            .ui-growl{
+    top:100px;
+}
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -51,11 +57,367 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Vendor POs" smallText="View and Edit Vendor POs"/>
+                            <POMSII:PageHeadings largeText="Vendor POs" smallText="View and Edit Vendor PO"/>
                             <div class="container-fluid">
+                            <h:form id="VendorPOListForm"> 
+                                <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
-                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>All Vendor POs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <p:dataTable id="datalistVendorPO" 
+                                                                     value="#{vendorPoController.items}" 
+                                                                     var="item"
+                                                                    selectionMode="single" selection="#{vendorPoController.selected}"
+                                                                    paginator="true"
+                                                                    rowKey="#{item.poNumber}"
+                                                                    rows="10"
+                                                                    rowsPerPageTemplate="5,10,15,20,25"
+                                                                    >
+
+                                                           <p:ajax event="rowSelect"   update="editButton,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD"/>
+
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poNumber}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="PO#"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poNumber}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poDate}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Date"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poDate}">
+                                                                   <f:convertDateTime pattern="MM/dd/yyyy" />
+                                                               </h:outputText>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" filterBy="#{item.poDescription}" 
+                                                                     filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Description"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poDescription}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.factor}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Factor"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.factor}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="ServiceValue"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.serviceValue}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="POValue"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poValue}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="POValueTaxes"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poValueTaxes}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="WorkDone"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.workDone}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" sortBy="#{item.remainingInPo}">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Remaining"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.remainingInPo}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Taxes"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.taxes}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Domain"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.domainName.domainName}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poType.typeName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Type"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poType.typeName}"/>
+                                                           </p:column>
+                                                           
+                                                           <f:facet name="footer">
+                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorPoEditForm" oncomplete="PF('VendorPoEditDialog').show()" disabled="#{empty vendorPoController.selected}"/>
+                                                           </f:facet>
+                                                       </p:dataTable>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+                                <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated MDs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                         <p:outputPanel id="selectedVendorPOMD"> 
+                                                             <h:panelGroup rendered="#{vendorPoController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedMD"
+                                                                        var="vendorMD" 
+                                                                        value="#{vendorPoController.selected.vendorMdCollection}"
+                                                                        emptyMessage="This PO doesn't have any MD"
+                                                                        selection="#{vendorMdController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{vendorMD.id}">
+                                                                
+                                                                <p:ajax event="rowSelect" update="editButton"/>
+                                                                
+                                                                <p:column headerText="MD#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMD.mdNumber}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMD.mdDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Deserved" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMD.mdDeserved}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Factor" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMD.mdFactor}" />
+                                                                </p:column>
+                                                                <p:column headerText="MDValue" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMD.mdValue}" />
+                                                                </p:column>
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vendorMD.remainingInMd}" />
+                                                                </p:column>
+                                                                <p:column headerText="Invoiced" style="font-size: 9px;">
+                                                                    <h:selectBooleanCheckbox value="#{vendorMD.invoiced}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="editButton"  actionListener="#{vendorMdController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorMdEditForm" oncomplete="PF('VendorMdEditDialog').show()" disabled="#{empty vendorMdController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <label for="grndeserved">MD Needed</label>
+                                                                     <h:outputText id="grndeserved"
+                                                                                   value="#{vendorPoController.selected.mdDeserved}"
+                                                                                   styleClass="form-control"/>
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <h:panelGroup rendered="#{vendorPoController.selected.mdDeserved>0}">
+                                                                         <p:commandButton 
+                                                                                     class="btn-raised btn-success btn"
+                                                                                      value="Create MD"
+                                                                                      ajax="false"
+                                                                                      actionListener="#{vendorPoController.createMd}"
+                                                                                      update="
+                                                                                      :vendorPOListForm:selectedVendorPOMD, 
+                                                                                      :vendorPOListForm:selectedVendorPOMD:associatedMD,
+                                                                                      :vendorPOListForm:growl">
+
+                                                                        </p:commandButton>
+                                                                     </h:panelGroup>
+                                                                 </div>
+                                                             </h:panelGroup>
+                                                         </p:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated ASP POs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                       <p:outputPanel id="selectedVendorPOASPPO">
+                                                           <h:panelGroup rendered="#{vendorPoController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedActivity"
+                                                                        var="aspPO" 
+                                                                        value="#{vendorPoController.selected.aspPoCollection}"
+                                                                        emptyMessage="This PO doesn't have any ASP PO"
+                                                                        selection="#{aspPoController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{aspPO.poNumber}">
+                                                                
+                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                
+                                                                <p:column headerText="PO#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.poNumber}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.poDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Value" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.poValue}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.remainingInPo}" />
+                                                                </p:column>
+                                                                <p:column headerText="ASP" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.asp}" />
+                                                                </p:column>
+                                                                <p:column headerText="WorkDone" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.workDone}" />
+                                                                </p:column>
+                                                                <p:column headerText="Margin" style="font-size: 9px;">
+                                                                    <h:outputText value="#{aspPO.poMargin}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ASPPOViewForm" oncomplete="PF('ASPPOViewDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                      </div> 
+                                                             </h:panelGroup>
+                                                         </p:outputPanel> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>       
                                 <!--page content end here--> 
+                                </h:form>
+                                <p:dialog id="VendorPoEditDlg" widgetVar="VendorPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorPoTitle}">
+                                    <h:form id="VendorPoEditForm">
+                                        <h:panelGroup id="display">
+                                            <p:panelGrid columns="2" rendered="#{vendorPoController.selected != null}">
+                                                <p:outputLabel value="#{bundle.EditVendorPoLabel_workDone}" for="workDone" />
+                                                <p:inputText id="workDone" 
+                                                             value="#{vendorPoController.selected.workDone}" 
+                                                             title="#{bundle.EditVendorPoTitle_workDone}" >
+                                                    <f:validateDoubleRange minimum="#{vendorPoController.selected.workDone}" 
+                                                                           maximum="#{vendorPoController.selected.factor}"/>
+                                                </p:inputText>
+                                            </p:panelGrid>
+                                            <p:commandButton actionListener="#{vendorPoController.update}" value="#{bundle.Save}" 
+                                                             update="display,:VendorPOListForm:datalistVendorPO,:VendorPOListForm:growl,
+                                                                    :VendorPOListForm:selectedVendorPOMD" oncomplete="handleSubmit(args, 'VendorPoEditDialog');"/>
+                                            <p:commandButton value="#{bundle.Cancel}" onclick="VendorPoEditDialog.hide()"/>
+                                        </h:panelGroup>
+                                    </h:form>
+                            </p:dialog>
+                                <p:dialog id="ASPPOViewDlg" widgetVar="ASPPOViewDialog" modal="true" resizable="false" appendTo="@(body)" header="ASP PO">
+                                    <h:form id="ASPPOViewForm">
+                                        <h:panelGroup id="display">
+                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
+                                                <h:outputText value="#{bundle.ViewAspPoLabel_poNumber}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poNumber}" title="#{bundle.ViewAspPoTitle_poNumber}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poDate}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poDate}" title="#{bundle.ViewAspPoTitle_poDate}">
+                                                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                                                    </h:outputText>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poDescription}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poDescription}" title="#{bundle.ViewAspPoTitle_poDescription}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_factor}"/>
+                                                    <h:outputText value="#{aspPoController.selected.factor}" title="#{bundle.ViewAspPoTitle_factor}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_serviceValue}"/>
+                                                    <h:outputText value="#{aspPoController.selected.serviceValue}" title="#{bundle.ViewAspPoTitle_serviceValue}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poValue}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poValue}" title="#{bundle.ViewAspPoTitle_poValue}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poValueTaxes}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poValueTaxes}" title="#{bundle.ViewAspPoTitle_poValueTaxes}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_workDone}"/>
+                                                    <h:outputText value="#{aspPoController.selected.workDone}" title="#{bundle.ViewAspPoTitle_workDone}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_remainingInPo}"/>
+                                                    <h:outputText value="#{aspPoController.selected.remainingInPo}" title="#{bundle.ViewAspPoTitle_remainingInPo}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_sysDate}"/>
+                                                    <h:outputText value="#{aspPoController.selected.sysDate}" title="#{bundle.ViewAspPoTitle_sysDate}">
+                                                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                                                    </h:outputText>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poMargin}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poMargin}" title="#{bundle.ViewAspPoTitle_poMargin}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_taxes}"/>
+                                                    <h:outputText value="#{aspPoController.selected.taxes}" title="#{bundle.ViewAspPoTitle_taxes}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_domainName}"/>
+                                                    <h:outputText value="#{aspPoController.selected.domainName.domainName}" title="#{bundle.ViewAspPoTitle_domainName}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poStatus}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poStatus.statusName}" title="#{bundle.ViewAspPoTitle_poStatus}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_poType}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poType.typeName}" title="#{bundle.ViewAspPoTitle_poType}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_asp}"/>
+                                                    <h:outputText value="#{aspPoController.selected.asp.subcontractorName}" title="#{bundle.ViewAspPoTitle_asp}"/>
+                                                    <h:outputText value="#{bundle.ViewAspPoLabel_creator}"/>
+                                                    <h:outputText value="#{aspPoController.selected.creator.email}" title="#{bundle.ViewAspPoTitle_creator}"/>
+                                            </p:panelGrid>
+                                            <p:commandButton value="#{bundle.Close}" onclick="ASPPOViewDialog.hide()"/>
+                                        </h:panelGroup>
+                                    </h:form>
+                                </p:dialog>
+                                <p:dialog id="VendorMdEditDlg" widgetVar="VendorMdEditDialog" modal="true" resizable="false" appendTo="@(body)" 
+                                      header="Vendor MD">
+                                    <h:form id="VendorMdEditForm">
+                                        <h:panelGroup id="display">
+                                        <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">
+                                            <p:outputLabel value="MD Factor" for="mdFactor"/>
+                                            <p:inputText id="mdFactor" value="#{vendorMdController.editMdFactor}" 
+                                                         title="MD Factor" 
+                                                         required="true" requiredMessage="MD Factor is required">
+                                                <p:ajax update="mdValue,remainingInMd"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="MD Value" for="mdValue" />
+                                        <p:inputText id="mdValue" value="#{vendorMdController.editMdValue}" title="MD Value"
+                                                     required="true" requiredMessage="MD Value is required">
+                                             <p:ajax update="mdFactor,remainingInMd"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="MD Date" for="mdDate" />
+                                        <p:calendar id="mdDate" pattern="MM/dd/yyyy" value="#{vendorMdController.editMdDate}" 
+                                                    title="MD Date"  showOn="button"
+                                                    required="true" requiredMessage="MD Date is required"/>
+                                        <p:outputLabel value="MD Number" for="mdNumber" />
+                                        <p:inputText id="mdNumber" value="#{vendorMdController.editMdNumber}" title="MD Number" />
+                                        <p:outputLabel value="Invoiced" for="invoiced"/>
+                                        <p:selectBooleanCheckbox id="invoiced" value="#{vendorMdController.editInvoiced}" />
+                                        <p:outputLabel value="Remaining in MD" for="remainingInMd" />
+                                        <p:inputText id="remainingInMd" value="#{vendorMdController.editRemainingInMd}" 
+                                                     title="Remaining in MD" disabled="true"/>
+                                    </p:panelGrid>
+                                    <p:commandButton actionListener="#{vendorMdController.updateEdit}" value="#{bundle.Save}" 
+                                                     ajax="false" update="display,:VendorPoListForm:datalistVendorPO,
+                                                     :VendorPoListForm:selectedVendorPOMD,:VendorPoListForm:growl,
+                                                     :VendorPoListForm:selectedVendorPOMD:associatedMD" oncomplete="handleSubmit(args, 'VendorMdEditDialog');"/>
+                                    <p:commandButton value="#{bundle.Cancel}" ajax="false" onclick="VendorMdEditDialog.hide()" 
+                                                    update="display,:VendorPoListForm:datalistVendorPO,
+                                                                            :VendorPoListForm:selectedVendorPOMD,
+                                                                            :VendorPoListForm:growl,:VendorPoListForm:selectedVendorPOMD:associatedMD"/>
+                                </h:panelGroup>
+                                </h:form>
+                            </p:dialog>
+                            
                             </div>
                         </div>
                     </div>

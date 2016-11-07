@@ -59,7 +59,7 @@
                         <div class="page-content">
                             <POMSII:PageHeadings largeText="ASP POs" smallText="View and Edit ASP PO"/>
                             <div class="container-fluid">
-                            <h:form id="ASPPOListForm"> 
+                            <h:form id="ASPPOListForm">  
                                 <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
                                 <div class="row">
@@ -81,7 +81,7 @@
                                                                     rowsPerPageTemplate="5,10,15,20,25"
                                                                     >
 
-                                                           <p:ajax event="rowSelect"   update="editButton,
+                                                           <p:ajax event="rowSelect"   update="editButton, correlateButton,
                                                                                                :ASPPOListForm:selectedASPPOActivities ,
                                                                                                :ASPPOListForm:selectedASPPOGRN"/>
 
@@ -175,14 +175,28 @@
                                                                </f:facet>
                                                                <h:outputText value="#{item.asp.subcontractorName}"/>
                                                            </p:column>
+                                                           <p:column style="font-size: 9px;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="VendorPO"/>
+                                                               </f:facet>
+                                                               <h:outputText value="Correlated" rendered="#{item.vendorPoCollection.size()>0}"/>
+                                                               <p:commandButton id="correlateButton"  
+                                                                                actionListener="#{aspPoController.setSelected(item)}"
+                                                                                icon="ui-icon-pencil"
+                                                                                update=":AspPoCorrelateForm,:ASPPOListForm:datalistASPPO" 
+                                                                                oncomplete="PF('AspPoCorrelateDialog').show()"
+                                                                                rendered="#{item.vendorPoCollection.size()==0}"/>
+                                                           </p:column>
                                                            <f:facet name="footer">
-                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspPoEditForm" oncomplete="PF('AspPoEditDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" 
+                                                                                update=":AspPoEditForm" oncomplete="PF('AspPoEditDialog').show()" disabled="#{empty aspPoController.selected}"/>
                                                            </f:facet>
                                                        </p:dataTable>
                                                     </div>
                                                 </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                                         
                                 <div class="row">
@@ -226,14 +240,14 @@
                                                                 <p:column headerText="GRNValue" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.grnValue}" />
                                                                 </p:column>
-                                                                <p:column headerText="Remaining">
+                                                                <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.remainingInGrn}" />
                                                                 </p:column>
                                                                 <p:column headerText="Invoiced" style="font-size: 9px;">
                                                                     <h:selectBooleanCheckbox value="#{aspGRN.invoiced}" />
                                                                 </p:column>
                                                                 <f:facet name="footer">
-                                                                    <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
+                                                                    <p:commandButton id="editButton"  actionListener="#{aspGrnController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
@@ -322,6 +336,7 @@
                                             </div>
                                         </div>
                                 </div>
+                                
                                         
                                 <!--page content end here--> 
                                 </h:form>
@@ -405,33 +420,75 @@
                                 <h:panelGroup id="display">
                                     <p:panelGrid columns="2" rendered="#{aspGrnController.selected != null}">
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_grnFactor}" for="grnFactor"/>
-                                        <p:inputText id="grnFactor" value="#{aspGrnController.selected.grnFactor}" 
+                                        <p:inputText id="grnFactor" value="#{aspGrnController.editGrnFactor}" 
                                                      title="#{bundle.EditAspGrnTitle_grnFactor}" 
                                                      required="true" requiredMessage="GRN Factor is required">
                                             <p:ajax update="grnValue,remainingInGrn"/>
                                         </p:inputText>
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_grnValue}" for="grnValue" />
-                                        <p:inputText id="grnValue" value="#{aspGrnController.selected.grnValue}" title="#{bundle.EditAspGrnTitle_grnValue}"
+                                        <p:inputText id="grnValue" value="#{aspGrnController.editGrnValue}" title="#{bundle.EditAspGrnTitle_grnValue}"
                                                      required="true" requiredMessage="GRN Value is required">
                                              <p:ajax update="grnFactor,remainingInGrn"/>
                                         </p:inputText>
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_grnDate}" for="grnDate" />
-                                        <p:calendar id="grnDate" pattern="MM/dd/yyyy" value="#{aspGrnController.selected.grnDate}" title="#{bundle.EditAspGrnTitle_grnDate}"  showOn="button"
+                                        <p:calendar id="grnDate" pattern="MM/dd/yyyy" value="#{aspGrnController.editGrnDate}" title="#{bundle.EditAspGrnTitle_grnDate}"  showOn="button"
                                                     required="true" requiredMessage="GRN Date is required"/>
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_grnNumber}" for="grnNumber" />
-                                        <p:inputText id="grnNumber" value="#{aspGrnController.selected.grnNumber}" title="#{bundle.EditAspGrnTitle_grnNumber}" />
+                                        <p:inputText id="grnNumber" value="#{aspGrnController.editGrnNumber}" title="#{bundle.EditAspGrnTitle_grnNumber}" />
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_invoiced}" for="invoiced"/>
-                                        <p:selectBooleanCheckbox id="invoiced" value="#{aspGrnController.selected.invoiced}" />
+                                        <p:selectBooleanCheckbox id="invoiced" value="#{aspGrnController.editInvoiced}" />
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_remainingInGrn}" for="remainingInGrn" />
-                                        <p:inputText id="remainingInGrn" value="#{aspGrnController.selected.remainingInGrn}" title="#{bundle.EditAspGrnTitle_remainingInGrn}" disabled="true"/>
+                                        <p:inputText id="remainingInGrn" value="#{aspGrnController.editRemainingInGrn}" title="#{bundle.EditAspGrnTitle_remainingInGrn}" disabled="true"/>
                                     </p:panelGrid>
-                                    <p:commandButton actionListener="#{aspGrnController.update}" value="#{bundle.Save}" 
+                                    <p:commandButton actionListener="#{aspGrnController.updateEdit}" value="#{bundle.Save}" 
                                                      ajax="false" update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:selectedASPPOGRN,:ASPPOListForm:growl,:ASPPOListForm:selectedASPPOGRN:associatedGRN" oncomplete="handleSubmit(args, 'AspGrnEditDialog');"/>
                                     <p:commandButton value="#{bundle.Cancel}" ajax="false" onclick="AspGrnEditDialog.hide()" update="display,:ASPPOListForm:datalistASPPO,
                                                                             :ASPPOListForm:selectedASPPOGRN,:ASPPOListForm:growl,:ASPPOListForm:selectedASPPOGRN:associatedGRN"/>
                                 </h:panelGroup>
                             </h:form>
                         </p:dialog>
+                            <p:dialog id="AspPoCorrelateDlg" widgetVar="AspPoCorrelateDialog" modal="true" resizable="false" 
+                                      appendTo="@(body)" header="Correlate ASP to vendor" width="30%">
+                                    <h:form id="AspPoCorrelateForm">
+                                        <h:panelGroup id="display">
+                                            <p:panel rendered="#{aspPoController.selected != null}">
+                                                            <p:dataTable 
+                                                                id="vendorDataTable"
+                                                                var="vendorPO" 
+                                                                value="#{vendorPoController.findMatchingPOForASP()}"
+                                                                emptyMessage="No POs found matching this ASP PO"
+                                                                selection="#{aspPoController.selectedVendorPo}"
+                                                                selectionMode="single"
+                                                                rowKey="#{vendorPO.poNumber}">
+                                                                
+                                                                <p:ajax event="rowSelect" update=":AspPoCorrelateForm:selectedCorrelationPO"/>
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{vendorPO.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vendorPO.remainingInPo}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{vendorPO.poValue}" />
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <h:panelGroup id="selectedCorrelationPO">
+                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPo!=null}">
+                                                           <p:commandButton 
+                                                               actionListener="#{aspPoController.correlate}" 
+                                                                value="Correlate" 
+                                                                update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
+                                                                        :ASPPOListForm:selectedASPPOGRN" oncomplete="AspPoCorrelateDialog.hide()"/>
+                                                            </h:panelGroup>
+                                                            </h:panelGroup>
+                                            </p:panel>
+                                            <p:commandButton value="#{bundle.Cancel}" onclick="AspPoCorrelateDialog.hide()"/>
+                                        </h:panelGroup>
+                                    </h:form>
+                            </p:dialog>
                             </div>
                         </div>
                     </div>

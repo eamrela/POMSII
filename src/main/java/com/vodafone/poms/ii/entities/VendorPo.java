@@ -194,6 +194,7 @@ public class VendorPo implements Serializable {
 
     public void setWorkDone(BigInteger workDone) {
         this.workDone = workDone;
+        calculateMdDeserved();
     }
 
     public BigInteger getRemainingInPo() {
@@ -229,7 +230,7 @@ public class VendorPo implements Serializable {
         this.aspPoCollection = aspPoCollection;
     }
 
-    @XmlTransient
+//    @XmlTransient
     public Collection<VendorMd> getVendorMdCollection() {
         return vendorMdCollection;
     }
@@ -293,6 +294,16 @@ public class VendorPo implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.VendorPo[ poNumber=" + poNumber + " ]";
+    }
+
+    private void calculateMdDeserved() {
+        BigInteger deserved = serviceValue.multiply(workDone);
+        Object[] grns = getVendorMdCollection().toArray();
+        for (Object grn : grns) {
+            deserved = deserved.subtract(((VendorMd) grn).getMdDeserved());
+        }
+        setMdDeserved(deserved);
+        setRemainingInPo(getRemainingInPo().subtract(getMdDeserved()));
     }
     
 }
