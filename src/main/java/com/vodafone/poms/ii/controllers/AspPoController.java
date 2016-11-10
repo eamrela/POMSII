@@ -193,8 +193,8 @@ public class AspPoController implements Serializable {
 
     public List<AspPo> findMatchingPOForActivity(){
         List<AspPo> suggestedPOs = new ArrayList<>();
-        if(activityController.getSelected()!=null){
-            suggestedPOs = getFacade().findPOforActivity(activityController.getSelected());
+        if(activityController.getSelectedItems()!=null){
+            suggestedPOs = getFacade().findPOforActivity(activityController.getSelectedItems());
         }
         return suggestedPOs;
     }
@@ -228,7 +228,7 @@ public class AspPoController implements Serializable {
            selected.setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
             update();
             selectedVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{add(selected);}});
-            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone().add(BigInteger.valueOf(selected.getFactor().intValue())));
+//            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone().add(BigInteger.valueOf(selected.getFactor().intValue())));
 //            selectedVendorPo.setRemainingInPo(
 //            selectedVendorPo.getRemainingInPo().subtract(
 //                            BigInteger.valueOf((((Float)(selected.getPoValue().intValue()

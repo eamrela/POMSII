@@ -160,12 +160,12 @@ public class ActivityCodeController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                     if (persistAction == PersistAction.UPDATE) {
-                        selected.setSubcontractorPrice(Float.valueOf(subcontractorPrice));
-                        selected.setVendorPrice(Float.valueOf(vendorPrice));
-                        selected.setUm(um);
-                        selected.setUmPercent(umPercent);
-                    }
+//                     if (persistAction == PersistAction.UPDATE) {
+//                        selected.setSubcontractorPrice(Float.valueOf(subcontractorPrice));
+//                        selected.setVendorPrice(Float.valueOf(vendorPrice));
+//                        selected.setUm(um);
+//                        selected.setUmPercent(umPercent);
+//                    }
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);

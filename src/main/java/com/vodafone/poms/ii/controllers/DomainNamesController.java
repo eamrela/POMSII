@@ -121,7 +121,7 @@ public class DomainNamesController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = DomainNames.class)
+    @FacesConverter("DomainNamesControllerConverter")
     public static class DomainNamesControllerConverter implements Converter {
 
         @Override

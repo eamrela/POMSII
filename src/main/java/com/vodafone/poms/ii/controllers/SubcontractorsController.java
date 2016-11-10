@@ -121,7 +121,7 @@ public class SubcontractorsController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = Subcontractors.class)
+    @FacesConverter("SubcontractorsControllerConverter")
     public static class SubcontractorsControllerConverter implements Converter {
 
         @Override

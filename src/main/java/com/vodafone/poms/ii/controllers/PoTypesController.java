@@ -121,7 +121,7 @@ public class PoTypesController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = PoTypes.class)
+    @FacesConverter("PoTypesControllerConverter")
     public static class PoTypesControllerConverter implements Converter {
 
         @Override

@@ -77,7 +77,7 @@ public class VendorPo implements Serializable {
     @Column(name = "po_value_taxes")
     private BigInteger poValueTaxes;
     @Column(name = "work_done")
-    private BigInteger workDone= BigInteger.ZERO;;
+    private Double workDone= 0.0;
     @Column(name = "remaining_in_po")
     private BigInteger remainingInPo;
     @Basic(optional = false)
@@ -188,11 +188,11 @@ public class VendorPo implements Serializable {
         this.poValueTaxes = poValueTaxes;
     }
 
-    public BigInteger getWorkDone() {
+    public Double getWorkDone() {
         return workDone;
     }
 
-    public void setWorkDone(BigInteger workDone) {
+    public void setWorkDone(Double workDone) {
         this.workDone = workDone;
         calculateMdDeserved();
     }
@@ -297,7 +297,7 @@ public class VendorPo implements Serializable {
     }
 
     private void calculateMdDeserved() {
-        BigInteger deserved = serviceValue.multiply(workDone);
+        BigInteger deserved = serviceValue.multiply(BigInteger.valueOf(workDone.intValue()));
         Object[] grns = getVendorMdCollection().toArray();
         for (Object grn : grns) {
             deserved = deserved.subtract(((VendorMd) grn).getMdDeserved());

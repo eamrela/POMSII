@@ -33,7 +33,9 @@
         <f:metadata>
             <f:viewAction action="#{activityController.prepareCreate}"/>
         </f:metadata>
-        
+        <style>
+            .ui-growl{top: 100px;}
+            </style>
     </h:head>
     <h:body class="animated-content infobar-overlay">
         <POMSII:Header/>
@@ -80,18 +82,23 @@
                                                                         converter="SitesControllerConverter" 
                                                                         forceSelection="true"
                                                                         required="true"
+                                                                        requiredMessage="Site is required"
                                                                         styleClass="form-control"
-                                                                        maxResults="10"/>
+                                                                        maxResults="10">
+                                                                <p:ajax event="itemSelect" listener="#{activityController.onItemSelectSetSite}" 
+                                                                        update=":createActivityForm:growl" />
+                                                            </p:autoComplete>
                                                         </div>
                                                         <div class="col-xs-3">
                                                         <label for="activityarea">Area</label>
                                                         <h:selectOneMenu id="activityarea" 
                                                                             value="#{activityController.selected.area}" 
                                                                             required="true" 
+                                                                            converter="AreaControllerConverter"
                                                                             requiredMessage="Area is required"
                                                                             styleClass="form-control">
                                                                <f:selectItem itemLabel="" 
-                                                                             itemValue="" noSelectionOption="false" />
+                                                                             itemValue="#{null}" noSelectionOption="true" />
                                                                <f:selectItems value="#{areaController.itemsAvailableSelectOne}"
                                                                               var="areaItem"
                                                                               itemLabel="#{areaItem.areaName}"
@@ -103,10 +110,11 @@
                                                         <h:selectOneMenu id="activityasp" 
                                                                          value="#{activityController.selected.asp}" 
                                                                          required="true" 
+                                                                         converter="SubcontractorsControllerConverter"
                                                                          requiredMessage="ASP is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
                                                                            var="aspItem"
                                                                            itemLabel="#{aspItem.subcontractorName}"
@@ -118,10 +126,11 @@
                                                         <h:selectOneMenu id="activityowner" 
                                                                          value="#{activityController.selected.vendorOwner}" 
                                                                          required="true" 
+                                                                         converter="VendorOwnerControllerConverter"
                                                                          requiredMessage="Owner is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{vendorOwnerController.itemsAvailableSelectOne}"
                                                                            var="vendorOwnerItem"
                                                                            itemLabel="#{vendorOwnerItem.ownerName}"
@@ -135,10 +144,11 @@
                                                         <h:selectOneMenu id="activitytype" 
                                                                          value="#{activityController.selected.activityType}" 
                                                                          required="true" 
+                                                                         converter="DomainNamesControllerConverter"
                                                                          requiredMessage="Type is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{domainNamesController.itemsAvailableSelectOne}"
                                                                            var="DomainNameItem"
                                                                            itemLabel="#{DomainNameItem.domainName}"
@@ -156,10 +166,11 @@
                                                         <h:selectOneMenu id="activityphase" 
                                                                          value="#{activityController.selected.phase}" 
                                                                          required="true" 
+                                                                         converter="PhasesControllerConverter"
                                                                          requiredMessage="Phase is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{phasesController.itemsAvailableSelectOne}"
                                                                            var="ItemPhase"
                                                                            itemLabel="#{ItemPhase.phaseName}"
@@ -171,10 +182,11 @@
                                                         <h:selectOneMenu id="activityclaim" 
                                                                          value="#{activityController.selected.claimStatus}" 
                                                                          required="true" 
+                                                                         converter="ClaimStatusControllerConverter"
                                                                          requiredMessage="Claim is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{claimStatusController.itemsAvailableSelectOne}"
                                                                            var="ItemClaim"
                                                                            itemLabel="#{ItemClaim.claimName}"
@@ -188,10 +200,11 @@
                                                         <h:selectOneMenu id="activityapproval" 
                                                                          value="#{activityController.selected.approvalStatus}" 
                                                                          required="true" 
+                                                                         converter="ApprovalStatusControllerConverter"
                                                                          requiredMessage="Approval is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="true" />
                                                             <f:selectItems value="#{approvalStatusController.itemsAvailableSelectOne}"
                                                                            var="ItemApproval"
                                                                            itemLabel="#{ItemApproval.statusName}"
@@ -220,7 +233,7 @@
                                                       </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <label for="activitytpricev">Total Price Vendor</label>
+                                                        <label for="activitytpricev">Total Price Customer</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceVendor}"
                                                                      class="form-control" id="activitytpricev" disabled="true"/>
@@ -234,7 +247,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-4">
-                                                        <label for="activitypricet">Total Price Vendor (#{activityController.selected.taxes})</label>
+                                                        <label for="activitypricet">Total Price Customer (#{activityController.selected.taxes*100}%)</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceVendorTaxes}"
                                                                      class="form-control" id="activitypricet" disabled="true"/>
@@ -323,13 +336,13 @@
                                                          <p:ajax event="itemSelect"  update="activitycode,activitycodevunitprice,
                                                                  activitycodeaspunitprice,activitycodeaspunitprice,
                                                                  activitycodeum,activitycodeump,activitytpricev,activitytprivea,
-                                                                 activitypricet,activitytum,activitytump" oncomplete="removeClasses();"/>
+                                                                 activitypricet,activitytum,activitytump,:createActivityForm:growl" oncomplete="removeClasses();"/>
                                                     </p:autoComplete>
                                                 </div> 
                                             </div>
                                             <div class="row">
                                                 <div class="col-xs-6">
-                                                    <label for="activitycodevunitprice">Vendor Price</label>
+                                                    <label for="activitycodevunitprice">Customer Price</label>
                                                     <h:inputText required="true" 
                                                                  value="#{activityController.selected.activityCode.vendorPrice}"
                                                                  class="form-control" id="activitycodevunitprice" disabled="true"/>
@@ -364,10 +377,10 @@
                                                      class="btn-raised btn-primary btn"
                                                       value="Create Activity"
                                                       ajax="false"
+                                                      update="growl"
                                                       actionListener="#{activityController.create}"
-                                                      update="growl">
-
-                                        </p:commandButton>
+                                                      >
+                                        </p:commandButton >
                                     </div>
                                     </div>
                                 </div>

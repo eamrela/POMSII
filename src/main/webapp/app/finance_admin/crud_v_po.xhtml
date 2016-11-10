@@ -57,7 +57,7 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Vendor POs" smallText="View and Edit Vendor PO"/>
+                            <POMSII:PageHeadings largeText="Customer POs" smallText="View and Edit Customer PO"/>
                             <div class="container-fluid">
                             <h:form id="VendorPOListForm"> 
                                 <p:growl id="growl" sticky="true"/>
@@ -66,7 +66,7 @@
                                     <div class="col-md-12">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
-                                                        <h2>All Vendor POs</h2>
+                                                        <h2>All Customer POs</h2>
                                                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                                                 </div>
                                                 <div class="panel-body">
@@ -147,7 +147,7 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="Taxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.taxes}"/>
+                                                               <h:outputText value="#{item.taxes*100}%"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
@@ -296,7 +296,7 @@
                                                                     <h:outputText value="#{aspPO.workDone}" />
                                                                 </p:column>
                                                                 <p:column headerText="Margin" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspPO.poMargin}" />
+                                                                    <h:outputText value="#{aspPO.poMargin}%" />
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ASPPOViewForm" oncomplete="PF('ASPPOViewDialog').show()" disabled="#{empty aspPoController.selected}"/>
@@ -360,9 +360,9 @@
                                                         <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                                                     </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poMargin}"/>
-                                                    <h:outputText value="#{aspPoController.selected.poMargin}" title="#{bundle.ViewAspPoTitle_poMargin}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poMargin}%" title="#{bundle.ViewAspPoTitle_poMargin}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_taxes}"/>
-                                                    <h:outputText value="#{aspPoController.selected.taxes}" title="#{bundle.ViewAspPoTitle_taxes}"/>
+                                                    <h:outputText value="#{aspPoController.selected.taxes*100}%" title="#{bundle.ViewAspPoTitle_taxes}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_domainName}"/>
                                                     <h:outputText value="#{aspPoController.selected.domainName.domainName}" title="#{bundle.ViewAspPoTitle_domainName}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poStatus}"/>
@@ -379,7 +379,7 @@
                                     </h:form>
                                 </p:dialog>
                                 <p:dialog id="VendorMdEditDlg" widgetVar="VendorMdEditDialog" modal="true" resizable="false" appendTo="@(body)" 
-                                      header="Vendor MD">
+                                      header="Customer MD">
                                     <h:form id="VendorMdEditForm">
                                         <h:panelGroup id="display">
                                         <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">

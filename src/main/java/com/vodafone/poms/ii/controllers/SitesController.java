@@ -125,7 +125,7 @@ public class SitesController implements Serializable {
         return getFacade().findAll();
     }
 
-    @FacesConverter(value="SitesControllerConverter")
+    @FacesConverter("SitesControllerConverter")
     public static class SitesControllerConverter implements Converter {
 
         @Override

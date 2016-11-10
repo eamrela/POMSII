@@ -72,10 +72,10 @@
                                                 <div class="panel-body">
                                                     <div class="row">
                                                     <p:dataTable id="datalistActivity" 
-                                                                             value="#{activityController.items}" 
+                                                                 value="#{activityController.itemsUncorrelated}" 
                                                                              var="item"
-                                                                             selectionMode="single" 
-                                                                             selection="#{activityController.selected}"
+                                                                             selectionMode="multiple" 
+                                                                             selection="#{activityController.selectedItems}"
                                                                              paginator="true"
                                                                              rowKey="#{item.activityId}"
                                                                              rows="10"
@@ -84,7 +84,14 @@
 
                                                                     <p:ajax event="rowSelect"   
                                                                             update=":ActivityListForm:selectedActivityCode,
-                                                                                    :ActivityListForm:selectedCorrelation,editButton"/>
+                                                                                    :ActivityListForm:selectedCorrelation,editButton
+                                                                                    ,:ActivityListForm:growl,
+                                                                                    :ActivityListForm:datalistActivity"/>
+                                                                    <p:ajax event="rowUnselect"   
+                                                                            update=":ActivityListForm:selectedActivityCode,
+                                                                                    :ActivityListForm:selectedCorrelation,editButton
+                                                                                    ,:ActivityListForm:growl,
+                                                                                    :ActivityListForm:datalistActivity"/>
 
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.activityId}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
@@ -114,7 +121,7 @@
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendor}">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="PriceVendor"/>
+                                                                            <h:outputText value="PriceCustomer"/>
                                                                         </f:facet>
                                                                         <h:outputText value="#{item.totalPriceVendor}"/>
                                                                     </p:column>
@@ -140,7 +147,9 @@
                                                                         <f:facet name="header">
                                                                             <h:outputText value="UM%"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalUmPercent}"/>
+                                                                        <h:outputText value="#{item.totalUmPercent*100.0}">
+                                                                            <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                                        </h:outputText>%
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.activityComment}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
@@ -153,7 +162,7 @@
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Taxes"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.taxes}"/>
+                                                                        <h:outputText value="#{item.taxes*100}%"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.approvalStatus.statusName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
@@ -210,7 +219,7 @@
                                                                         <h:outputText value="#{item.vendorOwner.ownerName}"/>
                                                                     </p:column>
                                                                     <f:facet name="footer">
-                                                                    <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ActivityEditForm" oncomplete="PF('ActivityEditDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                        <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ActivityEditForm" oncomplete="PF('ActivityEditDialog').show()" disabled="#{empty activityController.selectedItems}"/>
                                                                     </f:facet>
                                                                 </p:dataTable> 
                                                     </div>
@@ -245,7 +254,7 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xs-6">
-                                                                    <label for="activitycodevunitprice">Vendor Price</label>
+                                                                    <label for="activitycodevunitprice">Customer Price</label>
                                                                     <h:outputText 
                                                                         value="#{activityController.selected.activityCode.vendorPrice}"
                                                                         class="form-control" id="activitycodevunitprice"/>
@@ -282,9 +291,10 @@
                                                 </div>
                                                 <div class="panel-body">
                                                     <p:outputPanel id="selectedCorrelation">
-                                                    <h:panelGroup rendered="#{activityController.selected!=null}">
-                                                        <h:panelGroup rendered="#{activityController.selected.aspPoCollection.size() == 0}">
-                                                            <label for="aspDataTable">Please select a PO to correlate Activity (#{activityController.selected.activityId}) with</label>
+                                                        <h:panelGroup rendered="#{activityController.selectedItems!=null}">
+                                                            <label >Total ASP price: (#{activityController.totalPriceASP})</label>
+                                                            <br></br>
+                                                            <label >Please select a PO to correlate Activity (#{activityController.activityIds})</label>
                                                             <p:dataTable 
                                                                 id="aspDataTable"
                                                                 var="aspPO" 
@@ -315,7 +325,6 @@
                                                                           value="Correlate"
                                                                           actionListener="#{activityController.correlate}"
                                                                           update="growl,
-                                                                                 :ActivityListForm:selectedCorrelationPODng, 
                                                                                  :ActivityListForm:selectedCorrelationPO, 
                                                                                  :ActivityListForm:selectedCorrelation, 
                                                                                  :ActivityListForm:datalistActivity">
@@ -323,46 +332,8 @@
                                                             </p:commandButton>
                                                             </h:panelGroup>
                                                             </h:panelGroup>
-                                                    </h:panelGroup>
-                                                    <h:panelGroup rendered="#{activityController.selected.aspPoCollection.size() > 0}">
-                                                           <p:dataTable 
-                                                                var="aspPO" 
-                                                                value="#{activityController.selected.aspPoCollection}"
-                                                                emptyMessage="This Activity is not correlated to any ASP PO"
-                                                                selection="#{activityController.selectedASPPo}"
-                                                                selectionMode="single"
-                                                                rowKey="#{aspPO.poNumber}">
-                                                                
-                                                                <p:ajax event="rowSelect" update=":ActivityListForm:selectedCorrelationPODng"/>
-                                                                
-                                                                <p:column headerText="PO#">
-                                                                    <h:outputText value="#{aspPO.poNumber}" />
-                                                                </p:column>
-
-                                                                <p:column headerText="Remaining">
-                                                                    <h:outputText value="#{aspPO.remainingInPo}" />
-                                                                </p:column>
-
-                                                                <p:column headerText="PO Value">
-                                                                    <h:outputText value="#{aspPO.poValue}" />
-                                                                </p:column>
-                                                            </p:dataTable> 
-                                                            <h:panelGroup id="selectedCorrelationPODng">
-                                                            <h:panelGroup rendered="#{activityController.selectedASPPo!=null}">
-                                                            <p:commandButton 
-                                                                         class="btn-raised btn-danger btn"
-                                                                          value="unCorrelate"
-                                                                          actionListener="#{activityController.uncorrelate}"
-                                                                          update="growl,
-                                                                                 :ActivityListForm:selectedCorrelationPODng, 
-                                                                                 :ActivityListForm:selectedCorrelationPO, 
-                                                                                 :ActivityListForm:selectedCorrelation, 
-                                                                                 :ActivityListForm:datalistActivity">
-
-                                                            </p:commandButton>
-                                                            </h:panelGroup>
-                                                            </h:panelGroup>
-                                                    </h:panelGroup>
+                                                    
+                                                    
                                                     </h:panelGroup>
                                                     </p:outputPanel>
                                                 </div>
@@ -417,10 +388,10 @@
                                                                    itemLabel="#{phaseItem.phaseName}"
                                                                    itemValue="#{phaseItem}"/>
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="#{bundle.EditActivityLabel_vendorOwner}" for="vendorOwner" />
+                                                <p:outputLabel value="Owner" for="vendorOwner" />
                                                 <p:selectOneMenu id="vendorOwner" value="#{activityController.selected.vendorOwner}" 
                                                                  required="true" 
-                                                                 requiredMessage="#{bundle.EditActivityRequiredMessage_vendorOwner}"
+                                                                 requiredMessage="Owner is required"
                                                                  converter="VendorOwnerControllerConverter">
                                                     <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
                                                     <f:selectItems value="#{vendorOwnerController.itemsAvailableSelectOne}"

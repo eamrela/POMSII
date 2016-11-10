@@ -138,7 +138,9 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="WorkDone"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.workDone}"/>
+                                                               <h:outputText value="#{item.workDone}">
+                                                                   <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                               </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.remainingInPo}">
                                                                <f:facet name="header">
@@ -150,13 +152,17 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="Margin"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poMargin}"/>
+                                                               <h:outputText value="#{item.poMargin}">
+                                                                   <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                               </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Taxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.taxes}"/>
+                                                               <h:outputText value="#{item.taxes*100}">
+                                                                   <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                               </h:outputText>%
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
@@ -180,7 +186,7 @@
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="VendorPO"/>
+                                                                   <h:outputText value="CustomerPO"/>
                                                                </f:facet>
                                                                <h:outputText value="Correlated" rendered="#{item.vendorPoCollection.size()>0}"/>
                                                                <p:commandButton id="correlateButton"  
@@ -245,9 +251,6 @@
                                                                 </p:column>
                                                                 <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.remainingInGrn}" />
-                                                                </p:column>
-                                                                <p:column headerText="Invoiced" style="font-size: 9px;">
-                                                                    <h:selectBooleanCheckbox value="#{aspGRN.invoiced}" />
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="editButton"  actionListener="#{aspGrnController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
@@ -315,14 +318,16 @@
                                                                     <h:outputText value="#{aspActivity.totalPriceAsp}" />
                                                                 </p:column>
 
-                                                                <p:column headerText="PriceVendor" style="font-size: 9px;">
+                                                                <p:column headerText="PriceCustomer" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalPriceVendor}" />
                                                                 </p:column>
                                                                 <p:column headerText="UM" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalUm}" />
                                                                 </p:column>
                                                                 <p:column headerText="UM%" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspActivity.totalUmPercent}" />
+                                                                    <h:outputText value="#{aspActivity.totalUmPercent*100}" >
+                                                                        <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                                    </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Qty" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.qty}" />
@@ -375,16 +380,19 @@
                                             <h:outputText value="#{activityController.selected.activityDetails}" title="#{bundle.ViewActivityTitle_activityDetails}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_qty}"/>
                                             <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
-                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendor}"/>
-                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="#{bundle.ViewActivityTitle_totalPriceVendor}"/>
-                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceVendorTaxes}"/>
-                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="#{bundle.ViewActivityTitle_totalPriceVendorTaxes}"/>
+                                            <h:outputText value="TotalPriceCustomer"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="TotalPriceCustomer"/>
+                                            <h:outputText value="TotalPriceCustomerWithTaxes"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="TotalpriceCustomerWithTaxes"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
                                             <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
                                             <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
-                                            <h:outputText value="#{activityController.selected.totalUmPercent}" title="#{bundle.ViewActivityTitle_totalUmPercent}"/>
+                                            <h:outputText value="#{activityController.selected.totalUmPercent*100}" 
+                                                          title="#{bundle.ViewActivityTitle_totalUmPercent}">
+                                                <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                            </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_activityComment}"/>
                                             <h:outputText value="#{activityController.selected.activityComment}" title="#{bundle.ViewActivityTitle_activityComment}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_sysDate}"/>
@@ -392,7 +400,7 @@
                                                 <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                                             </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_taxes}"/>
-                                            <h:outputText value="#{activityController.selected.taxes}" title="#{bundle.ViewActivityTitle_taxes}"/>
+                                            <h:outputText value="#{activityController.selected.taxes*100}%" title="#{bundle.ViewActivityTitle_taxes}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_activityCode}"/>
                                             <h:outputText value="#{activityController.selected.activityCode.materialId}" title="#{bundle.ViewActivityTitle_activityCode}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_approvalStatus}"/>
@@ -438,8 +446,6 @@
                                                     required="true" requiredMessage="GRN Date is required"/>
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_grnNumber}" for="grnNumber" />
                                         <p:inputText id="grnNumber" value="#{aspGrnController.editGrnNumber}" title="#{bundle.EditAspGrnTitle_grnNumber}" />
-                                        <p:outputLabel value="#{bundle.EditAspGrnLabel_invoiced}" for="invoiced"/>
-                                        <p:selectBooleanCheckbox id="invoiced" value="#{aspGrnController.editInvoiced}" />
                                         <p:outputLabel value="#{bundle.EditAspGrnLabel_remainingInGrn}" for="remainingInGrn" />
                                         <p:inputText id="remainingInGrn" value="#{aspGrnController.editRemainingInGrn}" title="#{bundle.EditAspGrnTitle_remainingInGrn}" disabled="true"/>
                                     </p:panelGrid>
@@ -451,7 +457,7 @@
                             </h:form>
                         </p:dialog>
                             <p:dialog id="AspPoCorrelateDlg" widgetVar="AspPoCorrelateDialog" modal="true" resizable="false" 
-                                      appendTo="@(body)" header="Correlate ASP to vendor" width="30%">
+                                      appendTo="@(body)" header="Correlate ASP to Customer" width="30%">
                                     <h:form id="AspPoCorrelateForm">
                                         <h:panelGroup id="display">
                                             <p:panel rendered="#{aspPoController.selected != null}">

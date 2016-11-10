@@ -137,10 +137,11 @@
                                                         <h:selectOneMenu id="potype" 
                                                                          value="#{aspPoController.selected.poType}" 
                                                                          required="true" 
+                                                                         converter="PoTypesControllerConverter"
                                                                          requiredMessage="PO Type is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="false" />
                                                             <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
                                                                            var="poTypeItem"
                                                                            itemValue="#{poTypeItem}"
@@ -154,9 +155,10 @@
                                                                          value="#{aspPoController.selected.domainName}" 
                                                                          required="true" 
                                                                          requiredMessage="PO Domain is required"
+                                                                         converter="DomainNamesControllerConverter"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="false" />
                                                             <f:selectItems value="#{domainNamesController.items}"
                                                                             var="domainItem"
                                                                            itemValue="#{domainItem}"
@@ -180,10 +182,11 @@
                                                        <h:selectOneMenu id="poasp" 
                                                                         value="#{aspPoController.selected.asp}" 
                                                                          required="true" 
+                                                                         converter="SubcontractorsControllerConverter"
                                                                          requiredMessage="ASP is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="false" />
                                                             <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
                                                                             var="ASPItem"
                                                                             itemValue="#{ASPItem}"
@@ -238,7 +241,7 @@
                                                         </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <label for="povaluetax">PO Value(#{aspPoController.selected.taxes}%)</label>
+                                                        <label for="povaluetax">PO Value(#{aspPoController.selected.taxes*100}%)</label>
                                                         <h:inputText id="povaluetax" 
                                                                      value="#{aspPoController.selected.poValueTaxes}"
                                                                      required="true"

@@ -60,7 +60,7 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Vendor PO" smallText="Create Vendor PO"/>
+                            <POMSII:PageHeadings largeText="Customer PO" smallText="Create Customer PO"/>
                             <div class="container-fluid">
                                 <h:form id="createASPPoForm">
                                 <p:growl id="growl" sticky="true"/>
@@ -105,7 +105,7 @@
                                     <div class="col-md-9">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
-                                                        <h2>Create Vendor PO</h2>
+                                                        <h2>Create Customer PO</h2>
                                                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                                                 </div>
                                              <div class="panel-body">
@@ -215,7 +215,7 @@
                                                         </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <label for="povaluetax">PO Value(#{vendorPoController.selected.taxes}%)</label>
+                                                        <label for="povaluetax">PO Value(#{vendorPoController.selected.taxes*100}%)</label>
                                                         <h:inputText id="povaluetax" 
                                                                      value="#{vendorPoController.selected.poValueTaxes}"
                                                                      required="true"

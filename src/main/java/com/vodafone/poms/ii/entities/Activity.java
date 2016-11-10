@@ -158,7 +158,6 @@ public class Activity implements Serializable {
     }
 
     public void setActivityDate(Date activityDate) {
-        System.out.println("Setting Activity Date: "+activityDate);
         this.activityDate = activityDate;
     }
 
@@ -311,6 +310,7 @@ public class Activity implements Serializable {
     }
 
     public void setPhase(Phases phase) {
+
         this.phase = phase;
     }
 

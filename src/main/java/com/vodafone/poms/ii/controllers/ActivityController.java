@@ -5,6 +5,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.ActivityFacade;
 import com.vodafone.poms.ii.entities.AspPo;
+import com.vodafone.poms.ii.entities.Sites;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -23,17 +24,23 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.primefaces.event.SelectEvent;
 
 @Named("activityController")
 @SessionScoped
 public class ActivityController implements Serializable {
     
     private AspPo selectedASPPo;
+    private String activityIds;
+    private Float totalPriceASP;
     
     @EJB
     private com.vodafone.poms.ii.beans.ActivityFacade ejbFacade;
     private List<Activity> items = null;
+    private List<Activity> itemsUncorrelated = null;
+    private List<Activity> itemsCorrelated = null;
     private Activity selected;
+    private List<Activity> selectedItems;
     
     @Inject
     private TaxesController taxesController;
@@ -54,6 +61,61 @@ public class ActivityController implements Serializable {
         selectedASPPo = null;
     }
 
+    public List<Activity> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public String getActivityIds() {
+        if(selectedItems!=null){
+            activityIds = "";
+            for (int i = 0; i < selectedItems.size(); i++) {
+                activityIds+= " "+selectedItems.get(i).getActivityId();
+            }
+        }
+        return activityIds;
+    }
+
+    public Float getTotalPriceASP() {
+        if(selectedItems!=null){
+            totalPriceASP = 0f;
+            for (int i = 0; i < selectedItems.size(); i++) {
+                totalPriceASP += selectedItems.get(i).getTotalPriceAsp();
+            }
+        }
+        return totalPriceASP;
+    }
+    
+    
+
+    public void setActivityIds(String activityIds) {
+        this.activityIds = activityIds;
+    }
+
+    
+    public void setSelectedItems(List<Activity> selectedItems) {
+        this.selectedItems = selectedItems;
+        selectedASPPo = null;
+        if(selectedItems.size()==1){
+            selected = selectedItems.get(0);
+        }
+        else{
+            // Check ASP,Type,
+            String domain = selectedItems.get(0).getActivityType().getDomainName();
+            String asp = selectedItems.get(0).getAsp().getSubcontractorName();
+            for (int i = 1; i < selectedItems.size(); i++) {
+                if(!selectedItems.get(i).getActivityType().getDomainName().equals(domain)
+                        ||
+                    !selectedItems.get(i).getAsp().getSubcontractorName().equals(asp)){
+                    selectedItems.remove(selectedItems.get(i));
+                    JsfUtil.addErrorMessage("Selected Activity doesn't have a matching ASP/Type");
+                }
+            }
+            selected = null;
+        }
+    }
+    
+    
+
     public AspPo getSelectedASPPo() {
         return selectedASPPo;
     }
@@ -62,7 +124,11 @@ public class ActivityController implements Serializable {
         this.selectedASPPo = selectedASPPo;
     }
     
-    
+    public void onItemSelectSetSite(SelectEvent event){
+    if(selected!=null){
+        selected.setSite((Sites) event.getObject());
+    }
+}
 
     protected void setEmbeddableKeys() {
     }
@@ -80,13 +146,17 @@ public class ActivityController implements Serializable {
         selected.setCreator(usersController.getSelected());
         selected.setSysDate(new Date());
         initializeEmbeddableKey();
+        System.out.println("Prepare Create for Activity");
         return selected;
     }
 
     public void create() {
+        System.out.println("Creating Activity");
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ActivityCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsCorrelated = null;
+            itemsUncorrelated = null;
         }
         prepareCreate();
     }
@@ -99,7 +169,10 @@ public class ActivityController implements Serializable {
         persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ActivityDeleted"));
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
+            selectedItems = null;
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsCorrelated = null;
+            itemsUncorrelated = null;
         }
     }
 
@@ -109,6 +182,22 @@ public class ActivityController implements Serializable {
         }
         return items;
     }
+
+    public List<Activity> getItemsCorrelated() {
+        if(itemsCorrelated == null){
+            itemsCorrelated = getFacade().findCorrelatedItems();
+        }
+        return itemsCorrelated;
+    }
+
+    public List<Activity> getItemsUncorrelated() {
+        if(itemsUncorrelated == null){
+            itemsUncorrelated = getFacade().findUncorrelatedItems();
+        }
+        return itemsUncorrelated;
+    }
+    
+    
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -192,18 +281,28 @@ public class ActivityController implements Serializable {
     }
 
     public void correlate(){
-        if(selected!=null && selectedASPPo!=null){
-            selected.setAspPoCollection(new ArrayList<AspPo>(){{add(selectedASPPo);}});
-            update();
-            selectedASPPo.setActivityCollection(new ArrayList<Activity>(){{add(selected);}});
-            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().add(BigInteger.ONE));
+        if(selectedItems!=null && selectedASPPo!=null){
+            Float totalPrice = 0f;
+            for (int i = 0; i < selectedItems.size(); i++) {
+            selectedItems.get(i).setAspPoCollection(new ArrayList<AspPo>(){{add(selectedASPPo);}});
+            totalPrice += selectedItems.get(0).getTotalPriceAsp();
+            selected = selectedItems.get(i);
+            update(); 
+            selected = null;
+            }
+            selectedASPPo.setActivityCollection(new ArrayList<Activity>(){{addAll(selectedItems);}});
+            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone()+
+                (totalPrice/selectedASPPo.getServiceValue().floatValue())
+            );
             selectedASPPo.setRemainingInPo(
                     selectedASPPo.getRemainingInPo().subtract(
-                            BigInteger.valueOf(selected.getTotalPriceAsp().intValue())));
+                            BigInteger.valueOf(totalPrice.intValue())));
             aspPOController.setSelected(selectedASPPo);
             aspPOController.update();
             aspPOController.setSelected(null);
-            JsfUtil.addSuccessMessage("Activity "+selected.getActivityId()+" is now correlated to ASP PO "+selectedASPPo.getPoNumber());
+            itemsUncorrelated = null;
+            selectedItems = null;
+            JsfUtil.addSuccessMessage("Activity "+activityIds+" is now correlated to ASP PO "+selectedASPPo.getPoNumber());
         }
     }
     
@@ -212,7 +311,7 @@ public class ActivityController implements Serializable {
             selected.setAspPoCollection(null);
             update();
             selectedASPPo.getActivityCollection().remove(selected);
-            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().subtract(BigInteger.ONE));
+//            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().subtract(BigInteger.ONE));
             selectedASPPo.setRemainingInPo(
                     selectedASPPo.getRemainingInPo().add(
                             BigInteger.valueOf(selected.getTotalPriceAsp().intValue())));
