@@ -145,6 +145,14 @@ public class VendorPoController implements Serializable {
         return getFacade().findAll();
     }
 
+    public List<VendorPo> getExportItems(Date fromDate, Date toDate) {
+        return getFacade().findExportItems(fromDate,toDate);
+    }
+
+    public List<VendorPo> getDashboardRemainingNotInvoiced(Date start, Date end) {
+        return getFacade().findRemainingNotYetinvoiced(start,end);
+    }
+
     @FacesConverter(forClass = VendorPo.class)
     public static class VendorPoControllerConverter implements Converter {
 
@@ -204,8 +212,8 @@ public class VendorPoController implements Serializable {
     
     public List<VendorPo> findMatchingPOForASP(){
         List<VendorPo> suggestedPOs = new ArrayList<>();
-        if(aspPoController.getSelected()!=null){
-            suggestedPOs = getFacade().findPOforASP(aspPoController.getSelected());
+        if(aspPoController.getSelectedItems()!=null){
+            suggestedPOs = getFacade().findPOforASP(aspPoController.getSelectedItems());
         }
         return suggestedPOs;
     }

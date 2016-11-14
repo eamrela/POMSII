@@ -6,6 +6,8 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.Activity;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -42,6 +44,11 @@ public class ActivityFacade extends AbstractFacade<Activity> {
                                     "from activity " +
                                     "where activity_id not in (select activity_id from asp_po_j_activity) "
                 ,Activity.class).getResultList();
+    }
+
+    public List<Activity> findExportItems(Date fromDate, Date toDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery("select * from activity where activity_date between '"+sdf.format(fromDate)+"' and '"+sdf.format(toDate)+"'", Activity.class).getResultList();
     }
 
    

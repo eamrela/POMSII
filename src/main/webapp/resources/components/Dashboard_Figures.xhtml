@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="info-tile info-tile-alt tile-indigo">
+                    <div class="info">
+                        <div class="tile-heading"><span>NS</span></div>
+                        <div class="tile-body"><span>#{dashboardManager.NS}</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="info-tile info-tile-alt tile-danger">
+                    <div class="info">
+                        <div class="tile-heading"><span>COS</span></div>
+                        <div class="tile-body "><span>#{dashboardManager.COS}</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="info-tile info-tile-alt tile-primary">
+                    <div class="info">
+                        <div class="tile-heading"><span>UM</span></div>
+                        <div class="tile-body "><span>#{dashboardManager.UM}</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="info-tile info-tile-alt tile-success clearfix">
+                    <div class="info">
+                        <div class="tile-heading"><span>UM%</span></div>
+                        <div class="tile-body "><span>#{dashboardManager.UMPercent}%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </cc:implementation>
+</html>

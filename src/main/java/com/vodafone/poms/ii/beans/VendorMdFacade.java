@@ -6,6 +6,8 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.VendorMd;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -36,6 +38,14 @@ public class VendorMdFacade extends AbstractFacade<VendorMd> {
 
     public VendorMd merge(VendorMd selected) {
         return em.merge(selected);
+    }
+
+    public List<VendorMd> findDashboardItems(Date start, Date end) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery("select * " +
+                                    "from vendor_md " +
+                                    "where md_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"' ", 
+                VendorMd.class).getResultList();
     }
     
 }

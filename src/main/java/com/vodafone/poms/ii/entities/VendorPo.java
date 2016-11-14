@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -297,7 +298,7 @@ public class VendorPo implements Serializable {
     }
 
     private void calculateMdDeserved() {
-        BigInteger deserved = serviceValue.multiply(BigInteger.valueOf(workDone.intValue()));
+        BigInteger deserved = BigDecimal.valueOf(serviceValue.floatValue()*workDone).toBigInteger();
         Object[] grns = getVendorMdCollection().toArray();
         for (Object grn : grns) {
             deserved = deserved.subtract(((VendorMd) grn).getMdDeserved());
@@ -305,5 +306,7 @@ public class VendorPo implements Serializable {
         setMdDeserved(deserved);
         setRemainingInPo(getRemainingInPo().subtract(getMdDeserved()));
     }
+
+    
     
 }

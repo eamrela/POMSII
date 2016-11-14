@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -28,8 +30,8 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-
-
+        
+        
     </h:head>
     <h:body class="animated-content infobar-overlay">
         <POMSII:Header/>
@@ -51,11 +53,118 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Dashboard" smallText="Executive Summary"/>
+                            <POMSII:PageHeadings largeText="Dashboard" smallText="From: #{dashboardManager.start} , To: #{dashboardManager.end}"/>
                             <div class="container-fluid">
+                                <h:form id="dashboardForm">
                                 <!--Page start content here-->
-                                
+                                <POMSII:Dashboard_Figures/>
+                                <POMSII:Dashboard_Figures_Details/>
+                                <POMSII:Dashboard_Committed_Remaining/>
+                                <POMSII:Dashboard_ASPAnalysis/>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Uncorrelated Activities</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                       <p:dataTable var="ucActivity" 
+                                                                     value="#{activityController.itemsUncorrelated}">
+                                                            <p:column headerText="Id">
+                                                                <h:outputText value="#{ucActivity.activityId}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Type">
+                                                                <h:outputText value="#{ucActivity.activityType.domainName}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="ASP">
+                                                                <h:outputText value="#{ucActivity.asp.subcontractorName}" />
+                                                            </p:column>
+                                                            <p:column headerText="Details">
+                                                                <h:outputText value="#{ucActivity.activityDetails}" />
+                                                            </p:column>
+                                                            <p:column headerText="PriceASP">
+                                                                <h:outputText value="#{ucActivity.totalPriceAsp}" />
+                                                            </p:column>
+                                                        </p:dataTable> 
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Uncorrelated ASP POs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <p:dataTable var="ucAspPo" 
+                                                                     value="#{aspPoController.itemsUncorrelated}">
+                                                            <p:column headerText="Id">
+                                                                <h:outputText value="#{ucAspPo.poNumber}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Domain">
+                                                                <h:outputText value="#{ucAspPo.domainName.domainName}" />
+                                                            </p:column>
+                                                            <p:column headerText="Type">
+                                                                <h:outputText value="#{ucAspPo.poType.typeName}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="ASP">
+                                                                <h:outputText value="#{ucAspPo.asp.subcontractorName}" />
+                                                            </p:column>
+                                                            <p:column headerText="Details">
+                                                                <h:outputText value="#{ucAspPo.poDescription}" />
+                                                            </p:column>
+                                                            <p:column headerText="PoValue">
+                                                                <h:outputText value="#{ucAspPo.poValue}" />
+                                                            </p:column>
+                                                            <p:column headerText="Margin">
+                                                                <h:outputText value="#{ucAspPo.poMargin}" >
+                                                                    <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                                </h:outputText>%
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:commandButton title="Click for settings"
+                                                 type="button" 
+                                                 icon="ui-icon-pencil"
+                                                 class="btn btn-primary btn-fab demo-switcher-fab"
+                                                 onclick="PF('dlg3').show();" >
+                                </p:commandButton>
+                                <p:dialog header="Modify Dashboard Dates" widgetVar="dlg3" modal="true">
+                                    <p:panelGrid columns="2"> 
+                                        <h:outputText value="From" />
+                                        <p:calendar id="startDate" 
+                                                            value="#{dashboardManager.start}"
+                                                            styleClass="form-control"/>
+
+                                        <h:outputText value="To" />
+                                        <p:calendar id="toDate" 
+                                                    value="#{dashboardManager.end}"
+                                                    styleClass="form-control"/>
+
+                                        <h:outputText value="Refresh" />
+                                         <p:commandButton 
+                                                      value="Refresh"
+                                                      actionListener="#{dashboardManager.refresh}"
+                                                      update=""
+                                                      ajax="false"
+                                                      >
+                                        </p:commandButton >
+                                    </p:panelGrid>
+                                </p:dialog>
                                 <!--page content end here--> 
+                                </h:form>
                             </div>
                         </div>
                     </div>
@@ -79,7 +188,7 @@
         <script src="#{resource['assets/js/application.js']}"></script>
         <script src="#{resource['assets/plugins/form-daterangepicker/moment.min.js']}"></script>
         <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
-
+        
     </h:body>
 
 </html>

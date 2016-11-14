@@ -131,9 +131,10 @@
                                                                          value="#{vendorPoController.selected.poType}" 
                                                                          required="true" 
                                                                          requiredMessage="PO Type is required"
+                                                                         converter="PoTypesControllerConverter"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="false" />
                                                             <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
                                                                            var="poTypeItem"
                                                                            itemValue="#{poTypeItem}"
@@ -146,10 +147,11 @@
                                                         <h:selectOneMenu id="podomain" 
                                                                          value="#{vendorPoController.selected.domainName}" 
                                                                          required="true" 
+                                                                         converter="DomainNamesControllerConverter"
                                                                          requiredMessage="PO Domain is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
-                                                                          itemValue="" noSelectionOption="false" />
+                                                                          itemValue="#{null}" noSelectionOption="false" />
                                                             <f:selectItems value="#{domainNamesController.items}"
                                                                             var="domainItem"
                                                                            itemValue="#{domainItem}"

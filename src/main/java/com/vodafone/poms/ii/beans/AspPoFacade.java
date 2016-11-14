@@ -7,6 +7,8 @@ package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.entities.AspPo;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -44,6 +46,25 @@ public class AspPoFacade extends AbstractFacade<AspPo> {
                                     "and remaining_in_po >= "+totalPriceASP,AspPo.class).getResultList();
         }
         return null;
+    }
+
+    public List<AspPo> findExportItems(Date fromDate, Date toDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery("select * from asp_po where po_date between '"+sdf.format(fromDate)+"' and '"+sdf.format(toDate)+"' ", AspPo.class).getResultList();
+    }
+
+    public List<AspPo> findCommittedCostItems(Date start, Date end) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery("select *  " +
+                                    "from asp_po " +
+                                    "where grn_deserved > 0 " +
+                                    "and po_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"' ", AspPo.class).getResultList();
+    }
+
+    public List<AspPo> findUncorrelatedItems() {
+        return em.createNativeQuery("select *  " +
+                                    "from asp_po " +
+                                    "where po_number not in (select asp_po_id from vendor_po_j_asp_po) ", AspPo.class).getResultList();
     }
     
 }

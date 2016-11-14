@@ -239,6 +239,10 @@ public class ActivityController implements Serializable {
         return getFacade().findAll();
     }
 
+    public List<Activity> getExportItems(Date fromDate, Date toDate) {
+        return getFacade().findExportItems(fromDate,toDate);
+    }
+
     @FacesConverter(forClass = Activity.class)
     public static class ActivityControllerConverter implements Converter {
 

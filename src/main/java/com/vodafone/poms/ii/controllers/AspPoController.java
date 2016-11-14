@@ -7,6 +7,7 @@ import com.vodafone.poms.ii.beans.AspPoFacade;
 import com.vodafone.poms.ii.entities.VendorPo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +31,14 @@ public class AspPoController implements Serializable {
 
     
     private VendorPo selectedVendorPo;
+    private String poIds;
+    private BigInteger totalPOASPPrice;
+    private boolean disabled = false;
     @EJB
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
     private List<AspPo> items = null;
+    private List<AspPo> itemsUncorrelated = null;
+    private List<AspPo> selectedItems = null;
     private AspPo selected;
     
     @Inject
@@ -48,6 +54,25 @@ public class AspPoController implements Serializable {
     @Inject
     private VendorPoController vendorPoController;
 
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isDisabled() {
+        if(selectedItems!=null){
+            for (int i = 0; i < selectedItems.size(); i++) {
+                if(selectedItems.get(i).getVendorPoCollection().size()>0)
+                {
+                    disabled=true;
+                    break;
+                }
+            }
+        }
+        return disabled;
+    }
+
+    
+    
     public AspPoController() {
     }
 
@@ -86,6 +111,8 @@ public class AspPoController implements Serializable {
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspPoCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsUncorrelated = null;
+            selectedItems = null;
         }
         prepareCreate();
     }
@@ -99,6 +126,8 @@ public class AspPoController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsUncorrelated = null;
+            selectedItems = null;
         }
     }
 
@@ -108,6 +137,73 @@ public class AspPoController implements Serializable {
         }
         return items;
     }
+
+    public List<AspPo> getItemsUncorrelated() {
+        if(itemsUncorrelated==null){
+            return getFacade().findUncorrelatedItems();
+        }
+        return itemsUncorrelated;
+    }
+
+    
+    public List<AspPo> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void setSelectedItems(List<AspPo> selectedItems) {
+        this.selectedItems = selectedItems;
+        selectedVendorPo = null;
+        if(selectedItems.size()==1){
+            selected = selectedItems.get(0);
+        }
+        else{
+            // Check ASP,Type,
+            String poType = selectedItems.get(0).getPoType().getTypeName();
+            String domainName = selectedItems.get(0).getDomainName().getDomainName();
+            for (int i = 1; i < selectedItems.size(); i++) {
+                if(!selectedItems.get(i).getPoType().getTypeName().equals(poType)
+                        ||
+                    !selectedItems.get(i).getDomainName().getDomainName().equals(domainName)){
+                    selectedItems.remove(selectedItems.get(i));
+                    JsfUtil.addErrorMessage("Selected POs doesn't have a matching Type/Domain");
+                }
+            }
+            selected = null;
+        }
+    }
+
+    public void setPoIds(String poIds) {
+        this.poIds = poIds;
+    }
+
+    public void setTotalPOASPPrice(BigInteger totalPOASPPrice) {
+        this.totalPOASPPrice = totalPOASPPrice;
+    }
+
+    public String getPoIds() {
+         if(selectedItems!=null){
+            poIds = "";
+            for (int i = 0; i < selectedItems.size(); i++) {
+                poIds+= " "+selectedItems.get(i).getPoNumber();
+            }
+        }
+        return poIds;
+    }
+
+    public BigInteger getTotalPOASPPrice() {
+        if(selectedItems!=null){
+            totalPOASPPrice = BigInteger.ZERO;
+            for (int i = 0; i < selectedItems.size(); i++) {
+                totalPOASPPrice = 
+                        totalPOASPPrice.add(
+                                BigDecimal.valueOf(
+                                        selectedItems.get(i).getPoValue().doubleValue()*(1+(selectedItems.get(i).getPoMargin()/100.0))
+                                ).toBigInteger());
+            }
+        }
+        return totalPOASPPrice;
+    }
+
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -148,6 +244,14 @@ public class AspPoController implements Serializable {
 
     public List<AspPo> getItemsAvailableSelectOne() {
         return getFacade().findAll();
+    }
+
+    public List<AspPo> getExportItems(Date fromDate, Date toDate) {
+        return getFacade().findExportItems(fromDate,toDate);
+    }
+
+    public List<AspPo> getDashboardCommittedCost(Date start, Date end) {
+        return getFacade().findCommittedCostItems(start,end);
     }
 
     @FacesConverter(forClass = AspPo.class)
@@ -224,20 +328,34 @@ public class AspPoController implements Serializable {
     }
     
     public void correlate(){
-        if(selectedVendorPo!=null && selected!=null){
-           selected.setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
-            update();
-            selectedVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{add(selected);}});
-//            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone().add(BigInteger.valueOf(selected.getFactor().intValue())));
-//            selectedVendorPo.setRemainingInPo(
-//            selectedVendorPo.getRemainingInPo().subtract(
-//                            BigInteger.valueOf((((Float)(selected.getPoValue().intValue()
-//                                                +selected.getPoValue().intValue()*(Float.valueOf(String.valueOf((selected.getPoMargin()/100))))))
-//                                                .intValue()))));
+        if(selectedVendorPo!=null && selectedItems!=null){
+           disabled=true;
+           BigInteger totalPrice = BigInteger.ZERO;
+            for (int i = 0; i < selectedItems.size(); i++) {
+            selectedItems.get(i).setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
+            totalPrice = 
+                        totalPrice.add(
+                                BigDecimal.valueOf(
+                                        selectedItems.get(i).getPoValue().doubleValue()*(1+(selectedItems.get(i).getPoMargin()/100.0))
+                                ).toBigInteger());
+            selected = selectedItems.get(i);
+            update(); 
+            selected = null;
+            }
+            selectedVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{addAll(selectedItems);}});
+            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone()+
+                (totalPrice.floatValue()/selectedVendorPo.getServiceValue().floatValue())
+            );
+            selectedVendorPo.setRemainingInPo(
+                    selectedVendorPo.getRemainingInPo().subtract(
+                            BigInteger.valueOf(totalPrice.intValue())));
             vendorPoController.setSelected(selectedVendorPo);
             vendorPoController.update();
             vendorPoController.setSelected(null);
-            JsfUtil.addSuccessMessage("ASP PO "+selected.getPoNumber()+" is now correlated to Vendor PO "+selectedVendorPo.getPoNumber());
+            items = null;
+            selectedItems = null;
+            JsfUtil.addSuccessMessage("ASP PO "+poIds+" is now correlated to Customer PO "+selectedVendorPo.getPoNumber());
+            selectedVendorPo=null;
         }
     }
     

@@ -6,6 +6,8 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.AspGrn;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -36,6 +38,14 @@ public class AspGrnFacade extends AbstractFacade<AspGrn> {
 
     public List<AspGrn> findByGRNNumber(String editGrnNumber) {
         return em.createNativeQuery("select * from asp_grn where grn_number='"+editGrnNumber+"'",AspGrn.class).getResultList();
+    }
+
+    public List<AspGrn> findDashboardItems(Date start, Date end) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery(" select *  " +
+                                    " from asp_grn " +
+                                    " where grn_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"' ", 
+                AspGrn.class).getResultList();
     }
     
 }

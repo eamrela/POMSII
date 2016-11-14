@@ -158,6 +158,12 @@ public class VendorMdController implements Serializable {
         return getFacade().findAll();
     }
 
+    public List<VendorMd> getDashboardItems(Date start, Date end) {
+        return getFacade().findDashboardItems(start,end);
+    }
+
+    
+
     @FacesConverter(forClass = VendorMd.class)
     public static class VendorMdControllerConverter implements Converter {
 

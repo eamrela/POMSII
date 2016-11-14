@@ -66,7 +66,7 @@
                                 <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-9">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
                                                         <h2>All ASP POs</h2>
@@ -77,16 +77,23 @@
                                                         <p:dataTable id="datalistASPPO" 
                                                                      value="#{aspPoController.items}" 
                                                                      var="item"
-                                                                    selectionMode="single" selection="#{aspPoController.selected}"
+                                                                     selectionMode="multiple" selection="#{aspPoController.selectedItems}"
                                                                     paginator="true"
                                                                     rowKey="#{item.poNumber}"
                                                                     rows="10"
                                                                     rowsPerPageTemplate="5,10,15,20,25"
                                                                     >
 
-                                                           <p:ajax event="rowSelect"   update="editButton, correlateButton,
+                                                           <p:ajax event="rowSelect"   update="editButton, :ASPPOListForm:selectedCorrelation,
                                                                                                :ASPPOListForm:selectedASPPOActivities ,
-                                                                                               :ASPPOListForm:selectedASPPOGRN"/>
+                                                                                               :ASPPOListForm:selectedASPPOGRN,
+                                                                                               :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO"/>
+                                                           <p:ajax event="rowUnselect"   update="editButton, :ASPPOListForm:selectedCorrelation,
+                                                                                               :ASPPOListForm:selectedASPPOActivities ,
+                                                                                               :ASPPOListForm:selectedASPPOGRN,
+                                                                                               :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO"/>
 
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poNumber}" filterMatchMode="contains" filterStyle="width: 70%;">
@@ -188,13 +195,7 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="CustomerPO"/>
                                                                </f:facet>
-                                                               <h:outputText value="Correlated" rendered="#{item.vendorPoCollection.size()>0}"/>
-                                                               <p:commandButton id="correlateButton"  
-                                                                                actionListener="#{aspPoController.setSelected(item)}"
-                                                                                icon="ui-icon-pencil"
-                                                                                update=":AspPoCorrelateForm,:ASPPOListForm:datalistASPPO" 
-                                                                                oncomplete="PF('AspPoCorrelateDialog').show()"
-                                                                                rendered="#{item.vendorPoCollection.size()==0}"/>
+                                                               <h:outputText value="#{item.vendorPoCollection.size()>0?'Correlated':'Not Correlated'}"/>
                                                            </p:column>
                                                            <f:facet name="footer">
                                                                <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" 
@@ -205,7 +206,63 @@
                                                 </div>
                                         </div>
                                     </div>
-                                    
+                                    <div class="col-md-3">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Correlate Customer POs</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                     <p:outputPanel id="selectedCorrelation">
+                                                         <h:panelGroup rendered="#{aspPoController.selectedItems!=null}">
+                                                             <label >Total PO price with Margin: (#{aspPoController.totalPOASPPrice})</label>
+                                                            <br></br>
+                                                            <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
+                                                            <p:dataTable 
+                                                                id="vendorDataTable"
+                                                                var="vendorPO" 
+                                                                value="#{vendorPoController.findMatchingPOForASP()}"
+                                                                emptyMessage="No POs found matching this ASP PO"
+                                                                selection="#{aspPoController.selectedVendorPo}"
+                                                                selectionMode="single"
+                                                                rowKey="#{vendorPO.poNumber}">
+                                                                
+                                                                <p:ajax event="rowSelect" update=":ASPPOListForm:selectedCorrelationPO,
+                                                                            :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO"/>
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{vendorPO.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vendorPO.remainingInPo}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{vendorPO.poValue}" />
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <h:panelGroup id="selectedCorrelationPO">
+                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPo!=null}">
+                                                           <p:commandButton 
+                                                               class="btn-raised btn-primary btn"
+                                                               actionListener="#{aspPoController.correlate}" 
+                                                               value="Correlate" 
+                                                               ajax="false"
+                                                               disabled="#{aspPoController.disabled}"
+                                                               update=" :ASPPOListForm:datalistASPPO,
+                                                                        :ASPPOListForm:growl,
+                                                                        :ASPPOListForm:selectedASPPOGRN,
+                                                                        :ASPPOListForm:selectedCorrelationPO,
+                                                                        :ASPPOListForm:vendorDataTable" />
+                                                            </h:panelGroup>
+                                                            </h:panelGroup>
+                                                         </h:panelGroup>
+                                                     </p:outputPanel>
+                                                </div>
+                                    </div>
+                                    </div>
                                 </div>
                                         
                                 <div class="row">
@@ -456,48 +513,7 @@
                                 </h:panelGroup>
                             </h:form>
                         </p:dialog>
-                            <p:dialog id="AspPoCorrelateDlg" widgetVar="AspPoCorrelateDialog" modal="true" resizable="false" 
-                                      appendTo="@(body)" header="Correlate ASP to Customer" width="30%">
-                                    <h:form id="AspPoCorrelateForm">
-                                        <h:panelGroup id="display">
-                                            <p:panel rendered="#{aspPoController.selected != null}">
-                                                            <p:dataTable 
-                                                                id="vendorDataTable"
-                                                                var="vendorPO" 
-                                                                value="#{vendorPoController.findMatchingPOForASP()}"
-                                                                emptyMessage="No POs found matching this ASP PO"
-                                                                selection="#{aspPoController.selectedVendorPo}"
-                                                                selectionMode="single"
-                                                                rowKey="#{vendorPO.poNumber}">
-                                                                
-                                                                <p:ajax event="rowSelect" update=":AspPoCorrelateForm:selectedCorrelationPO"/>
-                                                                
-                                                                <p:column headerText="PO#">
-                                                                    <h:outputText value="#{vendorPO.poNumber}" />
-                                                                </p:column>
-
-                                                                <p:column headerText="Remaining">
-                                                                    <h:outputText value="#{vendorPO.remainingInPo}" />
-                                                                </p:column>
-
-                                                                <p:column headerText="PO Value">
-                                                                    <h:outputText value="#{vendorPO.poValue}" />
-                                                                </p:column>
-                                                            </p:dataTable>
-                                                            <h:panelGroup id="selectedCorrelationPO">
-                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPo!=null}">
-                                                           <p:commandButton 
-                                                               actionListener="#{aspPoController.correlate}" 
-                                                                value="Correlate" 
-                                                                update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
-                                                                        :ASPPOListForm:selectedASPPOGRN" oncomplete="AspPoCorrelateDialog.hide()"/>
-                                                            </h:panelGroup>
-                                                            </h:panelGroup>
-                                            </p:panel>
-                                            <p:commandButton value="#{bundle.Cancel}" onclick="AspPoCorrelateDialog.hide()"/>
-                                        </h:panelGroup>
-                                    </h:form>
-                            </p:dialog>
+                            
                             </div>
                         </div>
                     </div>

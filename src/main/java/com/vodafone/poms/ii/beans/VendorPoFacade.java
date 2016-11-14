@@ -7,7 +7,10 @@ package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,15 +35,43 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
         super(VendorPo.class);
     }
 
-    public List<VendorPo> findPOforASP(AspPo selected) {
-        return em.createNativeQuery("select * from vendor_po " +
-                                    "where po_type = '"+selected.getPoType().getTypeName()+"' " +
-                                    "and domain_name = '"+selected.getDomainName().getDomainName()+"' " +
-                                    "and remaining_in_po >= "+ 
-                                        BigInteger.valueOf((((Float)(selected.getPoValue().intValue()
-                                                +selected.getPoValue().intValue()*(Float.valueOf(String.valueOf((selected.getPoMargin()/100))))))
-                                                .intValue()))+
-                                    "and (factor-work_done) >=  "+selected.getFactor(),VendorPo.class).getResultList();
+    public List<VendorPo> findPOforASP(List<AspPo> selected) {
+        if(selected!=null){
+            if(!selected.isEmpty())
+            {
+                String poType = selected.get(0).getPoType().getTypeName();
+                String domain = selected.get(0).getDomainName().getDomainName();
+                BigInteger totalPOASPPrice = BigInteger.ZERO;
+                    for (int i = 0; i < selected.size(); i++) {
+                        totalPOASPPrice = 
+                                totalPOASPPrice.add(
+                                        BigDecimal.valueOf(
+                                                selected.get(i).getPoValue().doubleValue()*(1+(selected.get(i).getPoMargin()/100.0))
+                                        ).toBigInteger());
+                    }
+            return em.createNativeQuery("select * from vendor_po " +
+                                    "where po_type = '"+poType+"' " +
+                                    "and domain_name = '"+domain+"' " +
+                                    "and remaining_in_po >= "+ totalPOASPPrice,VendorPo.class).getResultList();
+            }
+        }
+        return null;
+        
+    }
+
+    public List<VendorPo> findExportItems(Date fromDate, Date toDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery("select * from vendor_po where po_date between '"+sdf.format(fromDate)+"' and '"+sdf.format(toDate)+"' ", 
+                VendorPo.class).getResultList();
+    }
+
+    public List<VendorPo> findRemainingNotYetinvoiced(Date start, Date end) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery(" select * " +
+                                    "from vendor_po " +
+                                    "where po_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"'  " +
+                                    "and md_deserved > 0 ", 
+                VendorPo.class).getResultList();
     }
     
 }

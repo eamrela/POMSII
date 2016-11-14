@@ -161,6 +161,10 @@ public class AspGrnController implements Serializable {
         return getFacade().findAll();
     }
 
+    public List<AspGrn> getDashboardItems(Date start, Date end) {
+        return getFacade().findDashboardItems(start,end);
+    }
+
     @FacesConverter(forClass = AspGrn.class)
     public static class AspGrnControllerConverter implements Converter {
 
