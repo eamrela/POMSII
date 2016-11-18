@@ -153,6 +153,10 @@ public class VendorPoController implements Serializable {
         return getFacade().findRemainingNotYetinvoiced(start,end);
     }
 
+    public List<VendorPo> getDashboardMDNotYetGenerated(Date start, Date end) {
+        return getFacade().findMdNotYetGenerated(start,end);
+    }
+
     @FacesConverter(forClass = VendorPo.class)
     public static class VendorPoControllerConverter implements Converter {
 
@@ -216,5 +220,10 @@ public class VendorPoController implements Serializable {
             suggestedPOs = getFacade().findPOforASP(aspPoController.getSelectedItems());
         }
         return suggestedPOs;
+    }
+    
+    public void clearSelected(){
+        selected=null;
+        items = null;
     }
 }

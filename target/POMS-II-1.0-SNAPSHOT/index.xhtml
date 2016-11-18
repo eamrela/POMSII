@@ -30,7 +30,18 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-        
+         <f:metadata>
+             <f:viewAction action="#{dashboardManager.clearSelected}"/>
+        </f:metadata>
+        <style>
+            .ui-growl{
+    top:100px;
+        }
+        .fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+        </style>
         
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -56,85 +67,17 @@
                             <POMSII:PageHeadings largeText="Dashboard" smallText="From: #{dashboardManager.start} , To: #{dashboardManager.end}"/>
                             <div class="container-fluid">
                                 <h:form id="dashboardForm">
+                                    <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
                                 <POMSII:Dashboard_Figures/>
                                 <POMSII:Dashboard_Figures_Details/>
                                 <POMSII:Dashboard_Committed_Remaining/>
                                 <POMSII:Dashboard_ASPAnalysis/>
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
-                                                <div class="panel-heading">
-                                                        <h2>Uncorrelated Activities</h2>
-                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                       <p:dataTable var="ucActivity" 
-                                                                     value="#{activityController.itemsUncorrelated}">
-                                                            <p:column headerText="Id">
-                                                                <h:outputText value="#{ucActivity.activityId}" />
-                                                            </p:column>
-
-                                                            <p:column headerText="Type">
-                                                                <h:outputText value="#{ucActivity.activityType.domainName}" />
-                                                            </p:column>
-
-                                                            <p:column headerText="ASP">
-                                                                <h:outputText value="#{ucActivity.asp.subcontractorName}" />
-                                                            </p:column>
-                                                            <p:column headerText="Details">
-                                                                <h:outputText value="#{ucActivity.activityDetails}" />
-                                                            </p:column>
-                                                            <p:column headerText="PriceASP">
-                                                                <h:outputText value="#{ucActivity.totalPriceAsp}" />
-                                                            </p:column>
-                                                        </p:dataTable> 
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
-                                                <div class="panel-heading">
-                                                        <h2>Uncorrelated ASP POs</h2>
-                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <p:dataTable var="ucAspPo" 
-                                                                     value="#{aspPoController.itemsUncorrelated}">
-                                                            <p:column headerText="Id">
-                                                                <h:outputText value="#{ucAspPo.poNumber}" />
-                                                            </p:column>
-
-                                                            <p:column headerText="Domain">
-                                                                <h:outputText value="#{ucAspPo.domainName.domainName}" />
-                                                            </p:column>
-                                                            <p:column headerText="Type">
-                                                                <h:outputText value="#{ucAspPo.poType.typeName}" />
-                                                            </p:column>
-
-                                                            <p:column headerText="ASP">
-                                                                <h:outputText value="#{ucAspPo.asp.subcontractorName}" />
-                                                            </p:column>
-                                                            <p:column headerText="Details">
-                                                                <h:outputText value="#{ucAspPo.poDescription}" />
-                                                            </p:column>
-                                                            <p:column headerText="PoValue">
-                                                                <h:outputText value="#{ucAspPo.poValue}" />
-                                                            </p:column>
-                                                            <p:column headerText="Margin">
-                                                                <h:outputText value="#{ucAspPo.poMargin}" >
-                                                                    <f:convertNumber groupingUsed="false" minFractionDigits="1" />
-                                                                </h:outputText>%
-                                                            </p:column>
-                                                        </p:dataTable>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <POMSII:Dashboard_DomainAnalysis/>
+                                <POMSII:MDNotYetGenerated/>
+                                <POMSII:Dashboard_Uncorrelated/>
+                                <POMSII:Dashboard_CustomerSummary/>
+                                
                                 <p:commandButton title="Click for settings"
                                                  type="button" 
                                                  icon="ui-icon-pencil"

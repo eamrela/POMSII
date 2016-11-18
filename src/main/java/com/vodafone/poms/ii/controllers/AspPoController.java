@@ -33,6 +33,7 @@ public class AspPoController implements Serializable {
     private VendorPo selectedVendorPo;
     private String poIds;
     private BigInteger totalPOASPPrice;
+    private BigInteger itemsUncorrelatedPoValue;
     private boolean disabled = false;
     @EJB
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
@@ -139,8 +140,10 @@ public class AspPoController implements Serializable {
     }
 
     public List<AspPo> getItemsUncorrelated() {
-        if(itemsUncorrelated==null){
-            return getFacade().findUncorrelatedItems();
+        itemsUncorrelated=getFacade().findUncorrelatedItems();
+        itemsUncorrelatedPoValue = BigInteger.ZERO;
+        for (AspPo itemsUncorrelated1 : itemsUncorrelated) {
+            itemsUncorrelatedPoValue = itemsUncorrelatedPoValue.add(itemsUncorrelated1.getPoValue());
         }
         return itemsUncorrelated;
     }
@@ -361,5 +364,23 @@ public class AspPoController implements Serializable {
     
     public void clearSelected(){
         selected=null;
+        items = null;
+        itemsUncorrelated = null;
+    }
+
+    public BigInteger getItemsUncorrelatedPoValue() {
+        return itemsUncorrelatedPoValue;
+    }
+
+    public void setItemsUncorrelatedPoValue(BigInteger itemsUncorrelatedPoValue) {
+        this.itemsUncorrelatedPoValue = itemsUncorrelatedPoValue;
+    }
+    
+    public void adjustMargin(){
+        if(selected!=null){
+            if(selected.getPoType().getTypeName().equals("Service")){
+                selected.setPoMargin(13.0);
+            }
+        }
     }
 }

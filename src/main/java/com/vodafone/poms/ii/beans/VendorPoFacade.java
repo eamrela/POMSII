@@ -73,5 +73,14 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
                                     "and md_deserved > 0 ", 
                 VendorPo.class).getResultList();
     }
+
+    public List<VendorPo> findMdNotYetGenerated(Date start, Date end) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return em.createNativeQuery(" select * " +
+                                    "from vendor_po " +
+                                    "where po_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"'  " +
+                                    "and md_deserved > 0 ", 
+                VendorPo.class).getResultList();
+    }
     
 }

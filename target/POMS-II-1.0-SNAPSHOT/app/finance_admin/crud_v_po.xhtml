@@ -30,9 +30,16 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
+        <f:metadata>
+            <f:viewAction action="#{vendorPoController.clearSelected}"/>
+        </f:metadata>
         <style>
             .ui-growl{
     top:100px;
+}
+.fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
 }
         </style>
 
@@ -79,9 +86,10 @@
                                                                     rowKey="#{item.poNumber}"
                                                                     rows="10"
                                                                     rowsPerPageTemplate="5,10,15,20,25"
+                                                                    styleClass="fixed-size"
                                                                     >
 
-                                                           <p:ajax event="rowSelect"   update="editButton,
+                                                           <p:ajax event="rowSelect"   update="editButton,:VendorPOListForm:growl,
                                                                                                :VendorPOListForm:selectedVendorPOASPPO ,
                                                                                                :VendorPOListForm:selectedVendorPOMD"/>
 
@@ -117,19 +125,25 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="ServiceValue"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.serviceValue}"/>
+                                                               <h:outputText value="#{item.serviceValue}">
+                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="POValue"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValue}"/>
+                                                               <h:outputText value="#{item.poValue}">
+                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="POValueTaxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValueTaxes}"/>
+                                                               <h:outputText value="#{item.poValueTaxes}">
+                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
@@ -141,7 +155,9 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.remainingInPo}"/>
+                                                               <h:outputText value="#{item.remainingInPo}">
+                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
@@ -192,7 +208,8 @@
                                                                         emptyMessage="This PO doesn't have any MD"
                                                                         selection="#{vendorMdController.selected}"
                                                                         selectionMode="single"
-                                                                        rowKey="#{vendorMD.id}">
+                                                                        rowKey="#{vendorMD.id}"
+                                                                        styleClass="fixed-size">
                                                                 
                                                                 <p:ajax event="rowSelect" update="editButton"/>
                                                                 
@@ -205,17 +222,23 @@
                                                                     </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Deserved" style="font-size: 9px;">
-                                                                    <h:outputText value="#{vendorMD.mdDeserved}" />
+                                                                    <h:outputText value="#{vendorMD.mdDeserved}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Factor" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdFactor}" />
                                                                 </p:column>
                                                                 <p:column headerText="MDValue" style="font-size: 9px;">
-                                                                    <h:outputText value="#{vendorMD.mdValue}" />
+                                                                    <h:outputText value="#{vendorMD.mdValue}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Remaining">
-                                                                    <h:outputText value="#{vendorMD.remainingInMd}" />
+                                                                    <h:outputText value="#{vendorMD.remainingInMd}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Invoiced" style="font-size: 9px;">
                                                                     <h:selectBooleanCheckbox value="#{vendorMD.invoiced}" />
@@ -229,7 +252,9 @@
                                                                      <label for="grndeserved">MD Needed</label>
                                                                      <h:outputText id="grndeserved"
                                                                                    value="#{vendorPoController.selected.mdDeserved}"
-                                                                                   styleClass="form-control"/>
+                                                                                   styleClass="form-control">
+                                                                          <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                  </div>
                                                                  <div class="col-xs-6">
                                                                      <h:panelGroup rendered="#{vendorPoController.selected.mdDeserved>0}">
@@ -270,7 +295,8 @@
                                                                         emptyMessage="This PO doesn't have any ASP PO"
                                                                         selection="#{aspPoController.selected}"
                                                                         selectionMode="single"
-                                                                        rowKey="#{aspPO.poNumber}">
+                                                                        rowKey="#{aspPO.poNumber}"
+                                                                        styleClass="fixed-size">
                                                                 
                                                                 <p:ajax event="rowSelect" update="viewButton"/>
                                                                 
@@ -283,14 +309,18 @@
                                                                     </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Value" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspPO.poValue}" />
+                                                                    <h:outputText value="#{aspPO.poValue}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Remaining" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspPO.remainingInPo}" />
+                                                                    <h:outputText value="#{aspPO.remainingInPo}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="ASP" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspPO.asp}" />
+                                                                    <h:outputText value="#{aspPO.asp.subcontractorName}" />
                                                                 </p:column>
                                                                 <p:column headerText="WorkDone" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.workDone}" />
@@ -346,15 +376,23 @@
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_factor}"/>
                                                     <h:outputText value="#{aspPoController.selected.factor}" title="#{bundle.ViewAspPoTitle_factor}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_serviceValue}"/>
-                                                    <h:outputText value="#{aspPoController.selected.serviceValue}" title="#{bundle.ViewAspPoTitle_serviceValue}"/>
+                                                    <h:outputText value="#{aspPoController.selected.serviceValue}" title="#{bundle.ViewAspPoTitle_serviceValue}">
+                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poValue}"/>
-                                                    <h:outputText value="#{aspPoController.selected.poValue}" title="#{bundle.ViewAspPoTitle_poValue}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poValue}" title="#{bundle.ViewAspPoTitle_poValue}">
+                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poValueTaxes}"/>
-                                                    <h:outputText value="#{aspPoController.selected.poValueTaxes}" title="#{bundle.ViewAspPoTitle_poValueTaxes}"/>
+                                                    <h:outputText value="#{aspPoController.selected.poValueTaxes}" title="#{bundle.ViewAspPoTitle_poValueTaxes}">
+                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_workDone}"/>
                                                     <h:outputText value="#{aspPoController.selected.workDone}" title="#{bundle.ViewAspPoTitle_workDone}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_remainingInPo}"/>
-                                                    <h:outputText value="#{aspPoController.selected.remainingInPo}" title="#{bundle.ViewAspPoTitle_remainingInPo}"/>
+                                                    <h:outputText value="#{aspPoController.selected.remainingInPo}" title="#{bundle.ViewAspPoTitle_remainingInPo}">
+                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_sysDate}"/>
                                                     <h:outputText value="#{aspPoController.selected.sysDate}" title="#{bundle.ViewAspPoTitle_sysDate}">
                                                         <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />

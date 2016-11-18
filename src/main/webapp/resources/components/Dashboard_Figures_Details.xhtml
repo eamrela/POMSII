@@ -23,17 +23,22 @@
                         <p:dataTable var="NSItems" 
                                      value="#{dashboardManager.vendorMdsNS}"
                                      emptyMessage="No MD for this period!"
-                                     sortBy="#{NSItems.mdNumber}">
+                                     sortBy="#{NSItems.mdNumber}"
+                                     styleClass="fixed-size">
                             <p:column headerText="MD#">
                                 <h:outputText value="#{NSItems.mdNumber}" />
                             </p:column>
 
                             <p:column headerText="Deserved">
-                                <h:outputText value="#{NSItems.mdDeserved}" />
+                                <h:outputText value="#{NSItems.mdDeserved}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="Value">
-                                <h:outputText value="#{NSItems.mdValue}" />
+                                <h:outputText value="#{NSItems.mdValue}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="PO#">
@@ -42,16 +47,11 @@
                             <p:column headerText="Description">
                                 <h:outputText value="#{NSItems.vendorPoId.poDescription}" />
                             </p:column>
-                            <p:summaryRow>
-                                <p:column colspan="3" style="text-align:right">
-                                    <h:outputText value="Total:" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{dashboardManager.NS}">
+                            <f:facet name="footer">
+                                 <h:outputText value="#{dashboardManager.NS}">
                                         <f:convertNumber type="currency" currencySymbol="EGP" />
-                                    </h:outputText>
-                                </p:column>
-                            </p:summaryRow>
+                                </h:outputText>
+                            </f:facet>
                         </p:dataTable>
                     </div>
                 </div>
@@ -66,17 +66,22 @@
                         <p:dataTable var="COSItems" 
                                      value="#{dashboardManager.aspGrnsCOS}"
                                      emptyMessage="No GRN for this period!"
-                                     sortBy="#{COSItems.grnNumber}">
+                                     sortBy="#{COSItems.grnNumber}"
+                                     styleClass="fixed-size">
                             <p:column headerText="GRN#">
                                 <h:outputText value="#{COSItems.grnNumber}" />
                             </p:column>
 
                             <p:column headerText="Deserved">
-                                <h:outputText value="#{COSItems.grnDeserved}" />
+                                <h:outputText value="#{COSItems.grnDeserved}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="Value">
-                                <h:outputText value="#{COSItems.grnValue}" />
+                                <h:outputText value="#{COSItems.grnValue}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="PO#">
@@ -85,16 +90,11 @@
                             <p:column headerText="Description">
                                 <h:outputText value="#{COSItems.aspPoId.poDescription}" />
                             </p:column>
-                            <p:summaryRow>
-                                <p:column colspan="3" style="text-align:right">
-                                    <h:outputText value="Total:" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{dashboardManager.COS}">
+                            <f:facet name="footer">
+                                 <h:outputText value="#{dashboardManager.COS}">
                                         <f:convertNumber type="currency" currencySymbol="EGP" />
-                                    </h:outputText>
-                                </p:column>
-                            </p:summaryRow>
+                                </h:outputText>
+                            </f:facet>
                         </p:dataTable>
                     </div>
                 </div>

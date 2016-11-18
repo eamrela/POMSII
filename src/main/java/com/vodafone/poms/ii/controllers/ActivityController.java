@@ -33,6 +33,7 @@ public class ActivityController implements Serializable {
     private AspPo selectedASPPo;
     private String activityIds;
     private Float totalPriceASP;
+    private Float itemsUncorrelatedActivityValue;
     
     @EJB
     private com.vodafone.poms.ii.beans.ActivityFacade ejbFacade;
@@ -191,10 +192,20 @@ public class ActivityController implements Serializable {
     }
 
     public List<Activity> getItemsUncorrelated() {
-        if(itemsUncorrelated == null){
-            itemsUncorrelated = getFacade().findUncorrelatedItems();
+        itemsUncorrelated = getFacade().findUncorrelatedItems();
+        itemsUncorrelatedActivityValue = 0f;
+        for (Activity itemsUncorrelated1 : itemsUncorrelated) {
+            itemsUncorrelatedActivityValue = itemsUncorrelatedActivityValue + itemsUncorrelated1.getTotalPriceAsp();
         }
         return itemsUncorrelated;
+    }
+
+    public Float getItemsUncorrelatedActivityValue() {
+        return itemsUncorrelatedActivityValue;
+    }
+
+    public void setItemsUncorrelatedActivityValue(Float itemsUncorrelatedActivityValue) {
+        this.itemsUncorrelatedActivityValue = itemsUncorrelatedActivityValue;
     }
     
     
@@ -324,5 +335,12 @@ public class ActivityController implements Serializable {
             aspPOController.setSelected(null);
             JsfUtil.addSuccessMessage("Activity "+selected.getActivityId()+" is now uncorrelated from ASP PO "+selectedASPPo.getPoNumber());
         }
+    }
+    
+    public void clearSelected(){
+        selected=null;
+        items = null;
+        itemsUncorrelated = null;
+        itemsUncorrelated = null;
     }
 }

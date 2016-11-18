@@ -37,6 +37,10 @@
             .ui-growl{
     top:100px;
 }
+.fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
         </style>
 
     </h:head>
@@ -82,6 +86,7 @@
                                                                     rowKey="#{item.poNumber}"
                                                                     rows="10"
                                                                     rowsPerPageTemplate="5,10,15,20,25"
+                                                                    styleClass="fixed-size"
                                                                     >
 
                                                            <p:ajax event="rowSelect"   update="editButton, :ASPPOListForm:selectedCorrelation,
@@ -127,19 +132,25 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="ServiceValue"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.serviceValue}"/>
+                                                               <h:outputText value="#{item.serviceValue}">
+                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="POValue"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValue}"/>
+                                                               <h:outputText value="#{item.poValue}">
+                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="POValueTaxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValueTaxes}"/>
+                                                               <h:outputText value="#{item.poValueTaxes}">
+                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
@@ -153,7 +164,9 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.remainingInPo}"/>
+                                                               <h:outputText value="#{item.remainingInPo}">
+                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poMargin}">
                                                                <f:facet name="header">
@@ -215,7 +228,12 @@
                                                 <div class="panel-body">
                                                      <p:outputPanel id="selectedCorrelation">
                                                          <h:panelGroup rendered="#{aspPoController.selectedItems!=null}">
-                                                             <label >Total PO price with Margin: (#{aspPoController.totalPOASPPrice})</label>
+                                                             <label >Total PO price with Margin: 
+                                                                 (
+                                                                 <h:outputText value="#{aspPoController.totalPOASPPrice}">
+                                                                     <f:convertNumber type="currency" currencySymbol="EGP"/>
+                                                                 </h:outputText>                       
+                                                                 )</label>
                                                             <br></br>
                                                             <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
                                                             <p:dataTable 
@@ -225,7 +243,8 @@
                                                                 emptyMessage="No POs found matching this ASP PO"
                                                                 selection="#{aspPoController.selectedVendorPo}"
                                                                 selectionMode="single"
-                                                                rowKey="#{vendorPO.poNumber}">
+                                                                rowKey="#{vendorPO.poNumber}"
+                                                                styleClass="fixed-size">
                                                                 
                                                                 <p:ajax event="rowSelect" update=":ASPPOListForm:selectedCorrelationPO,
                                                                             :ASPPOListForm:growl,
@@ -236,11 +255,15 @@
                                                                 </p:column>
 
                                                                 <p:column headerText="Remaining">
-                                                                    <h:outputText value="#{vendorPO.remainingInPo}" />
+                                                                    <h:outputText value="#{vendorPO.remainingInPo}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="PO Value">
-                                                                    <h:outputText value="#{vendorPO.poValue}" />
+                                                                    <h:outputText value="#{vendorPO.poValue}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                             </p:dataTable>
                                                             <h:panelGroup id="selectedCorrelationPO">
@@ -284,7 +307,8 @@
                                                                         emptyMessage="This PO doesn't have any GRN"
                                                                         selection="#{aspGrnController.selected}"
                                                                         selectionMode="single"
-                                                                        rowKey="#{aspGRN.id}">
+                                                                        rowKey="#{aspGRN.id}"
+                                                                        styleClass="fixed-size">
                                                                 
                                                                 <p:ajax event="rowSelect" update="editButton"/>
                                                                 
@@ -297,17 +321,23 @@
                                                                     </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Deserved" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspGRN.grnDeserved}" />
+                                                                    <h:outputText value="#{aspGRN.grnDeserved}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Factor" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.grnFactor}" />
                                                                 </p:column>
                                                                 <p:column headerText="GRNValue" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspGRN.grnValue}" />
+                                                                    <h:outputText value="#{aspGRN.grnValue}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Remaining" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspGRN.remainingInGrn}" />
+                                                                    <h:outputText value="#{aspGRN.remainingInGrn}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="editButton"  actionListener="#{aspGrnController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
@@ -318,7 +348,9 @@
                                                                      <label for="grndeserved">GRN Needed</label>
                                                                      <h:outputText id="grndeserved"
                                                                                    value="#{aspPoController.selected.grnDeserved}"
-                                                                                   styleClass="form-control"/>
+                                                                                   styleClass="form-control">
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                  </div>
                                                                  <div class="col-xs-6">
                                                                      <h:panelGroup rendered="#{aspPoController.selected.grnDeserved>0}">
@@ -359,7 +391,8 @@
                                                                         emptyMessage="This PO doesn't have any Activity"
                                                                         selection="#{activityController.selected}"
                                                                         selectionMode="single"
-                                                                        rowKey="#{aspActivity.activityId}">
+                                                                        rowKey="#{aspActivity.activityId}"
+                                                                        styleClass="fixed-size">
                                                                 
                                                                 <p:ajax event="rowSelect" update="viewButton"/>
                                                                 
@@ -372,14 +405,20 @@
                                                                     </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="PriceASP" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspActivity.totalPriceAsp}" />
+                                                                    <h:outputText value="#{aspActivity.totalPriceAsp}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="PriceCustomer" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspActivity.totalPriceVendor}" />
+                                                                    <h:outputText value="#{aspActivity.totalPriceVendor}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="UM" style="font-size: 9px;">
-                                                                    <h:outputText value="#{aspActivity.totalUm}" />
+                                                                    <h:outputText value="#{aspActivity.totalUm}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="UM%" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalUmPercent*100}" >
@@ -438,13 +477,21 @@
                                             <h:outputText value="#{bundle.ViewActivityLabel_qty}"/>
                                             <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
                                             <h:outputText value="TotalPriceCustomer"/>
-                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="TotalPriceCustomer"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="TotalPriceCustomer">
+                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                            </h:outputText>
                                             <h:outputText value="TotalPriceCustomerWithTaxes"/>
-                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="TotalpriceCustomerWithTaxes"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="TotalpriceCustomerWithTaxes">
+                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                            </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
-                                            <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}">
+                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                            </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
-                                            <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}"/>
+                                            <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}">
+                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                            </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
                                             <h:outputText value="#{activityController.selected.totalUmPercent*100}" 
                                                           title="#{bundle.ViewActivityTitle_totalUmPercent}">

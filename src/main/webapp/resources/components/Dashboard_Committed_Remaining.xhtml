@@ -23,31 +23,31 @@
                         <p:dataTable var="NSRItems" 
                                      value="#{dashboardManager.vendorRemainingNotYetinvoiced}"
                                      emptyMessage="No remaining invoices for this period!"
-                                     sortBy="#{NSRItems.poNumber}">
+                                     sortBy="#{NSRItems.vendorPoId.poNumber}"
+                                     styleClass="fixed-size">
                             <p:column headerText="PO#">
-                                <h:outputText value="#{NSRItems.poNumber}" />
+                                <h:outputText value="#{NSRItems.vendorPoId.poNumber}" />
                             </p:column>
 
                             <p:column headerText="PO Value">
-                                <h:outputText value="#{NSRItems.poValue}" />
+                                <h:outputText value="#{NSRItems.vendorPoId.poValue}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="MD Deserved">
-                                <h:outputText value="#{NSRItems.mdDeserved}" />
+                                <h:outputText value="#{NSRItems.mdDeserved}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
                             <p:column headerText="Description">
-                                <h:outputText value="#{NSRItems.poDescription}" />
+                                <h:outputText value="#{NSRItems.vendorPoId.poDescription}" />
                             </p:column>
-                            <p:summaryRow>
-                                <p:column colspan="3" style="text-align:right">
-                                    <h:outputText value="Total:" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{dashboardManager.remainingNotYetInvoiced}">
+                            <f:facet name="footer">
+                                <h:outputText value="#{dashboardManager.remainingNotYetInvoiced}">
                                         <f:convertNumber type="currency" currencySymbol="EGP" />
-                                    </h:outputText>
-                                </p:column>
-                            </p:summaryRow>
+                                </h:outputText>
+                            </f:facet>
                         </p:dataTable>
                     </div>
                 </div>
@@ -62,31 +62,31 @@
                         <p:dataTable var="COSCItems" 
                                      value="#{dashboardManager.aspCommittedCost}"
                                      emptyMessage="No committed cost for this period!"
-                                     sortBy="#{COSCItems.poNumber}">
+                                     sortBy="#{COSCItems.poNumber}"
+                                     styleClass="fixed-size">
                             <p:column headerText="PO#">
                                 <h:outputText value="#{COSCItems.poNumber}" />
                             </p:column>
 
                             <p:column headerText="POValue">
-                                <h:outputText value="#{COSCItems.poValue}" />
+                                <h:outputText value="#{COSCItems.poValue}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
 
                             <p:column headerText="GRN Deserved">
-                                <h:outputText value="#{COSCItems.grnDeserved}" />
+                                <h:outputText value="#{COSCItems.grnDeserved}" >
+                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                </h:outputText>
                             </p:column>
                             <p:column headerText="Description">
                                 <h:outputText value="#{COSCItems.poDescription}" />
                             </p:column>
-                            <p:summaryRow>
-                                <p:column colspan="3" style="text-align:right">
-                                    <h:outputText value="Total:" />
-                                </p:column>
-                                <p:column>
-                                    <h:outputText value="#{dashboardManager.committedCost}">
+                            <f:facet name="footer">
+                                <h:outputText value="#{dashboardManager.committedCost}">
                                         <f:convertNumber type="currency" currencySymbol="EGP" />
-                                    </h:outputText>
-                                </p:column>
-                            </p:summaryRow>
+                                </h:outputText>
+                            </f:facet>
                         </p:dataTable>
                     </div>
                 </div>

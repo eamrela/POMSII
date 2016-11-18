@@ -229,6 +229,7 @@ public class AspPo implements Serializable {
     }
 
     public double getPoMargin() {
+        if(getActivityCollection()!=null){
         if(!getActivityCollection().isEmpty()){
              Object[] activities = getActivityCollection().toArray();
              Float totalASP = 0f;
@@ -239,6 +240,7 @@ public class AspPo implements Serializable {
             }
              
              setPoMargin((1-(totalASP/totalVendor))*100.0);
+        }
         }
         return poMargin;
     }
@@ -295,6 +297,7 @@ public class AspPo implements Serializable {
 
     public void setPoType(PoTypes poType) {
         this.poType = poType;
+        
     }
 
     public Subcontractors getAsp() {

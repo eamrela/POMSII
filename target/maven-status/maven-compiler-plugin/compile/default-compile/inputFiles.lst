@@ -32,6 +32,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\PoTypesC
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\AbstractFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\ActivityCodeFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Taxes.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\DomainAnalysis.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\UserPrivilege.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\AspGrn.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Activity.java
@@ -50,6 +51,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\AreaFacade.jav
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\ActivityCodeLoader.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\UserRoleFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\UsersController.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\CustomerSummary.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\SubcontractorsController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\VendorPo.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\PoTypesFacade.java

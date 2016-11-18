@@ -28,12 +28,12 @@
             <div class="col-xs-12">
                 <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                     <div class="panel-heading">
-                        <h2>ASP Analysis</h2>
+                        <h2>ASP Analysis (Committed Cost)</h2>
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
                         <div class="col-xs-6">
-                            <p:dataTable var="aspAnalysis" value="#{dashboardManager.aspAnalysis}">
+                            <p:dataTable var="aspAnalysis" value="#{dashboardManager.aspAnalysis}" styleClass="fixed-size">
                                 <p:column headerText="ASP Name">
                                     <h:outputText value="#{aspAnalysis.name}" />
                                 </p:column>

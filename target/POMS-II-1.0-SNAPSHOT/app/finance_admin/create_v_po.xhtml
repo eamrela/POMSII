@@ -37,6 +37,10 @@
             .ui-growl{
     top:100px;
 }
+.fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
         </style>
 
     </h:head>
@@ -96,7 +100,9 @@
                                                         <h:inputText required="true" 
                                                                      requiredMessage="PO Remaining is required"
                                                                      value="#{vendorPoController.selected.poValue}"
-                                                                     class="form-control" id="remaininginpo" disabled="true"/>
+                                                                     class="form-control" id="remaininginpo" disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                      </div>
                                                  </div>
                                              </div>
@@ -199,6 +205,7 @@
                                                                                     return false;">
                                                         <p:ajax event="keyup"  
                                                                 update="povalue,povaluetax,remaininginpo" />
+                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
                                                         </h:inputText>
                                                         </div>
                                                     </div>
@@ -214,6 +221,7 @@
                                                                                     return false;"
                                                                     disabled="true">
                                                             <p:ajax/>
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
                                                         </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
@@ -226,7 +234,9 @@
                                                                      styleClass="form-control"
                                                                      onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
                                                                                     return false;"
-                                                                    disabled="true"/>
+                                                                    disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                     </div>
                                                 </div>
                                              </div>

@@ -35,6 +35,10 @@
         </f:metadata>
         <style>
             .ui-growl{top: 100px;}
+            .fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
             </style>
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -236,13 +240,17 @@
                                                         <label for="activitytpricev">Total Price Customer</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceVendor}"
-                                                                     class="form-control" id="activitytpricev" disabled="true"/>
+                                                                     class="form-control" id="activitytpricev" disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
                                                         <label for="activitytprivea">Total Price ASP</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceAsp}"
-                                                                     class="form-control" id="activitytprivea" disabled="true"/>
+                                                                     class="form-control" id="activitytprivea" disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -250,7 +258,9 @@
                                                         <label for="activitypricet">Total Price Customer (#{activityController.selected.taxes*100}%)</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceVendorTaxes}"
-                                                                     class="form-control" id="activitypricet" disabled="true"/>
+                                                                     class="form-control" id="activitypricet" disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
                                                         <label for="activitysysdate">System date</label>
@@ -279,7 +289,9 @@
                                                         <label for="activitytum">Total UM</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalUm}"
-                                                                     class="form-control" id="activitytum" disabled="true"/>
+                                                                     class="form-control" id="activitytum" disabled="true">
+                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                        </h:inputText>
                                                     </div>
                                                     <div class="col-xs-6">
                                                         <label for="activitytump">Total UM%</label>
@@ -345,13 +357,17 @@
                                                     <label for="activitycodevunitprice">Customer Price</label>
                                                     <h:inputText required="true" 
                                                                  value="#{activityController.selected.activityCode.vendorPrice}"
-                                                                 class="form-control" id="activitycodevunitprice" disabled="true"/>
+                                                                 class="form-control" id="activitycodevunitprice" disabled="true">
+                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:inputText>
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label for="activitycodeaspunitprice">ASP Price</label>
                                                     <h:inputText required="true" 
                                                                  value="#{activityController.selected.activityCode.subcontractorPrice}"
-                                                                 class="form-control" id="activitycodeaspunitprice" disabled="true"/>
+                                                                 class="form-control" id="activitycodeaspunitprice" disabled="true">
+                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:inputText>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -359,7 +375,9 @@
                                                     <label for="activitycodeum">UM/Unit</label>
                                                     <h:inputText required="true" 
                                                                  value="#{activityController.selected.activityCode.um}"
-                                                                 class="form-control" id="activitycodeum" disabled="true"/>
+                                                                 class="form-control" id="activitycodeum" disabled="true">
+                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                    </h:inputText>
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label for="activitycodeump">UM%/Unit</label>

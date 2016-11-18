@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                    <div class="panel-heading">
+                        <h2>Uncorrelated Activities</h2>
+                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <p:dataTable var="ucActivity" 
+                                         value="#{activityController.itemsUncorrelated}"
+                                         styleClass="fixed-size">
+                                <p:column headerText="Id">
+                                    <h:outputText value="#{ucActivity.activityId}" />
+                                </p:column>
+
+                                <p:column headerText="Type">
+                                    <h:outputText value="#{ucActivity.activityType.domainName}" />
+                                </p:column>
+
+                                <p:column headerText="ASP">
+                                    <h:outputText value="#{ucActivity.asp.subcontractorName}" />
+                                </p:column>
+                                <p:column headerText="Details">
+                                    <h:outputText value="#{ucActivity.activityDetails}" />
+                                </p:column>
+                                <p:column headerText="PriceASP">
+                                    <h:outputText value="#{ucActivity.totalPriceAsp}" >
+                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+                                <f:facet name="footer">
+                                <h:outputText value="#{activityController.itemsUncorrelatedActivityValue}">
+                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                </h:outputText>
+                                </f:facet>
+                            </p:dataTable> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                    <div class="panel-heading">
+                        <h2>Uncorrelated ASP POs</h2>
+                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <p:dataTable var="ucAspPo" 
+                                         value="#{aspPoController.itemsUncorrelated}"
+                                         styleClass="fixed-size">
+                                <p:column headerText="Id">
+                                    <h:outputText value="#{ucAspPo.poNumber}" />
+                                </p:column>
+
+                                <p:column headerText="Domain">
+                                    <h:outputText value="#{ucAspPo.domainName.domainName}" />
+                                </p:column>
+                                <p:column headerText="Type">
+                                    <h:outputText value="#{ucAspPo.poType.typeName}" />
+                                </p:column>
+
+                                <p:column headerText="ASP">
+                                    <h:outputText value="#{ucAspPo.asp.subcontractorName}" />
+                                </p:column>
+                                <p:column headerText="Details">
+                                    <h:outputText value="#{ucAspPo.poDescription}" />
+                                </p:column>
+                                <p:column headerText="PoValue">
+                                    <h:outputText value="#{ucAspPo.poValue}" >
+                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Margin">
+                                    <h:outputText value="#{ucAspPo.poMargin}" >
+                                        <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                    </h:outputText>%
+                                </p:column>
+                                <f:facet name="footer">
+                                    <h:outputText value="#{aspPoController.itemsUncorrelatedPoValue}">
+                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                </h:outputText>
+                                </f:facet>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </cc:implementation>
+</html>

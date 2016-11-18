@@ -18,9 +18,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -29,10 +27,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.joda.time.DateTime;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.ChartSeries;
 
 /**
  *
@@ -45,21 +39,26 @@ public class DashboardController implements Serializable{
     private Date start;
     private Date end;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private List<CustomerSummary> customerSummary;
     private List<AspGrn> aspGrns;
     private List<AspGrn> aspGrnsCOS;
     private List<AspPo> aspCommittedCost;
     private List<VendorMd> vendorMds;
     private List<VendorMd> vendorMdsNS;
-    private List<VendorPo> vendorRemainingNotYetinvoiced;
+    private List<VendorMd> vendorRemainingNotYetinvoiced;
+    private List<VendorPo> vendorMdNotYetGenrated;
     private BigInteger NS;
     private BigInteger COS;
     private BigInteger UM;
     private Double UMPercent;
     private BigInteger committedCost;
     private BigInteger remainingNotYetInvoiced;
+    private BigInteger vendorMdNotYetGenratedValue;
     
     private List<ASPAnalysis> aspAnalysis;
+    private List<DomainAnalysis> domainAnalysis;
     private String aspAnalysisChartData;
+    private String domainAnalysisChartData;
     
     @PersistenceContext(unitName = "com.vodafone_POMS-II_war_1.0-SNAPSHOTPU")
     private EntityManager em;
@@ -92,8 +91,8 @@ public class DashboardController implements Serializable{
 //</editor-fold>
     
     public DashboardController(){
-        end = DateTime.now().withTimeAtStartOfDay().toDate();
-        start = DateTime.now().withTimeAtStartOfDay().minusDays(30).toDate();
+        end = DateTime.now().toDate();
+        start = DateTime.now().withDayOfMonth(1).withTimeAtStartOfDay().toDate();
     }
     
     @PostConstruct
@@ -103,13 +102,24 @@ public class DashboardController implements Serializable{
         if(asp && vendor){
             UM = NS.subtract(COS);
             if(NS.compareTo(BigInteger.ZERO)==1){
-            UMPercent = Double.valueOf(UM.intValue()/NS.intValue());
+            UMPercent = round(Double.valueOf((UM.floatValue()/NS.floatValue())*100),1);
             }else{
             UMPercent = 0.0;
             }
         }
+        getAspAnalysis();
+        getDomainAnalysis();
+        getVendorRemainingNotYetinvoiced();
+        getAspCommittedCost();
+        calculateCustomerSummary();
+        
     }
 
+    private static double round (double value, int precision) {
+    int scale = (int) Math.pow(10, precision);
+    return (double) Math.round(value * scale) / scale;
+}
+    
     public boolean calculateASP() {
             aspGrns = aspGrnController.getDashboardItems(start,end);
             aspCommittedCost = aspPoController.getDashboardCommittedCost(start,end);
@@ -136,22 +146,29 @@ public class DashboardController implements Serializable{
 
     public boolean calculateVendor(){
         vendorMds = vendorMDController.getDashboardItems(start, end);
-        vendorRemainingNotYetinvoiced = vendorPoController.getDashboardRemainingNotInvoiced(start, end);
-        NS = BigInteger.ZERO;
-        remainingNotYetInvoiced = BigInteger.ZERO;
-        for (VendorPo vendorRemainingNotYetinvoiced1 : vendorRemainingNotYetinvoiced) {
-            remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorRemainingNotYetinvoiced1.getMdDeserved());
+        vendorRemainingNotYetinvoiced = new ArrayList<>();
+        vendorMdNotYetGenrated = vendorPoController.getDashboardMDNotYetGenerated(start,end);
+        vendorMdNotYetGenratedValue = BigInteger.ZERO;
+        for (VendorPo vendorMdNotYetGenrated1 : vendorMdNotYetGenrated) {
+            vendorMdNotYetGenratedValue = vendorMdNotYetGenratedValue.add(vendorMdNotYetGenrated1.getMdDeserved());
         }
+        NS = BigInteger.ZERO;
+        vendorMdsNS = new ArrayList<>();
+        remainingNotYetInvoiced = BigInteger.ZERO;
+        
         for (VendorMd vendorMd : vendorMds) {
             if(vendorMd.getInvoiced()!=null){
                 if(vendorMd.getInvoiced() && vendorMd.getMdValue()!=null){
                     NS = NS.add(vendorMd.getMdValue());
+                    vendorMdsNS.add(vendorMd);
                     if(vendorMd.getRemainingInMd()!=null){
                         if(vendorMd.getRemainingInMd().compareTo(BigInteger.ZERO)==1){
                             remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorMd.getRemainingInMd());
-                            vendorRemainingNotYetinvoiced.add(vendorMd.getVendorPoId());
+                            vendorRemainingNotYetinvoiced.add(vendorMd);
                         }
                     }
+                }else{
+                    vendorRemainingNotYetinvoiced.add(vendorMd);
                 }
             }
         }
@@ -160,21 +177,91 @@ public class DashboardController implements Serializable{
 
     public List<ASPAnalysis> getAspAnalysis() {
         if(aspAnalysis == null){
-            aspAnalysis = em.createNativeQuery(" select asp_name, " +
-                                                "	case when val is null then 0 else val end amount " +
-                                                " from ( " +
-                                                " select subcontractor_name asp_name, " +
-                                                "      (select sum(total_price_asp) " +
-                                                "       from activity " +
-                                                "       where asp = asp.subcontractor_name " +
-                                                "       and activity_date between '"+sdf.format(start)+"' "
-                                                + " and '"+sdf.format(end)+"' " +
-                                                "       ) val " +
-                                                "from subcontractors asp) a",ASPAnalysis.class).getResultList();
+            aspAnalysis = em.createNativeQuery(" select asp_name, "+
+"         case when amount is null then 0 else amount end amount "+
+" from ( "+
+"  select asp_name,  "+
+"         sum(val) amount  "+
+"  from (  "+
+"  select subcontractor_name asp_name,  "+
+"       (select sum(total_price_asp)  "+
+"        from activity  "+
+"        where asp = asp.subcontractor_name  "+
+"        and activity_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"'  "+
+"        and activity_id not in "+
+"                 (select activity_id from asp_po_j_activity)) val  "+
+" from subcontractors asp "+
+" union  "+
+" select subcontractor_name asp_name,  "+
+"       (select sum(po_value)  "+
+"        from asp_po  "+
+"        where asp = asp.subcontractor_name  "+
+"        and po_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"'  "+
+"        and po_number not in "+
+"                 (select asp_po_id from asp_po_j_activity)) val  "+
+" from subcontractors asp "+
+" ) a "+
+" group by asp_name) b "
+,ASPAnalysis.class).getResultList();
         }
         return aspAnalysis;
     }
 
+    public List<DomainAnalysis> getDomainAnalysis() {
+        if(domainAnalysis == null){
+            domainAnalysis = em.createNativeQuery(" select domain_name, "+
+"   case when amount is null then 0 else amount end amount "+
+" from ( "+
+"  select domain_name,  "+
+"   sum(val) amount  "+
+"  from (  "+
+"  select domain_name, "+
+"       (select sum(total_price_asp)  "+
+"        from activity  "+
+"        where activity_type = domains.domain_name  "+
+"        and activity_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"'  "+
+"        and activity_id not in "+
+"     (select activity_id from asp_po_j_activity)) val  "+
+" from domain_names domains "+
+" union  "+
+" select domain_name, "+
+"       (select sum(po_value)  "+
+"        from asp_po  "+
+"        where domain_name = domains.domain_name  "+
+"        and po_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"'  "+
+"        and po_number not in "+
+"     (select asp_po_id from asp_po_j_activity)) val  "+
+" from domain_names domains "+
+" ) a "+
+" group by domain_name) b "
+,DomainAnalysis.class).getResultList();
+        }
+        return domainAnalysis;
+    }
+
+    
+    public void clearSelected(){
+        COS =  null;
+        NS = null;
+        UM = null;
+        UMPercent = null;
+        aspAnalysis = null;
+        domainAnalysis = null;
+        aspAnalysisChartData = null;
+        domainAnalysisChartData = null;
+        aspCommittedCost = null;
+        aspGrns = null;
+        aspGrnsCOS = null;
+        committedCost = null;
+        remainingNotYetInvoiced = null;
+        vendorMds = null;
+        vendorMdsNS = null;
+        vendorRemainingNotYetinvoiced = null;
+        vendorMdNotYetGenrated = null;
+        vendorMdNotYetGenratedValue = BigInteger.ZERO;
+        customerSummary = null;
+        refresh();
+    }
     
 
     
@@ -185,10 +272,29 @@ public class DashboardController implements Serializable{
         this.remainingNotYetInvoiced = remainingNotYetInvoiced;
     }
 
+    public BigInteger getVendorMdNotYetGenratedValue() {
+        return vendorMdNotYetGenratedValue;
+    }
+
+    public void setVendorMdNotYetGenratedValue(BigInteger vendorMdNotYetGenratedValue) {
+        this.vendorMdNotYetGenratedValue = vendorMdNotYetGenratedValue;
+    }
+    
     public void setStart(Date start) {
         this.start = start;
     }
 
+    public List<VendorPo> getVendorMdNotYetGenrated() {
+        return vendorMdNotYetGenrated;
+    }
+
+    public void setVendorMdNotYetGenrated(List<VendorPo> vendorMdNotYetGenrated) {
+        this.vendorMdNotYetGenrated = vendorMdNotYetGenrated;
+    }
+
+   
+
+    
     public void setEnd(Date end) {
         this.end = end;
     }
@@ -233,11 +339,11 @@ public class DashboardController implements Serializable{
         this.vendorMdsNS = vendorMdsNS;
     }
 
-    public List<VendorPo> getVendorRemainingNotYetinvoiced() {
+    public List<VendorMd> getVendorRemainingNotYetinvoiced() {
         return vendorRemainingNotYetinvoiced;
     }
 
-    public void setVendorRemainingNotYetinvoiced(List<VendorPo> vendorRemainingNotYetinvoiced) {
+    public void setVendorRemainingNotYetinvoiced(List<VendorMd> vendorRemainingNotYetinvoiced) {
         this.vendorRemainingNotYetinvoiced = vendorRemainingNotYetinvoiced;
     }
 
@@ -288,8 +394,64 @@ public class DashboardController implements Serializable{
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Charts Data">
-    
 
+    public String getDomainAnalysisChartData() {
+          //<editor-fold defaultstate="collapsed" desc="Start of string">
+        
+        domainAnalysisChartData = "{" +
+                        "    \"theme\": \"light\", " +
+                        "    \"type\": \"serial\", " +
+                        "	\"startDuration\": 1, " +
+                        "    \"dataProvider\": [";
+//</editor-fold>
+
+        for (int i = 0; i < domainAnalysis.size(); i++) {
+            
+            domainAnalysisChartData+= 
+                        "{ " +
+                        "        \"DomainName\": \""+domainAnalysis.get(i).getName()+"\", " +
+                        "        \"Amount\": "+domainAnalysis.get(i).getAmount()+", " +
+                        "        \"color\": \""+getColor()+"\" " +
+                        "}"+(i==domainAnalysis.size()-1?"":",");
+        }
+ 
+            //<editor-fold defaultstate="collapsed" desc="End of String">
+
+            domainAnalysisChartData+= " ], " +
+                        "    \"valueAxes\": [{ " +
+                        "        \"position\": \"left\", " +
+                        "        \"title\": \"Money\" " +
+                        "    }], " +
+                        "    \"graphs\": [{ " +
+                        "        \"balloonText\": \"[[category]]: <b>[[value]]</b>\", " +
+                        "        \"fillColorsField\": \"color\", " +
+                        "        \"fillAlphas\": 1, " +
+                        "        \"lineAlpha\": 0.1, " +
+                        "        \"type\": \"column\", " +
+                        "        \"valueField\": \"Amount\" " +
+                        "    }], " +
+                        "    \"depth3D\": 20, " +
+                        "	\"angle\": 30, " +
+                        "    \"chartCursor\": { " +
+                        "        \"categoryBalloonEnabled\": false, " +
+                        "        \"cursorAlpha\": 0, " +
+                        "        \"zoomable\": false " +
+                        "    }, " +
+                        "    \"categoryField\": \"DomainName\", " +
+                        "    \"categoryAxis\": { " +
+                        "        \"gridPosition\": \"start\", " +
+                        "        \"labelRotation\": 90 " +
+                        "    }, " +
+                        "    \"export\": { " +
+                        "    	\"enabled\": true " +
+                        "     } " +
+                        " " +
+                        "}";
+            //</editor-fold>
+        return domainAnalysisChartData;
+    }
+    
+    
     public String getAspAnalysisChartData() {
          //<editor-fold defaultstate="collapsed" desc="Start of string">
         
@@ -347,6 +509,45 @@ public class DashboardController implements Serializable{
     }
 //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Customer Summary">
+     public List<CustomerSummary> getCustomerSummary() {
+        return customerSummary;
+    }
+
+    public void setCustomerSummary(List<CustomerSummary> customerSummary) {
+        this.customerSummary = customerSummary;
+    }
+    
+    public void calculateCustomerSummary(){
+       List<VendorPo> customerPos = vendorPoController.getExportItems(start, end);
+       List<AspPo> aspPos = aspPoController.getExportItems(start, end);
+       customerSummary = new ArrayList<>();
+       CustomerSummary summary = new CustomerSummary();
+        for (VendorPo customerPo : customerPos) {
+            summary.setTotalPoValue(customerPo.getPoValue());
+            summary.setTotalRemainingInPo((customerPo.getRemainingInPo()!=null?customerPo.getRemainingInPo():BigInteger.ZERO));
+            summary.setTotalMdDeserved((customerPo.getMdDeserved()!=null?customerPo.getMdDeserved():BigInteger.ZERO));
+            Object[] mds = customerPo.getVendorMdCollection().toArray();
+           for (Object md : mds) {
+               VendorMd vMd = ((VendorMd)md);
+               summary.setTotalMdDeserved((vMd.getMdDeserved()!=null?vMd.getMdDeserved():BigInteger.ZERO));
+               summary.setTotalRemainingFromMd((vMd.getRemainingInMd()!=null?vMd.getRemainingInMd():BigInteger.ZERO));
+               summary.setTotalMdRecieved((vMd.getMdValue()!=null?vMd.getMdValue():BigInteger.ZERO));
+               if(vMd.getInvoiced()!=null){
+                if(vMd.getInvoiced()){
+                   summary.setTotalMdValue((vMd.getMdValue()!=null?vMd.getMdValue():BigInteger.ZERO));
+                }
+               }
+           }
+        }
+        
+        for (AspPo aspPo : aspPos) {
+            summary.setTotalCommittedCost((aspPo.getGrnDeserved()!=null?aspPo.getGrnDeserved():BigInteger.ZERO));
+        }
+        customerSummary.add(summary);
+       
+    }
+//</editor-fold>
     
     public String getColor() {
         Random randomGenerator = new Random(); // Construct a new Random number generator
