@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.Users;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

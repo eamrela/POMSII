@@ -8,17 +8,14 @@ package com.vodafone.poms.ii.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -32,88 +29,64 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u")
-    , @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id")
-    , @NamedQuery(name = "Users.findByFirstName", query = "SELECT u FROM Users u WHERE u.firstName = :firstName")
-    , @NamedQuery(name = "Users.findByLastName", query = "SELECT u FROM Users u WHERE u.lastName = :lastName")
-    , @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email")
-    , @NamedQuery(name = "Users.findByPwd", query = "SELECT u FROM Users u WHERE u.pwd = :pwd")
+    , @NamedQuery(name = "Users.findByUsername", query = "SELECT u FROM Users u WHERE u.username = :username")
+    , @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password")
     , @NamedQuery(name = "Users.findByEnabled", query = "SELECT u FROM Users u WHERE u.enabled = :enabled")
-    , @NamedQuery(name = "Users.findByTokenExpired", query = "SELECT u FROM Users u WHERE u.tokenExpired = :tokenExpired")
-    , @NamedQuery(name = "Users.findByPhoneNumber", query = "SELECT u FROM Users u WHERE u.phoneNumber = :phoneNumber")
-    , @NamedQuery(name = "Users.findByManager", query = "SELECT u FROM Users u WHERE u.manager = :manager")})
+    , @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email")
+    , @NamedQuery(name = "Users.findByFirstLastName", query = "SELECT u FROM Users u WHERE u.firstLastName = :firstLastName")})
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
-    private Long id;
+    @NotNull
+    @Size(min = 1, max = 2147483647)
+    @Column(name = "username")
+    private String username;
     @Size(max = 2147483647)
-    @Column(name = "first_name")
-    private String firstName;
-    @Size(max = 2147483647)
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "enabled")
+    private Short enabled;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 2147483647)
     @Column(name = "email")
     private String email;
     @Size(max = 2147483647)
-    @Column(name = "pwd")
-    private String pwd;
-    @Column(name = "enabled")
-    private Boolean enabled;
-    @Column(name = "token_expired")
-    private Boolean tokenExpired;
-    @Size(max = 2147483647)
-    @Column(name = "phone_number")
-    private String phoneNumber;
-    @Size(max = 2147483647)
-    @Column(name = "manager")
-    private String manager;
-    @ManyToMany(mappedBy = "usersCollection")
-    private Collection<UserRole> userRoleCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator")
-    private Collection<Activity> activityCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator")
-    private Collection<VendorMd> vendorMdCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator")
-    private Collection<AspPo> aspPoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator")
-    private Collection<AspGrn> aspGrnCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator")
-    private Collection<VendorPo> vendorPoCollection;
+    @Column(name = "first_last_name")
+    private String firstLastName;
+    @OneToMany(mappedBy = "username")
+    private Collection<UsersRoles> usersRolesCollection;
 
     public Users() {
     }
 
-    public Users(Long id) {
-        this.id = id;
+    public Users(String username) {
+        this.username = username;
     }
 
-    public Long getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getPassword() {
+        return password;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Short getEnabled() {
+        return enabled;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setEnabled(Short enabled) {
+        this.enabled = enabled;
     }
 
     public String getEmail() {
@@ -124,104 +97,27 @@ public class Users implements Serializable {
         this.email = email;
     }
 
-    public String getPwd() {
-        return pwd;
+    public String getFirstLastName() {
+        return firstLastName;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Boolean getTokenExpired() {
-        return tokenExpired;
-    }
-
-    public void setTokenExpired(Boolean tokenExpired) {
-        this.tokenExpired = tokenExpired;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getManager() {
-        return manager;
-    }
-
-    public void setManager(String manager) {
-        this.manager = manager;
+    public void setFirstLastName(String firstLastName) {
+        this.firstLastName = firstLastName;
     }
 
     @XmlTransient
-    public Collection<UserRole> getUserRoleCollection() {
-        return userRoleCollection;
+    public Collection<UsersRoles> getUsersRolesCollection() {
+        return usersRolesCollection;
     }
 
-    public void setUserRoleCollection(Collection<UserRole> userRoleCollection) {
-        this.userRoleCollection = userRoleCollection;
-    }
-
-    @XmlTransient
-    public Collection<Activity> getActivityCollection() {
-        return activityCollection;
-    }
-
-    public void setActivityCollection(Collection<Activity> activityCollection) {
-        this.activityCollection = activityCollection;
-    }
-
-    @XmlTransient
-    public Collection<VendorMd> getVendorMdCollection() {
-        return vendorMdCollection;
-    }
-
-    public void setVendorMdCollection(Collection<VendorMd> vendorMdCollection) {
-        this.vendorMdCollection = vendorMdCollection;
-    }
-
-    @XmlTransient
-    public Collection<AspPo> getAspPoCollection() {
-        return aspPoCollection;
-    }
-
-    public void setAspPoCollection(Collection<AspPo> aspPoCollection) {
-        this.aspPoCollection = aspPoCollection;
-    }
-
-    @XmlTransient
-    public Collection<AspGrn> getAspGrnCollection() {
-        return aspGrnCollection;
-    }
-
-    public void setAspGrnCollection(Collection<AspGrn> aspGrnCollection) {
-        this.aspGrnCollection = aspGrnCollection;
-    }
-
-    @XmlTransient
-    public Collection<VendorPo> getVendorPoCollection() {
-        return vendorPoCollection;
-    }
-
-    public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
-        this.vendorPoCollection = vendorPoCollection;
+    public void setUsersRolesCollection(Collection<UsersRoles> usersRolesCollection) {
+        this.usersRolesCollection = usersRolesCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (username != null ? username.hashCode() : 0);
         return hash;
     }
 
@@ -232,7 +128,7 @@ public class Users implements Serializable {
             return false;
         }
         Users other = (Users) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.username == null && other.username != null) || (this.username != null && !this.username.equals(other.username))) {
             return false;
         }
         return true;
@@ -240,7 +136,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vodafone.poms.ii.entities.Users[ id=" + id + " ]";
+        return "com.vodafone.poms.ii.temp.Users[ username=" + username + " ]";
     }
     
 }

@@ -57,8 +57,10 @@ public class DashboardController implements Serializable{
     
     private List<ASPAnalysis> aspAnalysis;
     private List<DomainAnalysis> domainAnalysis;
+    private List<MasterGraph> masterGraph;
     private String aspAnalysisChartData;
     private String domainAnalysisChartData;
+    private String masterGraphData;
     
     @PersistenceContext(unitName = "com.vodafone_POMS-II_war_1.0-SNAPSHOTPU")
     private EntityManager em;
@@ -394,9 +396,8 @@ public class DashboardController implements Serializable{
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Charts Data">
-
-    public String getDomainAnalysisChartData() {
-          //<editor-fold defaultstate="collapsed" desc="Start of string">
+    public String getDomainAnalysisChartData(){
+            //<editor-fold defaultstate="collapsed" desc="Start of string">
         
         domainAnalysisChartData = "{" +
                         "    \"theme\": \"light\", " +
@@ -449,6 +450,169 @@ public class DashboardController implements Serializable{
                         "}";
             //</editor-fold>
         return domainAnalysisChartData;
+    }
+    //getMasterGraphData
+    public String getMasterGraphData() {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM-YYYY");
+        //<editor-fold defaultstate="collapsed" desc="Data Access">
+        masterGraph = em.createNativeQuery(" select target_month,ns_t,cos_t,um_t,ns_iso,cos_iso, "+
+" case when um_iso is null then 0.0 else um_iso end um_iso "+
+" from ( "+
+" select target_month,ns_t,cos_t,um_t, "+
+" case when ns_iso is null then 0.0 else ns_iso end ns_iso, "+
+" case when cos_iso is null then 0.0 else cos_iso end cos_iso, "+
+" (ns_iso-cos_iso) um_iso "+
+" from ( "+
+" select target_month,ns_t,cos_t,um_t, "+
+" round(vendor.ns_iso/1000000,2) ns_iso, "+
+" round(asp.cos_iso/1000000,2) cos_iso "+
+" from targets "+
+" left join  "+
+" (select extract(month from md_date) month_no,sum(md_value) ns_iso "+
+" from vendor_md "+
+" where md_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
+        +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
+" and invoiced is true "+
+" group by extract(month from md_date)) vendor "+
+" on target_month=vendor.month_no "+
+" left join  "+
+" (select month_no,sum(cos_iso) cos_iso "+
+" from ( "+
+" select extract(month from grn_date) month_no,sum(grn_value) cos_iso "+
+" from asp_grn "+
+" where grn_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
+                +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
+" group by extract(month from grn_date)  "+
+" union  "+
+" select extract(month from po_date) month_no,sum(grn_deserved) cos_iso  "+
+" from asp_po  "+
+" where po_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
+                +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
+" group by extract(month from po_date) ) a "+
+" group by a.month_no) asp "+
+" on target_month=asp.month_no) master_initial) "+
+" master ", MasterGraph.class).getResultList();
+//</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="Start of string">
+        
+        masterGraphData = "{\n" +
+                            "    \"theme\": \"none\", " +
+                            "    \"type\": \"serial\", " +
+                            "    \"dataProvider\": [";
+//</editor-fold>
+
+        for (int i = 0; i < masterGraph.size(); i++) {
+            
+            masterGraphData+= 
+                        "{ " +
+                        "\"date\": \""+dateFormatter.format(DateTime.now().withMonthOfYear(
+                                        masterGraph.get(i).getMonth()).toDate())+"\", " +
+                        "    \"ns_iso\": "+masterGraph.get(i).getNS_ISO()+", " +
+                        "    \"cos_iso\": "+masterGraph.get(i).getCOS_ISO()+", " +
+                        "    \"um_iso\": "+masterGraph.get(i).getUM_ISO()+", " +
+                        "    \"ns_t\": "+masterGraph.get(i).getNS_T()+", " +
+                        "    \"cos_t\": "+masterGraph.get(i).getCOS_T()+", " +
+                        "    \"um_t\": "+masterGraph.get(i).getUM_T()+""+
+                        "}"+(i==masterGraph.size()-1?"":",");
+        }
+ 
+            //<editor-fold defaultstate="collapsed" desc="End of String">
+
+            masterGraphData+= "]," +
+"    \"legend\": {" +
+"    \"useGraphSettings\": true," +
+"    \"position\": \"top\"" +
+"  }," +
+"    \"startDuration\": 1," +
+"    \"graphs\": [{" +
+"        \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"," +
+"        \"fillAlphas\": 0.9," +
+"        \"lineAlpha\": 0.2," +
+"        \"title\": \"NS(ISO)\"," +
+"        \"type\": \"column\"," +
+"        \"valueField\": \"ns_iso\"" +
+"    }, " +
+"    {" +
+"        \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"," +
+"        \"fillAlphas\": 0.9," +
+"        \"lineAlpha\": 0.2," +
+"        \"title\": \"COS(ISO)\"," +
+"        \"type\": \"column\"," +
+"        \"valueField\": \"cos_iso\"" +
+"    }," +
+"    {" +
+"        \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"," +
+"        \"fillAlphas\": 0.9," +
+"        \"lineAlpha\": 0.2," +
+"        \"title\": \"UM(ISO)\"," +
+"        \"type\": \"column\"," +
+"        \"valueField\": \"um_iso\"" +
+"    }," +
+"    {" +
+"    \"bullet\": \"round\"," +
+"    \"bulletBorderAlpha\": 1," +
+"    \"bulletColor\": \"#FFFFFF\"," +
+"    \"bulletSize\": 5," +
+"    \"hideBulletsCount\": 50," +
+"    \"lineThickness\": 2," +
+"    \"lineColor\": \"#7D8778\"," +
+"    \"type\": \"smoothedLine\"," +
+"    \"dashLength\": 1," +
+"    \"title\": \"NS(T)\"," +
+"    \"useLineColorForBulletBorder\": true," +
+"    \"valueField\": \"ns_t\"," +
+"    \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"" +
+"  }," +
+"  {" +
+"    \"bullet\": \"round\"," +
+"    \"bulletBorderAlpha\": 1," +
+"    \"bulletColor\": \"#FFFFFF\"," +
+"    \"bulletSize\": 5," +
+"    \"hideBulletsCount\": 50," +
+"    \"lineThickness\": 2," +
+"    \"lineColor\": \"#2564E3\"," +
+"    \"type\": \"smoothedLine\"," +
+"    \"dashLength\": 1," +
+"    \"title\": \"COS(T)\"," +
+"    \"useLineColorForBulletBorder\": true," +
+"    \"valueField\": \"cos_t\"," +
+"    \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"" +
+"  }," +
+"  {" +
+"    \"bullet\": \"round\"," +
+"    \"bulletBorderAlpha\": 1," +
+"    \"bulletColor\": \"#FFFFFF\"," +
+"    \"bulletSize\": 5," +
+"    \"hideBulletsCount\": 50," +
+"    \"lineThickness\": 2," +
+"    \"lineColor\": \"#F3126B\"," +
+"    \"type\": \"smoothedLine\"," +
+"    \"dashLength\": 1," +
+"    \"title\": \"UM(T)\"," +
+"    \"useLineColorForBulletBorder\": true," +
+"    \"valueField\": \"um_t\"," +
+"    \"balloonText\": \"[[title]]<br /><b style='font-size: 130%'>[[value]]</b>\"" +
+"  }]," +
+"    \"plotAreaFillAlphas\": 0.1," +
+"    \"depth3D\": 10," +
+"    \"angle\": 5," +
+"    \"categoryField\": \"date\"," +
+"    \"categoryAxis\": {" +
+"        \"gridPosition\": \"start\"" +
+"    }," +
+"    \"export\": {" +
+"      \"enabled\": true" +
+"     }," +
+"     \"chartCursor\": {" +
+"    \"pan\": true," +
+"    \"valueLineEnabled\": true," +
+"    \"valueLineBalloonEnabled\": true," +
+"    \"cursorAlpha\": 0," +
+"    \"valueLineAlpha\": 0.2 " +
+"  } " +
+"}";
+            //</editor-fold>
+        return masterGraphData;
     }
     
     

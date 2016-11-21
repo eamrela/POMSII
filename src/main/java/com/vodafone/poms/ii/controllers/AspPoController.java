@@ -24,6 +24,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("aspPoController")
 @SessionScoped
@@ -98,7 +100,7 @@ public class AspPoController implements Serializable {
     public AspPo prepareCreate() {
         selected = new AspPo();
         selected.setTaxes(taxesController.getCurrentTaxes());
-        selected.setCreator(usersController.getSelected());
+        selected.setCreator(usersController.getLoggedInUser());
         selected.setSysDate(new Date());
         selected.setPoStatus(poStatusController.getInitialStatus());
         initializeEmbeddableKey();
@@ -311,7 +313,7 @@ public class AspPoController implements Serializable {
             if(selected.getGrnDeserved().compareTo(BigInteger.ZERO)==1){
                 aspGrnController.prepareCreate();
                 aspGrnController.getSelected().setAspPoId(selected);
-                aspGrnController.getSelected().setCreator(usersController.getSelected());
+                aspGrnController.getSelected().setCreator(usersController.getLoggedInUser());
                 aspGrnController.getSelected().setGrnDeserved(selected.getGrnDeserved());
                 aspGrnController.getSelected().setSysDate(new Date());
                 selected.getAspGrnCollection().add(aspGrnController.create());

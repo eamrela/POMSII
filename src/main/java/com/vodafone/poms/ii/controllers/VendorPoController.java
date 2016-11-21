@@ -22,6 +22,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("vendorPoController")
 @SessionScoped
@@ -67,7 +69,7 @@ public class VendorPoController implements Serializable {
     public VendorPo prepareCreate() {
         selected = new VendorPo();
         selected.setTaxes(taxesController.getCurrentTaxes());
-        selected.setCreator(usersController.getSelected());
+        selected.setCreator(usersController.getLoggedInUser());
         selected.setSysDate(new Date());
         selected.setPoStatus(poStatusController.getInitialStatus());
         initializeEmbeddableKey();
@@ -203,7 +205,7 @@ public class VendorPoController implements Serializable {
             if(selected.getMdDeserved().compareTo(BigInteger.ZERO)==1){
                 vendorMdController.prepareCreate();
                 vendorMdController.getSelected().setVendorPoId(selected);
-                vendorMdController.getSelected().setCreator(usersController.getSelected());
+                vendorMdController.getSelected().setCreator(usersController.getLoggedInUser());
                 vendorMdController.getSelected().setMdDeserved(selected.getMdDeserved());
                 vendorMdController.getSelected().setSysDate(new Date());
                 selected.getVendorMdCollection().add(vendorMdController.create());

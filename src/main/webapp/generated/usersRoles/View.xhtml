@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsersRolesViewDlg" widgetVar="UsersRolesViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewUsersRolesTitle}">
+            <h:form id="UsersRolesViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usersRolesController.selected != null}">
+                        <h:outputText value="#{bundle.ViewUsersRolesLabel_id}"/>
+                        <h:outputText value="#{usersRolesController.selected.id}" title="#{bundle.ViewUsersRolesTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewUsersRolesLabel_role}"/>
+                        <h:outputText value="#{usersRolesController.selected.role}" title="#{bundle.ViewUsersRolesTitle_role}"/>
+                        <h:outputText value="#{bundle.ViewUsersRolesLabel_username}"/>
+                        <h:outputText value="#{usersRolesController.selected.username}" title="#{bundle.ViewUsersRolesTitle_username}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="UsersRolesViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

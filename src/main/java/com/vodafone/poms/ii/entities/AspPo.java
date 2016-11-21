@@ -113,7 +113,7 @@ public class AspPo implements Serializable {
     @JoinColumn(name = "asp", referencedColumnName = "subcontractor_name")
     @ManyToOne(optional = false)
     private Subcontractors asp;
-    @JoinColumn(name = "creator", referencedColumnName = "id")
+    @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
     @OneToMany(mappedBy = "aspPoId")
@@ -175,7 +175,8 @@ public class AspPo implements Serializable {
 
     public BigInteger getPoValue() {
         if(factor!=null && serviceValue!=null){
-            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
+//            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
+            poValue = BigDecimal.valueOf(serviceValue.floatValue()*factor.floatValue()).toBigInteger();
         }
         return poValue;
     }

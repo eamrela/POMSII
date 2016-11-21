@@ -74,7 +74,7 @@ public class VendorMd implements Serializable {
     @Column(name = "sys_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date sysDate;
-    @JoinColumn(name = "creator", referencedColumnName = "id")
+    @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
     @JoinColumn(name = "vendor_po_id", referencedColumnName = "po_number")

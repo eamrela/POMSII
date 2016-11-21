@@ -122,7 +122,7 @@ public class Activity implements Serializable {
     @JoinColumn(name = "asp", referencedColumnName = "subcontractor_name")
     @ManyToOne(optional = false)
     private Subcontractors asp;
-    @JoinColumn(name = "creator", referencedColumnName = "id")
+    @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
     @JoinColumn(name = "vendor_owner", referencedColumnName = "id")

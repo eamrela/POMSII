@@ -25,6 +25,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("activityController")
 @SessionScoped
@@ -144,7 +146,7 @@ public class ActivityController implements Serializable {
     public Activity prepareCreate() {
         selected = new Activity();
         selected.setTaxes(taxesController.getCurrentTaxes());
-        selected.setCreator(usersController.getSelected());
+        selected.setCreator(usersController.getLoggedInUser());
         selected.setSysDate(new Date());
         initializeEmbeddableKey();
         System.out.println("Prepare Create for Activity");

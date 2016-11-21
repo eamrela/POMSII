@@ -17201,7 +17201,7 @@ font-size: 12px;
   padding: 18px 0px 15px 15px;
   position: relative;
   width: 240px;
-  background: url("../img/bg.jpg") center left;
+  background: url("../../../resources/assets/img/bg.jpg") center left;
 }
 .sidebar .widget .widget-body .userinfo .avatar {
   height: 50px;

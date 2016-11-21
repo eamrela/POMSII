@@ -101,7 +101,7 @@ public class VendorPo implements Serializable {
     @JoinColumn(name = "po_type", referencedColumnName = "type_name")
     @ManyToOne(optional = false)
     private PoTypes poType;
-    @JoinColumn(name = "creator", referencedColumnName = "id")
+    @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
 
@@ -159,8 +159,10 @@ public class VendorPo implements Serializable {
     }
 
     public BigInteger getPoValue() {
+        
          if(factor!=null && serviceValue!=null){
-            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
+//            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
+            poValue = BigDecimal.valueOf(serviceValue.floatValue()*factor.floatValue()).toBigInteger();
         }
         return poValue;
     }

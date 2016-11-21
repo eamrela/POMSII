@@ -1,9 +1,9 @@
 package com.vodafone.poms.ii.controllers;
 
 import com.vodafone.poms.ii.entities.Users;
-import com.vodafone.poms.ii.controllers.util.JsfUtil;
-import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.UsersFacade;
+import com.vodafone.poms.ii.temp.util.JsfUtil;
+import com.vodafone.poms.ii.temp.util.JsfUtil.PersistAction;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,6 +18,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("usersController")
 @SessionScoped
@@ -27,14 +29,27 @@ public class UsersController implements Serializable {
     private com.vodafone.poms.ii.beans.UsersFacade ejbFacade;
     private List<Users> items = null;
     private Users selected;
+    private Users LoggedInUser;
 
     public UsersController() {
     }
 
-    public Users getSelected() {
-        if(selected==null){
-            selected = getItems().get(0);
+    public Users getLoggedInUser() {
+        if(LoggedInUser==null){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getName()!=null){
+               LoggedInUser=getUsers(auth.getName());
+            }
         }
+        return LoggedInUser;
+    }
+
+    public void setLoggedInUser(Users LoggedInUser) {
+        this.LoggedInUser = LoggedInUser;
+    }
+
+    
+    public Users getSelected() {
         return selected;
     }
 
@@ -112,7 +127,7 @@ public class UsersController implements Serializable {
         }
     }
 
-    public Users getUsers(java.lang.Long id) {
+    public Users getUsers(java.lang.String id) {
         return getFacade().find(id);
     }
 
@@ -137,13 +152,13 @@ public class UsersController implements Serializable {
             return controller.getUsers(getKey(value));
         }
 
-        java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+        java.lang.String getKey(String value) {
+            java.lang.String key;
+            key = value;
             return key;
         }
 
-        String getStringKey(java.lang.Long value) {
+        String getStringKey(java.lang.String value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value);
             return sb.toString();
@@ -156,7 +171,7 @@ public class UsersController implements Serializable {
             }
             if (object instanceof Users) {
                 Users o = (Users) object;
-                return getStringKey(o.getId());
+                return getStringKey(o.getUsername());
             } else {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), Users.class.getName()});
                 return null;

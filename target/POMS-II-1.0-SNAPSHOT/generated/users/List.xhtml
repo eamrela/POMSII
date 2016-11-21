@@ -19,7 +19,7 @@
                     <p:dataTable id="datalist" value="#{usersController.items}" var="item"
                                  selectionMode="single" selection="#{usersController.selected}"
                                  paginator="true"
-                                 rowKey="#{item.id}"
+                                 rowKey="#{item.username}"
                                  rows="10"
                                  rowsPerPageTemplate="10,20,30,40,50"
                                  >
@@ -29,21 +29,21 @@
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_id}"/>
+                                <h:outputText value="#{bundle.ListUsersTitle_username}"/>
                             </f:facet>
-                            <h:outputText value="#{item.id}"/>
+                            <h:outputText value="#{item.username}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_firstName}"/>
+                                <h:outputText value="#{bundle.ListUsersTitle_password}"/>
                             </f:facet>
-                            <h:outputText value="#{item.firstName}"/>
+                            <h:outputText value="#{item.password}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_lastName}"/>
+                                <h:outputText value="#{bundle.ListUsersTitle_enabled}"/>
                             </f:facet>
-                            <h:outputText value="#{item.lastName}"/>
+                            <h:outputText value="#{item.enabled}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
@@ -53,33 +53,9 @@
                         </p:column>
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_pwd}"/>
+                                <h:outputText value="#{bundle.ListUsersTitle_firstLastName}"/>
                             </f:facet>
-                            <h:outputText value="#{item.pwd}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_enabled}"/>
-                            </f:facet>
-                            <p:selectBooleanCheckbox value="#{item.enabled}" disabled="true"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_tokenExpired}"/>
-                            </f:facet>
-                            <p:selectBooleanCheckbox value="#{item.tokenExpired}" disabled="true"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_phoneNumber}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.phoneNumber}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListUsersTitle_manager}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.manager}"/>
+                            <h:outputText value="#{item.firstLastName}"/>
                         </p:column>
                         <f:facet name="footer">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{usersController.prepareCreate}" update=":UsersCreateForm" oncomplete="PF('UsersCreateDialog').show()"/>

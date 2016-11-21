@@ -15,15 +15,12 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-<!--        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
-        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> -->
-
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
+ <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
+            <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
+            <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
+            <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
+            <h:outputStylesheet name="assets/css/styles.css"  />
+            <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
@@ -52,7 +49,7 @@
                 <div class="static-sidebar-wrapper sidebar-blue">
                     <div class="static-sidebar">
                         <div class="sidebar">
-                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
+                            <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
                                 <POMSII:NavigationMenu/>
@@ -423,19 +420,16 @@
                                         <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">
                                             <p:outputLabel value="MD Factor" for="mdFactor"/>
                                             <p:inputText id="mdFactor" value="#{vendorMdController.editMdFactor}" 
-                                                         title="MD Factor" 
-                                                         required="true" requiredMessage="MD Factor is required">
+                                                         title="MD Factor">
                                                 <p:ajax update="mdValue,remainingInMd"/>
                                         </p:inputText>
                                         <p:outputLabel value="MD Value" for="mdValue" />
-                                        <p:inputText id="mdValue" value="#{vendorMdController.editMdValue}" title="MD Value"
-                                                     required="true" requiredMessage="MD Value is required">
+                                        <p:inputText id="mdValue" value="#{vendorMdController.editMdValue}" title="MD Value">
                                              <p:ajax update="mdFactor,remainingInMd"/>
                                         </p:inputText>
                                         <p:outputLabel value="MD Date" for="mdDate" />
                                         <p:calendar id="mdDate" pattern="MM/dd/yyyy" value="#{vendorMdController.editMdDate}" 
-                                                    title="MD Date"  showOn="button"
-                                                    required="true" requiredMessage="MD Date is required"/>
+                                                    title="MD Date"  showOn="button"/>
                                         <p:outputLabel value="MD Number" for="mdNumber" />
                                         <p:inputText id="mdNumber" value="#{vendorMdController.editMdNumber}" title="MD Number" />
                                         <p:outputLabel value="Invoiced" for="invoiced"/>

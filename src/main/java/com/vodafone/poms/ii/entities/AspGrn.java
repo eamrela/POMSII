@@ -77,7 +77,7 @@ public class AspGrn implements Serializable {
     @JoinColumn(name = "asp_po_id", referencedColumnName = "po_number")
     @ManyToOne
     private AspPo aspPoId;
-    @JoinColumn(name = "creator", referencedColumnName = "id")
+    @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
 
