@@ -36,6 +36,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Users.findByFirstLastName", query = "SELECT u FROM Users u WHERE u.firstLastName = :firstLastName")})
 public class Users implements Serializable {
 
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorPo> vendorPoCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorInvoice> vendorInvoiceCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorMd> vendorMdCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -137,6 +144,33 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.temp.Users[ username=" + username + " ]";
+    }
+
+    @XmlTransient
+    public Collection<VendorPo> getVendorPoCollection() {
+        return vendorPoCollection;
+    }
+
+    public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
+        this.vendorPoCollection = vendorPoCollection;
+    }
+
+    @XmlTransient
+    public Collection<VendorInvoice> getVendorInvoiceCollection() {
+        return vendorInvoiceCollection;
+    }
+
+    public void setVendorInvoiceCollection(Collection<VendorInvoice> vendorInvoiceCollection) {
+        this.vendorInvoiceCollection = vendorInvoiceCollection;
+    }
+
+    @XmlTransient
+    public Collection<VendorMd> getVendorMdCollection() {
+        return vendorMdCollection;
+    }
+
+    public void setVendorMdCollection(Collection<VendorMd> vendorMdCollection) {
+        this.vendorMdCollection = vendorMdCollection;
     }
     
 }

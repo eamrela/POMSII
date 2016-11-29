@@ -1,12 +1,15 @@
 package com.vodafone.poms.ii.entities;
 
 import com.vodafone.poms.ii.entities.UsersRoles;
+import com.vodafone.poms.ii.entities.VendorInvoice;
+import com.vodafone.poms.ii.entities.VendorMd;
+import com.vodafone.poms.ii.entities.VendorPo;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-21T01:22:19")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-29T19:56:30")
 @StaticMetamodel(Users.class)
 public class Users_ { 
 
@@ -15,6 +18,9 @@ public class Users_ {
     public static volatile CollectionAttribute<Users, UsersRoles> usersRolesCollection;
     public static volatile SingularAttribute<Users, String> email;
     public static volatile SingularAttribute<Users, String> firstLastName;
+    public static volatile CollectionAttribute<Users, VendorMd> vendorMdCollection;
+    public static volatile CollectionAttribute<Users, VendorPo> vendorPoCollection;
     public static volatile SingularAttribute<Users, String> password;
+    public static volatile CollectionAttribute<Users, VendorInvoice> vendorInvoiceCollection;
 
 }

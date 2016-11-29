@@ -2,7 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components">
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
@@ -13,26 +16,26 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-<!--        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
-        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> -->
-
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
+        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
+        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
+        <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
+        <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
+        <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
+        <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
+        
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>Settings | Approval Statuses</title>
-        <h:outputStylesheet name="css/jsfcrud.css"/>
-         <style>
-            .ui-growl{
-    top:100px;
+        <style>
+            .ui-growl{top: 100px;}
+            .fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
 }
-        </style>
+            </style>
+
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -43,7 +46,7 @@
                 <div class="static-sidebar-wrapper sidebar-blue">
                     <div class="static-sidebar">
                         <div class="sidebar">
-                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
+                            <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
                                 <POMSII:NavigationMenu/>
@@ -59,7 +62,55 @@
                             <div class="container-fluid">
                                 <!--Page start content here-->
                                 
-                                
+                                <div class="row-fluid"> 
+                                    <h:form class="ApprovalStatusListForm">
+                                        <p:growl id="growl"/>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                    <h2>Approval Statuses</h2>
+                                                    <div class="panel-ctrls" >
+                                                        <p:commandButton id="createButton" styleClass="btn btn-raised" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{approvalStatusController.prepareCreate}" update=":ApprovalStatusCreateForm" oncomplete="PF('ApprovalStatusCreateDialog').show()"/>
+                                                        <p:commandButton id="editButton" styleClass="btn btn-raised"  icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ApprovalStatusEditForm" oncomplete="PF('ApprovalStatusEditDialog').show()" disabled="#{empty approvalStatusController.selected}"/>
+                                                    </div>
+                                            </div>
+                                            <div class="panel-body" style="display: block;">
+                                                                                    <!-- panel body -->
+                                                            <p:dataTable id="datalist" value="#{approvalStatusController.items}" var="item"
+                                                                 selectionMode="single" selection="#{approvalStatusController.selected}"
+                                                                 paginator="true"
+                                                                 rowKey="#{item.statusName}"
+                                                                 rows="10"
+                                                                 rowsPerPageTemplate="10,20,30,40,50"
+                                                                 >
+
+                                                        <p:ajax event="rowSelect"   update="@([id$=createButton]) @([id$=editButton])"/>
+                                                        <p:ajax event="rowUnselect" update="@([id$=createButton]) @([id$=editButton])"/>
+
+                                                        <p:column>
+                                                            <f:facet name="header">
+                                                                <h:outputText value="#{bundle.ListApprovalStatusTitle_statusName}"/>
+                                                            </f:facet>
+                                                            <h:outputText value="#{item.statusName}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <f:facet name="header">
+                                                                <h:outputText value="#{bundle.ListApprovalStatusTitle_description}"/>
+                                                            </f:facet>
+                                                            <h:outputText value="#{item.description}"/>
+                                                        </p:column>
+                                                        <f:facet name="footer">
+                                                            
+                                                        </f:facet>
+                                                    </p:dataTable>
+                                                    
+                                                    <!-- panel body end -->
+                                            </div>
+                                            <div class="panel-footer" style="display: block;">
+                                                <span class="text-gray"><em>"#{approvalStatusController.items.size()}" Approval Status items</em></span>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </div>
                                 
                                 <!--page content end here--> 
                             </div>
@@ -87,6 +138,11 @@
         <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
 
     </h:body>
+    
+    <ui:fragment>
+        <ui:include src="modals/EditApprovalStatus.xhtml"/>
+        <ui:include src="modals/CreateApprovalStatus.xhtml"/>
+    </ui:fragment>
 
 </html>
 

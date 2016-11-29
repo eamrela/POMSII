@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +49,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "VendorPo.findBySysDate", query = "SELECT v FROM VendorPo v WHERE v.sysDate = :sysDate")
     , @NamedQuery(name = "VendorPo.findByTaxes", query = "SELECT v FROM VendorPo v WHERE v.taxes = :taxes")})
 public class VendorPo implements Serializable {
+
+    @JoinColumn(name = "po_chaser", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private EricssonPoChaser poChaser;
+    @JoinColumn(name = "po_owner", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private PoOwner poOwner;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -301,12 +307,29 @@ public class VendorPo implements Serializable {
 
     private void calculateMdDeserved() {
         BigInteger deserved = BigDecimal.valueOf(serviceValue.floatValue()*workDone).toBigInteger();
+        BigInteger deservedI = BigDecimal.valueOf(serviceValue.floatValue()*workDone).toBigInteger();
         Object[] grns = getVendorMdCollection().toArray();
         for (Object grn : grns) {
             deserved = deserved.subtract(((VendorMd) grn).getMdDeserved());
         }
         setMdDeserved(deserved);
-        setRemainingInPo(getRemainingInPo().subtract(getMdDeserved()));
+        setRemainingInPo(getPoValue().subtract(deservedI));
+    }
+
+    public EricssonPoChaser getPoChaser() {
+        return poChaser;
+    }
+
+    public void setPoChaser(EricssonPoChaser poChaser) {
+        this.poChaser = poChaser;
+    }
+
+    public PoOwner getPoOwner() {
+        return poOwner;
+    }
+
+    public void setPoOwner(PoOwner poOwner) {
+        this.poOwner = poOwner;
     }
 
     

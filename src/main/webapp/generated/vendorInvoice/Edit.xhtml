@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorInvoiceEditDlg" widgetVar="VendorInvoiceEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorInvoiceTitle}">
+            <h:form id="VendorInvoiceEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorInvoiceController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{vendorInvoiceController.selected.id}" title="#{bundle.EditVendorInvoiceTitle_id}" required="true" requiredMessage="#{bundle.EditVendorInvoiceRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiceDeserved}" for="invoiceDeserved" />
+                        <p:inputText id="invoiceDeserved" value="#{vendorInvoiceController.selected.invoiceDeserved}" title="#{bundle.EditVendorInvoiceTitle_invoiceDeserved}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiceFactor}" for="invoiceFactor" />
+                        <p:inputText id="invoiceFactor" value="#{vendorInvoiceController.selected.invoiceFactor}" title="#{bundle.EditVendorInvoiceTitle_invoiceFactor}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiceValue}" for="invoiceValue" />
+                        <p:inputText id="invoiceValue" value="#{vendorInvoiceController.selected.invoiceValue}" title="#{bundle.EditVendorInvoiceTitle_invoiceValue}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiceDate}" for="invoiceDate" />
+                        <p:calendar id="invoiceDate" pattern="MM/dd/yyyy" value="#{vendorInvoiceController.selected.invoiceDate}" title="#{bundle.EditVendorInvoiceTitle_invoiceDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiceNumber}" for="invoiceNumber" />
+                        <p:inputText id="invoiceNumber" value="#{vendorInvoiceController.selected.invoiceNumber}" title="#{bundle.EditVendorInvoiceTitle_invoiceNumber}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_invoiced}" for="invoiced" />
+                        <p:selectBooleanCheckbox id="invoiced" value="#{vendorInvoiceController.selected.invoiced}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_remainingInInvoice}" for="remainingInInvoice" />
+                        <p:inputText id="remainingInInvoice" value="#{vendorInvoiceController.selected.remainingInInvoice}" title="#{bundle.EditVendorInvoiceTitle_remainingInInvoice}" />
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_sysDate}" for="sysDate" />
+                        <p:calendar id="sysDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{vendorInvoiceController.selected.sysDate}" title="#{bundle.EditVendorInvoiceTitle_sysDate}" required="true" requiredMessage="#{bundle.EditVendorInvoiceRequiredMessage_sysDate}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_creator}" for="creator" />
+                        <p:selectOneMenu id="creator" value="#{vendorInvoiceController.selected.creator}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="creatorItem"
+                                           itemValue="#{creatorItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditVendorInvoiceLabel_mdId}" for="mdId" />
+                        <p:selectOneMenu id="mdId" value="#{vendorInvoiceController.selected.mdId}" required="true" requiredMessage="#{bundle.EditVendorInvoiceRequiredMessage_mdId}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{vendorMdController.itemsAvailableSelectOne}"
+                                           var="mdIdItem"
+                                           itemValue="#{mdIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{vendorInvoiceController.update}" value="#{bundle.Save}" update="display,:VendorInvoiceListForm:datalist,:growl" oncomplete="handleSubmit(args, 'VendorInvoiceEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="VendorInvoiceEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

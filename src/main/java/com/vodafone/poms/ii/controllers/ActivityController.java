@@ -311,9 +311,9 @@ public class ActivityController implements Serializable {
             selectedASPPo.setWorkDone(selectedASPPo.getWorkDone()+
                 (totalPrice/selectedASPPo.getServiceValue().floatValue())
             );
-            selectedASPPo.setRemainingInPo(
-                    selectedASPPo.getRemainingInPo().subtract(
-                            BigInteger.valueOf(totalPrice.intValue())));
+//            selectedASPPo.setRemainingInPo(
+//                    selectedASPPo.getRemainingInPo().subtract(
+//                            BigInteger.valueOf(totalPrice.intValue())));
             aspPOController.setSelected(selectedASPPo);
             aspPOController.update();
             aspPOController.setSelected(null);

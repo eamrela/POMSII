@@ -19,7 +19,7 @@
             <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
             <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
             <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
-            <h:outputStylesheet name="assets/css/styles.css"  />
+            <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
             <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
@@ -99,6 +99,34 @@
                                                                      class="form-control" id="remaininginpo" disabled="true">
                                                             <f:convertNumber currencySymbol="EGP" type="currency"/>
                                                         </h:inputText>
+                                                     </div>
+                                                     <div class="col-xs-12">
+                                                        <label for="poowner">PO Owner</label>
+                                                         <h:selectOneMenu id="poowner" 
+                                                                          value="#{vendorPoController.selected.poOwner}" 
+                                                                         converter="PoOwnerControllerConverter"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{poOwnerController.itemsAvailableSelectOne}"
+                                                                           var="poOwnerItem"
+                                                                           itemValue="#{poOwnerItem}"
+                                                                           itemLabel="#{poOwnerItem.ownerName}"/>
+                                                        </h:selectOneMenu>
+                                                     </div>
+                                                     <div class="col-xs-12">
+                                                        <label for="pochaser">PO Chaser</label>
+                                                         <h:selectOneMenu id="pochaser" 
+                                                                          value="#{vendorPoController.selected.poChaser}" 
+                                                                         converter="EricssonPoChaserControllerConverter"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{ericssonPoChaserController.itemsAvailableSelectOne}"
+                                                                           var="poChaserItem"
+                                                                           itemValue="#{poChaserItem}"
+                                                                           itemLabel="#{poChaserItem.chaserName}"/>
+                                                        </h:selectOneMenu>
                                                      </div>
                                                  </div>
                                              </div>

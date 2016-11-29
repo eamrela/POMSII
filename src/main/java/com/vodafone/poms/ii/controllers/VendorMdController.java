@@ -4,6 +4,7 @@ import com.vodafone.poms.ii.entities.VendorMd;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.VendorMdFacade;
+import com.vodafone.poms.ii.entities.VendorInvoice;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("vendorMdController")
 @SessionScoped
@@ -32,11 +34,18 @@ public class VendorMdController implements Serializable {
     private Date editMdDate;
     private String editMdNumber;
     private BigInteger editRemainingInMd;
+    private BigInteger selectedMdInvoiceValue;
     private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.VendorMdFacade ejbFacade;
     private List<VendorMd> items = null;
     private VendorMd selected;
+    
+    
+    @Inject
+    private VendorInvoiceController vendorInvoiceController;
+    @Inject
+    private UsersController usersController;
 
     public VendorMdController() {
     }
@@ -89,15 +98,17 @@ public class VendorMdController implements Serializable {
 
     public void updateEdit() {
         if(editMdDate!=null && editMdFactor!=null && editMdValue!=null){
-            if(getFacade().findByMdNumber(editMdNumber).isEmpty()){
+            if(editMdDeserved.compareTo(editMdValue)==1
+                    || editMdDeserved.compareTo(editMdValue)==0){
             selected.setMdDate(editMdDate);
             selected.setMdFactor(editMdFactor);
             selected.setMdValue(editMdValue);
             selected.setInvoiced(editInvoiced);
             selected.setMdNumber(editMdNumber);
+            selected.setRemainingInMd(editRemainingInMd);
             persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
             }else{
-                JsfUtil.addErrorMessage("GRN Number already exist");
+                JsfUtil.addErrorMessage("MD Value is more than the amount deserved.");
             }
         }
     }
@@ -161,6 +172,24 @@ public class VendorMdController implements Serializable {
     public List<VendorMd> getDashboardItems(Date start, Date end) {
         return getFacade().findDashboardItems(start,end);
     }
+
+    public BigInteger getSelectedMdInvoiceValue() {
+        selectedMdInvoiceValue = BigInteger.ZERO;
+        BigInteger totalInvoices = BigInteger.ZERO;
+        if(selected!=null){
+        Object[] invoices = selected.getVendorInvoiceCollection().toArray();
+        for (int i = 0; i < invoices.length; i++) {
+            if(((VendorInvoice)invoices[i]).getInvoiceValue()!=null)
+            totalInvoices = totalInvoices.add(((VendorInvoice)invoices[i]).getInvoiceValue());
+        }
+        if(selected.getMdValue()!=null){
+            selectedMdInvoiceValue = selected.getMdValue().subtract(totalInvoices);
+        }
+        }
+        return selectedMdInvoiceValue;
+    }
+
+    
 
     
 
@@ -278,5 +307,26 @@ public class VendorMdController implements Serializable {
     private void calculateRemaining() {
         if(editMdValue!=null)
           editRemainingInMd = editMdDeserved.subtract(editMdValue);
+    }
+    
+    public void clearSelected(){
+        selected = null;
+        selectedMdInvoiceValue = BigInteger.ZERO;
+    }
+    
+   
+    public void createInvoice(){
+        if(selected!=null){
+            if(getSelectedMdInvoiceValue().compareTo(BigInteger.ZERO)==1){
+                vendorInvoiceController.prepareCreate();
+                vendorInvoiceController.getSelected().setMdId(selected);
+                vendorInvoiceController.getSelected().setCreator(usersController.getLoggedInUser());
+                vendorInvoiceController.getSelected().setInvoiceDeserved(getSelectedMdInvoiceValue());
+                vendorInvoiceController.getSelected().setSysDate(new Date());
+                selected.getVendorInvoiceCollection().add(vendorInvoiceController.create());
+                selected.setInvoiced(Boolean.TRUE);
+                update();
+        }
+    }
     }
 }

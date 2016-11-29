@@ -1,14 +1,16 @@
 package com.vodafone.poms.ii.entities;
 
 import com.vodafone.poms.ii.entities.Users;
+import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.entities.VendorPo;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.annotation.Generated;
+import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-21T01:22:19")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-29T19:56:30")
 @StaticMetamodel(VendorMd.class)
 public class VendorMd_ { 
 
@@ -21,6 +23,7 @@ public class VendorMd_ {
     public static volatile SingularAttribute<VendorMd, BigInteger> mdDeserved;
     public static volatile SingularAttribute<VendorMd, String> mdNumber;
     public static volatile SingularAttribute<VendorMd, Date> mdDate;
+    public static volatile CollectionAttribute<VendorMd, VendorInvoice> vendorInvoiceCollection;
     public static volatile SingularAttribute<VendorMd, Boolean> invoiced;
     public static volatile SingularAttribute<VendorMd, Users> creator;
 

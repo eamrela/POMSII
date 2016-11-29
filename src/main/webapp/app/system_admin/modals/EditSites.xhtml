@@ -8,7 +8,8 @@
 
     <ui:composition>
 
-        <p:dialog id="SitesEditDlg" widgetVar="SitesEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditSitesTitle}">
+        <p:dialog id="SitesEditDlg" widgetVar="SitesEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditSitesTitle}"
+                  closable="false" closeOnEscape="false">
             <h:form id="SitesEditForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{sitesController.selected != null}">
@@ -18,7 +19,9 @@
                         <p:inputText id="gfRt" value="#{sitesController.selected.gfRt}" title="#{bundle.EditSitesTitle_gfRt}" />
                     </p:panelGrid>
                     <p:commandButton actionListener="#{sitesController.update}" value="#{bundle.Save}" update="display,:SitesListForm:datalist,:SitesListForm:growl" oncomplete="handleSubmit(args, 'SitesEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}" onclick="SitesEditDialog.hide()"/>
+                    <p:commandButton value="#{bundle.Cancel}" >
+                        <p:ajax listener="#{sitesController.resetSelection}" oncomplete="PF('SitesEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                    </p:commandButton>
                 </h:panelGroup>
             </h:form>
         </p:dialog>

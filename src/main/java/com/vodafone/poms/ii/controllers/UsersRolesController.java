@@ -2,8 +2,9 @@ package com.vodafone.poms.ii.controllers;
 
 import com.vodafone.poms.ii.entities.UsersRoles;
 import com.vodafone.poms.ii.beans.UsersRolesFacade;
-import com.vodafone.poms.ii.temp.util.JsfUtil;
-import com.vodafone.poms.ii.temp.util.JsfUtil.PersistAction;
+import com.vodafone.poms.ii.controllers.util.JsfUtil;
+import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
+
 
 import java.io.Serializable;
 import java.util.List;

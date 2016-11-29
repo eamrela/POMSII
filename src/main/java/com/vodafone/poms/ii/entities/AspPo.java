@@ -53,6 +53,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "AspPo.findByTaxes", query = "SELECT a FROM AspPo a WHERE a.taxes = :taxes")})
 public class AspPo implements Serializable {
 
+     @JoinColumn(name = "po_chaser", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private EricssonPoChaser poChaser;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -141,6 +144,13 @@ public class AspPo implements Serializable {
         this.poNumber = poNumber;
     }
 
+     public EricssonPoChaser getPoChaser() {
+        return poChaser;
+    }
+
+    public void setPoChaser(EricssonPoChaser poChaser) {
+        this.poChaser = poChaser;
+    }
     public Date getPoDate() {
         return poDate;
     }
@@ -235,9 +245,9 @@ public class AspPo implements Serializable {
              Object[] activities = getActivityCollection().toArray();
              Float totalASP = 0f;
              Float totalVendor = 0f;
-             for (int i = 0; i < activities.length; i++) {
-                totalASP += ((Activity)activities[i]).getTotalPriceAsp();
-                totalVendor += ((Activity)activities[i]).getTotalPriceVendor();
+            for (Object activitie : activities) {
+                totalASP += ((Activity) activitie).getTotalPriceAsp();
+                totalVendor += ((Activity) activitie).getTotalPriceVendor();
             }
              
              setPoMargin((1-(totalASP/totalVendor))*100.0);
@@ -258,7 +268,7 @@ public class AspPo implements Serializable {
         this.taxes = taxes;
     }
 
-    @XmlTransient
+//    @XmlTransient
     public Collection<Activity> getActivityCollection() {
         return activityCollection;
     }
@@ -319,12 +329,13 @@ public class AspPo implements Serializable {
 
     public void calculateGRNDeserved(){
         BigInteger deserved = BigDecimal.valueOf((serviceValue.floatValue()*workDone)).toBigInteger();
+        BigInteger deservedI = BigDecimal.valueOf((serviceValue.floatValue()*workDone)).toBigInteger();
         Object[] grns = getAspGrnCollection().toArray();
         for (Object grn : grns) {
             deserved = deserved.subtract(((AspGrn) grn).getGrnDeserved());
         }
         setGrnDeserved(deserved);
-        setRemainingInPo(getRemainingInPo().subtract(getGrnDeserved()));
+        setRemainingInPo(getPoValue().subtract(deservedI));
     }
     
 //    @XmlTransient

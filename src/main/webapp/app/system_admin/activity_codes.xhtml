@@ -16,26 +16,25 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-<!--        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
-        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> -->
-
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
-        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
+        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
+        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
+        <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
+        <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
+        <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
+        <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
+        
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>Settings | Activity Codes</title>
-        <h:outputStylesheet name="css/jsfcrud.css"/>
-         <style>
-            .ui-growl{
-    top:100px;
+        <style>
+            .ui-growl{top: 100px;}
+            .fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
 }
-        </style>
+            </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -46,7 +45,7 @@
                 <div class="static-sidebar-wrapper sidebar-blue">
                     <div class="static-sidebar">
                         <div class="sidebar">
-                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
+                            <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
                                 <POMSII:NavigationMenu/>
@@ -92,37 +91,37 @@
                                                             <p:ajax event="rowSelect"   update=":ActivityCodeListForm:createButton :ActivityCodeListForm:editButton"/>
                                                             <p:ajax event="rowUnselect" update=":ActivityCodeListForm:createButton :ActivityCodeListForm:editButton "/>
 
-                                                            <p:column filterBy="#{item.materialId}" filterMatchMode="contains">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_materialId}"/>
                                                                 </f:facet>
                                                                 <h:outputText value="#{item.materialId}"/>
                                                             </p:column>
-                                                            <p:column filterBy="#{item.description}" filterMatchMode="contains">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_description}"/>
                                                                 </f:facet>
                                                                 <h:outputText value="#{item.description}"/>
                                                             </p:column>
-                                                            <p:column sortBy="#{item.vendorPrice}">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_vendorPrice}"/>
                                                                 </f:facet>
                                                                 <h:outputText value="#{item.vendorPrice}"/>
                                                             </p:column>
-                                                            <p:column sortBy="#{item.subcontractorPrice}">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_subcontractorPrice}"/>
                                                                 </f:facet>
                                                                 <h:outputText value="#{item.subcontractorPrice}"/>
                                                             </p:column>
-                                                            <p:column sortBy="#{item.um}">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_um}"/>
                                                                 </f:facet>
                                                                 <h:outputText value="#{item.um}"/>
                                                             </p:column>
-                                                            <p:column sortBy="#{item.umPercent}">
+                                                            <p:column>
                                                                 <f:facet name="header">
                                                                     <h:outputText value="#{bundle.ListActivityCodeTitle_umPercent}"/>
                                                                 </f:facet>

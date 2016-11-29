@@ -19,7 +19,7 @@
             <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
             <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
             <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
-            <h:outputStylesheet name="assets/css/styles.css"  />
+            <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
             <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
@@ -86,9 +86,13 @@
                                                                     styleClass="fixed-size"
                                                                     >
 
-                                                           <p:ajax event="rowSelect"   update="editButton,:VendorPOListForm:growl,
+                                                           <p:ajax event="rowSelect"   
+                                                                   update="editButton,:VendorPOListForm:growl,
                                                                                                :VendorPOListForm:selectedVendorPOASPPO ,
-                                                                                               :VendorPOListForm:selectedVendorPOMD"/>
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice"/>
+                                                           <p:ajax  event="rowSelect" listener="#{vendorMdController.clearSelected}"/>
+                                                           <p:ajax event="rowSelect" listener="#{vendorInvoiceController.clearSelected}"/>
 
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poNumber}" filterMatchMode="contains" filterStyle="width: 70%;">
@@ -169,6 +173,20 @@
                                                                <h:outputText value="#{item.domainName.domainName}"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poOwner.ownerName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Owner"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poOwner.ownerName}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poChaser.chaserName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Chaser"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poChaser.chaserName}"/>
+                                                           </p:column>
+                                                           <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poType.typeName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Type"/>
@@ -208,7 +226,7 @@
                                                                         rowKey="#{vendorMD.id}"
                                                                         styleClass="fixed-size">
                                                                 
-                                                                <p:ajax event="rowSelect" update="editButton"/>
+                                                                <p:ajax event="rowSelect" update="editButton,:VendorPOListForm:selectedVendorPOMDInvoice"/>
                                                                 
                                                                 <p:column headerText="MD#" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdNumber}" />
@@ -262,7 +280,9 @@
                                                                                       actionListener="#{vendorPoController.createMd}"
                                                                                       update="
                                                                                       :vendorPOListForm:selectedVendorPOMD, 
+                                                                                      :vendorPOListForm:selectedVendorPOMDInvoice, 
                                                                                       :vendorPOListForm:selectedVendorPOMD:associatedMD,
+                                                                                      :vendorPOListForm:selectedVendorPOMDInvoice:associatedMDInvoice,
                                                                                       :vendorPOListForm:growl">
 
                                                                         </p:commandButton>
@@ -274,7 +294,99 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-md-6">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated Invoices</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                         <p:outputPanel id="selectedVendorPOMDInvoice"> 
+                                                             <h:panelGroup rendered="#{vendorMdController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedMDInvoice"
+                                                                        var="vendorMDInvoice" 
+                                                                        value="#{vendorMdController.selected.vendorInvoiceCollection}"
+                                                                        emptyMessage="This MD doesn't have any Invoice"
+                                                                        selection="#{vendorInvoiceController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{vendorMDInvoice.id}"
+                                                                        styleClass="fixed-size">
+                                                                
+                                                                <p:ajax event="rowSelect" update="editButton"/>
+                                                                
+                                                                <p:column headerText="Invoice#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMDInvoice.invoiceNumber}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMDInvoice.invoiceDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Deserved" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMDInvoice.invoiceDeserved}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Factor" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMDInvoice.invoiceFactor}" />
+                                                                </p:column>
+                                                                <p:column headerText="InvoiceValue" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorMDInvoice.invoiceValue}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vendorMDInvoice.remainingInInvoice}" >
+                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Invoiced" style="font-size: 9px;">
+                                                                    <h:selectBooleanCheckbox value="#{vendorMDInvoice.invoiced}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="editButton"  actionListener="#{vendorInvoiceController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorInvoiceEditForm" oncomplete="PF('VendorInvoiceEditDialog').show()" disabled="#{empty vendorInvoiceController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <label for="invoicedeserved">Invoice Needed</label>
+                                                                <h:outputText id="invoicedeserved"
+                                                                              value="#{vendorMdController.selectedMdInvoiceValue}"
+                                                                                   styleClass="form-control">
+                                                                          <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                 </div>
+                                                                 <div class="col-xs-6">
+                                                                     <h:panelGroup rendered="#{vendorMdController.selectedMdInvoiceValue>0}">
+                                                                         <p:commandButton 
+                                                                                     class="btn-raised btn-success btn"
+                                                                                      value="Create Invoice"
+                                                                                      ajax="false"
+                                                                                      actionListener="#{vendorMdController.createInvoice}"
+                                                                                      update="
+                                                                                      :vendorPOListForm:selectedVendorPOMD, 
+                                                                                      :vendorPOListForm:selectedVendorPOMDInvoice, 
+                                                                                      :vendorPOListForm:selectedVendorPOMD:associatedMD,
+                                                                                      :vendorPOListForm:selectedVendorPOMD:associatedMDInvoice,
+                                                                                      :vendorPOListForm:growl">
+
+                                                                        </p:commandButton>
+                                                                     </h:panelGroup>
+                                                                 </div>
+                                                             </h:panelGroup>
+                                                         </p:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>   
+                                <div class="row">
+                                    <div class="col-md-12">
                                             <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
                                                         <h2>Associated ASP POs</h2>
@@ -336,7 +448,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                </div>       
+                                </div>
                                 <!--page content end here--> 
                                 </h:form>
                                 <p:dialog id="VendorPoEditDlg" widgetVar="VendorPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorPoTitle}">
@@ -418,8 +530,8 @@
                                     <h:form id="VendorMdEditForm">
                                         <h:panelGroup id="display">
                                         <p:panelGrid columns="2" rendered="#{vendorMdController.selected != null}">
-                                            <p:outputLabel value="MD Factor" for="mdFactor"/>
-                                            <p:inputText id="mdFactor" value="#{vendorMdController.editMdFactor}" 
+                                        <p:outputLabel value="MD Factor" for="mdFactor"/>
+                                        <p:inputText id="mdFactor" value="#{vendorMdController.editMdFactor}" 
                                                          title="MD Factor">
                                                 <p:ajax update="mdValue,remainingInMd"/>
                                         </p:inputText>
@@ -449,6 +561,43 @@
                                 </h:panelGroup>
                                 </h:form>
                             </p:dialog>
+                                <p:dialog id="VendorInvoiceEditDlg" widgetVar="VendorInvoiceEditDialog" modal="true" resizable="false" appendTo="@(body)" 
+                                      header="Customer MD-Invoice">
+                                    <h:form id="VendorInvoiceEditForm">
+                                        <h:panelGroup id="display">
+                                            <p:panelGrid columns="2" rendered="#{vendorInvoiceController.selected != null}">
+                                            <p:outputLabel value="Invoice Factor" for="invoiceFactor"/>
+                                            <p:inputText id="invoiceFactor" value="#{vendorInvoiceController.editinvoiceFactor}" 
+                                                         title="Invoice Factor">
+                                                <p:ajax update="invoiceValue,remainingInInvoice"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="Invoice Value" for="invoiceValue" />
+                                        <p:inputText id="invoiceValue" value="#{vendorInvoiceController.editInvoiceValue}" title="Invoice Value">
+                                             <p:ajax update="invoiceFactor,remainingInInvoice"/>
+                                        </p:inputText>
+                                        <p:outputLabel value="Invoice Date" for="invoiceDate" />
+                                        <p:calendar id="invoiceDate" pattern="MM/dd/yyyy" value="#{vendorInvoiceController.editInvoiceDate}" 
+                                                    title="Invoice Date"  showOn="button"/>
+                                        <p:outputLabel value="Invoice Number" for="invoiceNumber" />
+                                        <p:inputText id="invoiceNumber" value="#{vendorInvoiceController.editInvoiceNumber}" title="Invoice Number" />
+                                        <p:outputLabel value="Invoiced" for="invoiced"/>
+                                        <p:selectBooleanCheckbox id="invoiced" value="#{vendorInvoiceController.editInvoiced}" />
+                                        <p:outputLabel value="Remaining in Invoice" for="remainingInInvoice" />
+                                        <p:inputText id="remainingInInvoice" value="#{vendorInvoiceController.editRemainingInInvoice}" 
+                                                     title="Remaining in Invoice" disabled="true"/>
+                                    </p:panelGrid>
+                                    <p:commandButton actionListener="#{vendorInvoiceController.updateEdit}" value="#{bundle.Save}" 
+                                                     ajax="false" update="display,:VendorPoListForm:datalistVendorPO,
+                                                     :VendorPoListForm:selectedVendorPOMDInvoice,:VendorPoListForm:growl,
+                                                     :VendorPoListForm:selectedVendorPOMDInvoice:associatedMDInvoice" 
+                                                     oncomplete="handleSubmit(args, 'VendorInvoiceEditDialog');"/>
+                                    <p:commandButton value="#{bundle.Cancel}" ajax="false" onclick="VendorInvoiceEditDialog.hide()" 
+                                                    update="display,:VendorPoListForm:datalistVendorPO,
+                                                     :VendorPoListForm:selectedVendorPOMDInvoice,:VendorPoListForm:growl,
+                                                     :VendorPoListForm:selectedVendorPOMDInvoice:associatedMDInvoice"/>
+                                </h:panelGroup>
+                                </h:form>
+                                </p:dialog>
                             
                             </div>
                         </div>

@@ -7,10 +7,12 @@ package com.vodafone.poms.ii.helpers;
 
 import com.vodafone.poms.ii.controllers.AspGrnController;
 import com.vodafone.poms.ii.controllers.AspPoController;
+import com.vodafone.poms.ii.controllers.VendorInvoiceController;
 import com.vodafone.poms.ii.controllers.VendorMdController;
 import com.vodafone.poms.ii.controllers.VendorPoController;
 import com.vodafone.poms.ii.entities.AspGrn;
 import com.vodafone.poms.ii.entities.AspPo;
+import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.entities.VendorMd;
 import com.vodafone.poms.ii.entities.VendorPo;
 import java.io.Serializable;
@@ -44,8 +46,10 @@ public class DashboardController implements Serializable{
     private List<AspGrn> aspGrnsCOS;
     private List<AspPo> aspCommittedCost;
     private List<VendorMd> vendorMds;
-    private List<VendorMd> vendorMdsNS;
+    
+    private List<VendorInvoice> vendorInvoices;
     private List<VendorMd> vendorRemainingNotYetinvoiced;
+    
     private List<VendorPo> vendorMdNotYetGenrated;
     private BigInteger NS;
     private BigInteger COS;
@@ -66,7 +70,9 @@ public class DashboardController implements Serializable{
     private EntityManager em;
     
     @Inject
-    private VendorMdController vendorMDController;
+    private VendorInvoiceController vendorInvoiceController;
+    @Inject
+    private VendorMdController vendorMdController;
     @Inject
     private VendorPoController vendorPoController;
     @Inject
@@ -136,7 +142,7 @@ public class DashboardController implements Serializable{
                 COS = COS.add(aspGrn.getGrnValue());
                 aspGrnsCOS.add(aspGrn);
                 }else if(aspGrn.getRemainingInGrn()!=null){ 
-                    if(aspGrn.getRemainingInGrn().compareTo(BigInteger.ZERO)==1){
+                    if(aspGrn.getRemainingInGrn().compareTo(BigInteger.ZERO)!=0){
                             aspCommittedCost.add(aspGrn.getAspPoId());
                             committedCost = committedCost.add(aspGrn.getRemainingInGrn());
                     }
@@ -147,33 +153,27 @@ public class DashboardController implements Serializable{
     }
 
     public boolean calculateVendor(){
-        vendorMds = vendorMDController.getDashboardItems(start, end);
-        vendorRemainingNotYetinvoiced = new ArrayList<>();
-        vendorMdNotYetGenrated = vendorPoController.getDashboardMDNotYetGenerated(start,end);
-        vendorMdNotYetGenratedValue = BigInteger.ZERO;
-        for (VendorPo vendorMdNotYetGenrated1 : vendorMdNotYetGenrated) {
-            vendorMdNotYetGenratedValue = vendorMdNotYetGenratedValue.add(vendorMdNotYetGenrated1.getMdDeserved());
-        }
+        vendorInvoices = vendorInvoiceController.findDashboardItems(start,end);
+        vendorRemainingNotYetinvoiced = vendorMdController.getDashboardItems(start, end);
         NS = BigInteger.ZERO;
-        vendorMdsNS = new ArrayList<>();
         remainingNotYetInvoiced = BigInteger.ZERO;
-        
-        for (VendorMd vendorMd : vendorMds) {
-            if(vendorMd.getInvoiced()!=null){
-                if(vendorMd.getInvoiced() && vendorMd.getMdValue()!=null){
-                    NS = NS.add(vendorMd.getMdValue());
-                    vendorMdsNS.add(vendorMd);
-                    if(vendorMd.getRemainingInMd()!=null){
-                        if(vendorMd.getRemainingInMd().compareTo(BigInteger.ZERO)==1){
-                            remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorMd.getRemainingInMd());
-                            vendorRemainingNotYetinvoiced.add(vendorMd);
-                        }
-                    }
-                }else{
-                    vendorRemainingNotYetinvoiced.add(vendorMd);
+        // Calculate total remaining in MDs
+        for (int i = 0; i < vendorRemainingNotYetinvoiced.size(); i++) {
+            remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorRemainingNotYetinvoiced.get(i).getRemainingInMd());
+        }
+        // Calculate total NS and Remaining in Invoices
+        for (int i = 0; i < vendorInvoices.size(); i++) {
+            NS = NS.add(vendorInvoices.get(i).getInvoiceValue());
+            if(vendorInvoices.get(i).getRemainingInInvoice()!=null){
+                if(vendorInvoices.get(i).getRemainingInInvoice().compareTo(BigInteger.ZERO)!=0){
+                    remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorInvoices.get(i).getRemainingInInvoice());
+                    vendorRemainingNotYetinvoiced.add(vendorInvoices.get(i).getMdId());
                 }
             }
         }
+        
+        
+        
         return true;
     }
 
@@ -257,7 +257,7 @@ public class DashboardController implements Serializable{
         committedCost = null;
         remainingNotYetInvoiced = null;
         vendorMds = null;
-        vendorMdsNS = null;
+        vendorInvoices = null;
         vendorRemainingNotYetinvoiced = null;
         vendorMdNotYetGenrated = null;
         vendorMdNotYetGenratedValue = BigInteger.ZERO;
@@ -281,6 +281,15 @@ public class DashboardController implements Serializable{
     public void setVendorMdNotYetGenratedValue(BigInteger vendorMdNotYetGenratedValue) {
         this.vendorMdNotYetGenratedValue = vendorMdNotYetGenratedValue;
     }
+
+    public List<VendorInvoice> getVendorInvoices() {
+        return vendorInvoices;
+    }
+
+    public void setVendorInvoices(List<VendorInvoice> vendorInvoices) {
+        this.vendorInvoices = vendorInvoices;
+    }
+    
     
     public void setStart(Date start) {
         this.start = start;
@@ -333,13 +342,7 @@ public class DashboardController implements Serializable{
         this.vendorMds = vendorMds;
     }
 
-    public List<VendorMd> getVendorMdsNS() {
-        return vendorMdsNS;
-    }
-
-    public void setVendorMdsNS(List<VendorMd> vendorMdsNS) {
-        this.vendorMdsNS = vendorMdsNS;
-    }
+   
 
     public List<VendorMd> getVendorRemainingNotYetinvoiced() {
         return vendorRemainingNotYetinvoiced;

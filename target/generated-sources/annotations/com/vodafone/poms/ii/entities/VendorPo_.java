@@ -2,6 +2,8 @@ package com.vodafone.poms.ii.entities;
 
 import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.entities.DomainNames;
+import com.vodafone.poms.ii.entities.EricssonPoChaser;
+import com.vodafone.poms.ii.entities.PoOwner;
 import com.vodafone.poms.ii.entities.PoStatus;
 import com.vodafone.poms.ii.entities.PoTypes;
 import com.vodafone.poms.ii.entities.Users;
@@ -13,12 +15,14 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-21T01:22:19")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-29T19:56:30")
 @StaticMetamodel(VendorPo.class)
 public class VendorPo_ { 
 
-    public static volatile SingularAttribute<VendorPo, Double> workDone;
+    public static volatile SingularAttribute<VendorPo, PoOwner> poOwner;
+    public static volatile SingularAttribute<VendorPo, EricssonPoChaser> poChaser;
     public static volatile SingularAttribute<VendorPo, BigInteger> remainingInPo;
+    public static volatile SingularAttribute<VendorPo, Double> workDone;
     public static volatile SingularAttribute<VendorPo, String> poDescription;
     public static volatile SingularAttribute<VendorPo, BigInteger> serviceValue;
     public static volatile CollectionAttribute<VendorPo, VendorMd> vendorMdCollection;

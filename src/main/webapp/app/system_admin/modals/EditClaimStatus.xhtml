@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ClaimStatusEditDlg" widgetVar="ClaimStatusEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditClaimStatusTitle}"
+                  closable="false" closeOnEscape="false">
+            <h:form id="ClaimStatusEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{claimStatusController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditClaimStatusLabel_claimName}" for="claimName" />
+                        <p:inputText id="claimName" value="#{claimStatusController.selected.claimName}" title="#{bundle.EditClaimStatusTitle_claimName}" required="true" requiredMessage="#{bundle.EditClaimStatusRequiredMessage_claimName}"/>
+                        <p:outputLabel value="#{bundle.EditClaimStatusLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{claimStatusController.selected.description}" title="#{bundle.EditClaimStatusTitle_description}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{claimStatusController.update}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args, 'ClaimStatusEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" >
+                        <p:ajax listener="#{claimStatusController.resetSelection}" oncomplete="PF('ClaimStatusEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

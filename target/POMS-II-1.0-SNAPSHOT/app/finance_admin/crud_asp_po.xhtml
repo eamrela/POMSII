@@ -19,7 +19,7 @@
             <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
             <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
             <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
-            <h:outputStylesheet name="assets/css/styles.css"  />
+            <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
             <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
@@ -200,6 +200,13 @@
                                                                </f:facet>
                                                                <h:outputText value="#{item.asp.subcontractorName}"/>
                                                            </p:column>
+                                                           <p:column style="font-size: 9px;"
+                                                                     filterBy="#{item.poChaser.chaserName}" filterMatchMode="contains" filterStyle="width: 70%;">
+                                                               <f:facet name="header">
+                                                                   <h:outputText value="Chaser"/>
+                                                               </f:facet>
+                                                               <h:outputText value="#{item.poChaser.chaserName}"/>
+                                                           </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="CustomerPO"/>
@@ -218,20 +225,49 @@
                                     <div class="col-md-3">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
-                                                        <h2>Correlate Customer POs</h2>
+                                                        <h2>Correlate/Check Customer POs</h2>
                                                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                                                 </div>
                                                 <div class="panel-body">
                                                      <p:outputPanel id="selectedCorrelation">
                                                          <h:panelGroup rendered="#{aspPoController.selectedItems!=null}">
+                                                            <h:panelGroup rendered="#{aspPoController.selected.vendorPoCollection.size()>0}">
+                                                                <label>This PO is correlated</label>
+                                                                <p:dataTable 
+                                                                id="vendorDataTableCorrelated"
+                                                                var="vendorPOC" 
+                                                                value="#{aspPoController.selected.vendorPoCollection}"
+                                                                emptyMessage="No POs found matching this ASP PO"
+                                                                rowKey="#{vendorPOC.poNumber}"
+                                                                styleClass="fixed-size">
+
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{vendorPOC.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vendorPOC.remainingInPo}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{vendorPOC.poValue}" >
+                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            </h:panelGroup>
+                                                            <h:panelGroup rendered="#{aspPoController.selected.vendorPoCollection.size()==0}">
                                                              <label >Total PO price with Margin: 
                                                                  (
                                                                  <h:outputText value="#{aspPoController.totalPOASPPrice}">
                                                                      <f:convertNumber type="currency" currencySymbol="EGP"/>
                                                                  </h:outputText>                       
-                                                                 )</label>
-                                                            <br></br>
-                                                            <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
+                                                                 )
+                                                             </label>
+                                                             <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
                                                             <p:dataTable 
                                                                 id="vendorDataTable"
                                                                 var="vendorPO" 
@@ -277,6 +313,8 @@
                                                                         :ASPPOListForm:vendorDataTable" />
                                                             </h:panelGroup>
                                                             </h:panelGroup>
+                                                            </h:panelGroup>
+                                                           
                                                          </h:panelGroup>
                                                      </p:outputPanel>
                                                 </div>

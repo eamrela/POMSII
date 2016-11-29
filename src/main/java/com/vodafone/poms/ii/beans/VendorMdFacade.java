@@ -44,7 +44,8 @@ public class VendorMdFacade extends AbstractFacade<VendorMd> {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return em.createNativeQuery("select * " +
                                     "from vendor_md " +
-                                    "where md_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"' ", 
+                                    "where md_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"' "
+                                    + " and remaining_in_md > 0 ", 
                 VendorMd.class).getResultList();
     }
     

@@ -351,9 +351,9 @@ public class AspPoController implements Serializable {
             selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone()+
                 (totalPrice.floatValue()/selectedVendorPo.getServiceValue().floatValue())
             );
-            selectedVendorPo.setRemainingInPo(
-                    selectedVendorPo.getRemainingInPo().subtract(
-                            BigInteger.valueOf(totalPrice.intValue())));
+//            selectedVendorPo.setRemainingInPo(
+//                    selectedVendorPo.getRemainingInPo().subtract(
+//                            BigInteger.valueOf(totalPrice.intValue())));
             vendorPoController.setSelected(selectedVendorPo);
             vendorPoController.update();
             vendorPoController.setSelected(null);
@@ -382,6 +382,8 @@ public class AspPoController implements Serializable {
         if(selected!=null){
             if(selected.getPoType().getTypeName().equals("Service")){
                 selected.setPoMargin(13.0);
+            }else{
+                selected.setPoMargin(30.0);
             }
         }
     }

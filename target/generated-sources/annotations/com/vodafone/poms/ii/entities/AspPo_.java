@@ -3,6 +3,7 @@ package com.vodafone.poms.ii.entities;
 import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.entities.AspGrn;
 import com.vodafone.poms.ii.entities.DomainNames;
+import com.vodafone.poms.ii.entities.EricssonPoChaser;
 import com.vodafone.poms.ii.entities.PoStatus;
 import com.vodafone.poms.ii.entities.PoTypes;
 import com.vodafone.poms.ii.entities.Subcontractors;
@@ -15,11 +16,12 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-21T01:22:19")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-29T19:56:30")
 @StaticMetamodel(AspPo.class)
 public class AspPo_ { 
 
     public static volatile SingularAttribute<AspPo, Double> poMargin;
+    public static volatile SingularAttribute<AspPo, EricssonPoChaser> poChaser;
     public static volatile SingularAttribute<AspPo, Double> workDone;
     public static volatile SingularAttribute<AspPo, BigInteger> remainingInPo;
     public static volatile SingularAttribute<AspPo, String> poDescription;

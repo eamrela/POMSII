@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorInvoiceViewDlg" widgetVar="VendorInvoiceViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewVendorInvoiceTitle}">
+            <h:form id="VendorInvoiceViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorInvoiceController.selected != null}">
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_id}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.id}" title="#{bundle.ViewVendorInvoiceTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiceDeserved}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.invoiceDeserved}" title="#{bundle.ViewVendorInvoiceTitle_invoiceDeserved}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiceFactor}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.invoiceFactor}" title="#{bundle.ViewVendorInvoiceTitle_invoiceFactor}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiceValue}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.invoiceValue}" title="#{bundle.ViewVendorInvoiceTitle_invoiceValue}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiceDate}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.invoiceDate}" title="#{bundle.ViewVendorInvoiceTitle_invoiceDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiceNumber}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.invoiceNumber}" title="#{bundle.ViewVendorInvoiceTitle_invoiceNumber}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_invoiced}"/>
+                        <p:selectBooleanCheckbox value="#{vendorInvoiceController.selected.invoiced}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_remainingInInvoice}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.remainingInInvoice}" title="#{bundle.ViewVendorInvoiceTitle_remainingInInvoice}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_sysDate}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.sysDate}" title="#{bundle.ViewVendorInvoiceTitle_sysDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_creator}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.creator}" title="#{bundle.ViewVendorInvoiceTitle_creator}"/>
+                        <h:outputText value="#{bundle.ViewVendorInvoiceLabel_mdId}"/>
+                        <h:outputText value="#{vendorInvoiceController.selected.mdId}" title="#{bundle.ViewVendorInvoiceTitle_mdId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="VendorInvoiceViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

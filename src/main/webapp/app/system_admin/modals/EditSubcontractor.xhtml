@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="SubcontractorsEditDlg" widgetVar="SubcontractorsEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditSubcontractorsTitle}">
+            <h:form id="SubcontractorsEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{subcontractorsController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditSubcontractorsLabel_subcontractorName}" for="subcontractorName" />
+                        <p:inputText id="subcontractorName" value="#{subcontractorsController.selected.subcontractorName}" title="#{bundle.EditSubcontractorsTitle_subcontractorName}" required="true" requiredMessage="#{bundle.EditSubcontractorsRequiredMessage_subcontractorName}"/>
+                        <p:outputLabel value="#{bundle.EditSubcontractorsLabel_spoc}" for="spoc" />
+                        <p:inputText id="spoc" value="#{subcontractorsController.selected.spoc}" title="#{bundle.EditSubcontractorsTitle_spoc}" />
+                        <p:outputLabel value="#{bundle.EditSubcontractorsLabel_subcontractorDetails}" for="subcontractorDetails" />
+                        <p:inputText id="subcontractorDetails" value="#{subcontractorsController.selected.subcontractorDetails}" title="#{bundle.EditSubcontractorsTitle_subcontractorDetails}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{subcontractorsController.update}" value="#{bundle.Save}" update="display,@([id$=growl]) @([id$=datalist])" oncomplete="handleSubmit(args, 'SubcontractorsEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="">
+                        <p:ajax listener="#{subcontractorsController.resetSelection}" oncomplete="PF('SubcontractorsEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

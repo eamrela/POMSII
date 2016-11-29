@@ -21,31 +21,31 @@
                     </div>
                     <div class="panel-body">
                         <p:dataTable var="NSItems" 
-                                     value="#{dashboardManager.vendorMdsNS}"
-                                     emptyMessage="No MD for this period!"
-                                     sortBy="#{NSItems.mdNumber}"
+                                     value="#{dashboardManager.vendorInvoices}"
+                                     emptyMessage="No Invoices for this period!"
+                                     sortBy="#{NSItems.invoiceNumber}"
                                      styleClass="fixed-size">
-                            <p:column headerText="MD#">
-                                <h:outputText value="#{NSItems.mdNumber}" />
+                            <p:column headerText="Invoice#">
+                                <h:outputText value="#{NSItems.invoiceNumber}" />
                             </p:column>
 
                             <p:column headerText="Deserved">
-                                <h:outputText value="#{NSItems.mdDeserved}" >
+                                <h:outputText value="#{NSItems.invoiceDeserved}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="Value">
-                                <h:outputText value="#{NSItems.mdValue}" >
+                                <h:outputText value="#{NSItems.invoiceValue}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="PO#">
-                                <h:outputText value="#{NSItems.vendorPoId.poNumber}" />
+                                <h:outputText value="#{NSItems.mdId.vendorPoId}" />
                             </p:column>
                             <p:column headerText="Description">
-                                <h:outputText value="#{NSItems.vendorPoId.poDescription}" />
+                                <h:outputText value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
                                  <h:outputText value="#{dashboardManager.NS}">

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ApprovalStatusCreateDlg" widgetVar="ApprovalStatusCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateApprovalStatusTitle}"
+                  closable="false" closeOnEscape="false">
+            <h:form id="ApprovalStatusCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{approvalStatusController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateApprovalStatusLabel_statusName}" for="statusName" />
+                        <p:inputText id="statusName" value="#{approvalStatusController.selected.statusName}" title="#{bundle.CreateApprovalStatusTitle_statusName}" required="true" requiredMessage="#{bundle.CreateApprovalStatusRequiredMessage_statusName}"/>
+                        <p:outputLabel value="#{bundle.CreateApprovalStatusLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{approvalStatusController.selected.description}" title="#{bundle.CreateApprovalStatusTitle_description}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{approvalStatusController.create}" value="#{bundle.Save}" update="display,@([id$=datalist]),@([id$=growl])" oncomplete="handleSubmit(args,'ApprovalStatusCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" >
+                        <p:ajax listener="#{approvalStatusController.resetSelection}" oncomplete="PF('ApprovalStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

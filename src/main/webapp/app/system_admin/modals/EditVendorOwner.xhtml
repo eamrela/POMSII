@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorOwnerEditDlg" widgetVar="VendorOwnerEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorOwnerTitle}"
+                  closable="false" closeOnEscape="false">
+            <h:form id="VendorOwnerEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorOwnerController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditVendorOwnerLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{vendorOwnerController.selected.id}" title="#{bundle.EditVendorOwnerTitle_id}" required="true" requiredMessage="#{bundle.EditVendorOwnerRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditVendorOwnerLabel_ownerName}" for="ownerName" />
+                        <p:inputText id="ownerName" value="#{vendorOwnerController.selected.ownerName}" title="#{bundle.EditVendorOwnerTitle_ownerName}" />
+                        <p:outputLabel value="#{bundle.EditVendorOwnerLabel_ownerNumber}" for="ownerNumber" />
+                        <p:inputText id="ownerNumber" value="#{vendorOwnerController.selected.ownerNumber}" title="#{bundle.EditVendorOwnerTitle_ownerNumber}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{vendorOwnerController.update}" value="#{bundle.Save}" update="display,:VendorOwnerListForm:datalist,:VendorOwnerListForm:growl" oncomplete="handleSubmit(args, 'VendorOwnerEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" >
+                        <p:ajax oncomplete="PF('VendorOwnerEditDialog').hide;" listener="#{vendorOwnerController.resetSelection}" update=":VendorOwnerListForm:datalist,:VendorOwnerListForm:editButton,:VendorOwnerListForm:createButton" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

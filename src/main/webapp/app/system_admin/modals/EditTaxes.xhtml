@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="TaxesEditDlg" widgetVar="TaxesEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditTaxesTitle}"
+                  closable="false" closeOnEscape="false">
+            <h:form id="TaxesEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{taxesController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditTaxesLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{taxesController.selected.id}" title="#{bundle.EditTaxesTitle_id}" required="true" disabled="true" requiredMessage="#{bundle.EditTaxesRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditTaxesLabel_taxValue}" for="taxValue" />
+                        <p:inputText id="taxValue" value="#{taxesController.selected.taxValue}" title="#{bundle.EditTaxesTitle_taxValue}" />
+                        <p:outputLabel value="#{bundle.EditTaxesLabel_activationDate}" for="activationDate" />
+                        <p:calendar id="activationDate"  value="#{taxesController.selected.activationDate}" title="#{bundle.EditTaxesTitle_activationDate}"  showOn="button"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{taxesController.update}" value="#{bundle.Save}" update="display,:TaxesListForm:datalist,:TaxesListForm:growl" oncomplete="handleSubmit(args, 'TaxesEditDialog');"/>
+                    <p:commandButton  value="#{bundle.Cancel}" >
+                        <p:ajax listener="#{taxesController.resetSelection}" oncomplete="PF('TaxesEditDialog').hide();" update=":TaxesListForm:datalist :TaxesListForm:editButton"/>
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
