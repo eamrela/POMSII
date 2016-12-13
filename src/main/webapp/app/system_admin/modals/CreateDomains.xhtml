@@ -20,7 +20,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{domainNamesController.create}" value="#{bundle.Save}" update="display,:DomainNamesListForm:datalist,:DomainNamesListForm:growl" oncomplete="handleSubmit(args,'DomainNamesCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" >
-                        <p:ajax listener="#{domainNamesController.resetSelection}" oncomplete="PF('DomainNamesCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                        <p:ajax listener="#{domainNamesController.resetSelection}" oncomplete="PF('DomainNamesCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

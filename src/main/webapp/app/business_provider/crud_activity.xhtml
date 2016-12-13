@@ -34,9 +34,13 @@
             .ui-growl{
     top:100px;
         }
-        .fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
+.fixed-size {
+    table-layout: auto;
+    white-space: normal;
+    word-wrap: normal;
+    font-size: 0.7vw;
+    text-align: left;
+    float: left;
 }
         </style>
 
@@ -126,34 +130,34 @@
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendor}">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="PriceCustomer"/>
+                                                                            <h:outputText value="Price Customer"/>
                                                                         </f:facet>
                                                                         <h:outputText value="#{item.totalPriceVendor}">
-                                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendorTaxes}">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="PriceWithTaxes"/>
+                                                                            <h:outputText value="Price With Taxes"/>
                                                                         </f:facet>
                                                                         <h:outputText value="#{item.totalPriceVendorTaxes}">
-                                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceAsp}">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="ASPPrice"/>
+                                                                            <h:outputText value="ASP Price"/>
                                                                         </f:facet>
                                                                         <h:outputText value="#{item.totalPriceAsp}">
-                                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalUm}">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="TotalUM"/>
+                                                                            <h:outputText value="Total UM"/>
                                                                         </f:facet>
                                                                         <h:outputText value="#{item.totalUm}">
-                                                                            <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalUmPercent}">
@@ -175,7 +179,7 @@
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Taxes"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.taxes*100}%"/>
+                                                                        <h:outputText value="#{item.taxes}%"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.approvalStatus.statusName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
@@ -233,6 +237,13 @@
                                                                     </p:column>
                                                                     <f:facet name="footer">
                                                                         <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ActivityEditForm" oncomplete="PF('ActivityEditDialog').show()" disabled="#{empty activityController.selectedItems}"/>
+                                                                        <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{activityController.destroy}" 
+                                                                                         update=":ActivityListForm:selectedActivityCode,
+                                                                                                :ActivityListForm:selectedCorrelation,editButton
+                                                                                                ,:ActivityListForm:growl,
+                                                                                                :ActivityListForm:datalistActivity" 
+                                                                                         disabled="#{empty activityController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                     </f:facet>
                                                                 </p:dataTable> 
                                                     </div>
@@ -256,44 +267,44 @@
                                                                     <label for="activitycode">Code</label>
                                                                     <h:outputText id="activitycode"
                                                                                   class="form-control"
-                                                                                  value="#{activityController.selected.activityCode.materialId}"/>
+                                                                                  value="#{activityController.selected.acMaterialId}"/>
                                                                 </div>
                                                                 <div class="col-xs-12">
                                                                     <label for="activitycodedescription">Description</label>
                                                                     <h:outputText id="activitycodedescription" 
                                                                                   class="form-control"
-                                                                                  value="#{activityController.selected.activityCode.description}"/>
+                                                                                  value="#{activityController.selected.acDescription}"/>
                                                                 </div> 
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xs-6">
                                                                     <label for="activitycodevunitprice">Customer Price</label>
                                                                     <h:outputText 
-                                                                        value="#{activityController.selected.activityCode.vendorPrice}"
+                                                                        value="#{activityController.selected.acVendorPrice}"
                                                                         class="form-control" id="activitycodevunitprice">
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                     </h:outputText>
                                                                 </div>
                                                                 <div class="col-xs-6">
                                                                     <label for="activitycodeaspunitprice">ASP Price</label>
                                                                     <h:outputText 
-                                                                        value="#{activityController.selected.activityCode.subcontractorPrice}"
+                                                                        value="#{activityController.selected.acSubcontractorPrice}"
                                                                         class="form-control" id="activitycodeaspunitprice">
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                     </h:outputText>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xs-6">
                                                                     <label for="activitycodeum">UM/Unit</label>
-                                                                    <h:outputText value="#{activityController.selected.activityCode.um}"
+                                                                    <h:outputText value="#{activityController.selected.acUm}"
                                                                                  class="form-control" id="activitycodeum">
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                     </h:outputText>
                                                                 </div>
                                                                 <div class="col-xs-6">
                                                                     <label for="activitycodeump">UM%/Unit</label>
-                                                                    <h:outputText value="#{activityController.selected.activityCode.umPercent}"
+                                                                    <h:outputText value="#{activityController.selected.acUmPercent}"
                                                                                  class="form-control" id="activitycodeump"/>
                                                                 </div>
                                                             </div>   
@@ -305,15 +316,16 @@
                                         <div class="col-md-6">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
-                                                        <h2>Correlation</h2>
+                                                    <h2>Correlation</h2>
                                                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                                                 </div>
                                                 <div class="panel-body">
                                                     <p:outputPanel id="selectedCorrelation">
-                                                        <h:panelGroup rendered="#{activityController.selectedItems!=null}">
+                                                    <h:panelGroup rendered="#{activityController.selectedItems!=null}">
+                                                        <h:panelGroup rendered="#{activityController.selectedItems.get(0).correlateTo eq 'ASP'}">
                                                             <label >Total ASP price: (
                                                                 <h:outputText value="#{activityController.totalPriceASP}">
-                                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 )</label>
                                                             <br></br>
@@ -336,13 +348,13 @@
 
                                                                 <p:column headerText="Remaining">
                                                                     <h:outputText value="#{aspPO.remainingInPo}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                     </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="PO Value">
                                                                     <h:outputText value="#{aspPO.poValue}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                     </h:outputText>
                                                                 </p:column>
                                                             </p:dataTable>
@@ -360,8 +372,62 @@
                                                             </p:commandButton>
                                                             </h:panelGroup>
                                                             </h:panelGroup>
-                                                    
-                                                    
+                                                        </h:panelGroup>
+                                                        <h:panelGroup rendered="#{activityController.selectedItems.get(0).correlateTo eq 'CUSTOMER'}">
+                                                            <label >Total Vendor Work Done: (
+                                                                <h:outputText value="#{activityController.totalPriceVendor}"/>
+                                                                )</label>
+                                                            <br></br>
+                                                            <label >Please select a PO to correlate Activity (#{activityController.activityIds})</label>
+                                                            <p:dataTable 
+                                                                id="vendorDataTable"
+                                                                var="vPO" 
+                                                                value="#{vendorPoController.findMatchingVendorPOForActivity()}"
+                                                                emptyMessage="No POs found matching this activity"
+                                                                selection="#{activityController.selectedVendorPo}"
+                                                                selectionMode="single"
+                                                                rowKey="#{vPO.poNumber}"
+                                                                styleClass="fixed-size">
+                                                                
+                                                                <p:ajax event="rowSelect" update=":ActivityListForm:selectedCorrelationVPO"/>
+                                                                
+                                                                <p:column headerText="PO#">
+                                                                    <h:outputText value="#{vPO.poNumber}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Remaining">
+                                                                    <h:outputText value="#{vPO.remainingInPo}" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="PO Value">
+                                                                    <h:outputText value="#{vPO.poValue}" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Factor">
+                                                                    <h:outputText value="#{vPO.factor}" />
+                                                                </p:column>
+                                                                <p:column headerText="Work Done">
+                                                                    <h:outputText value="#{vPO.workDone}" />
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <h:panelGroup id="selectedCorrelationVPO">
+                                                            <h:panelGroup rendered="#{activityController.selectedVendorPo!=null}">
+                                                            <p:commandButton 
+                                                                         class="btn-raised btn-primary btn"
+                                                                          value="Correlate"
+                                                                          actionListener="#{activityController.correlateVendorPo}"
+                                                                          update="growl,
+                                                                                 :ActivityListForm:selectedCorrelationVPO, 
+                                                                                 :ActivityListForm:selectedCorrelation, 
+                                                                                 :ActivityListForm:datalistActivity">
+
+                                                            </p:commandButton>
+                                                            </h:panelGroup>
+                                                            </h:panelGroup>
+                                                        </h:panelGroup>
                                                     </h:panelGroup>
                                                     </p:outputPanel>
                                                 </div>

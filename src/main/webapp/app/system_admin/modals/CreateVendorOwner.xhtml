@@ -21,7 +21,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{vendorOwnerController.create}" value="#{bundle.Save}" update="display,:VendorOwnerListForm:datalist,:VendorOwnerListForm:growl" oncomplete="handleSubmit(args,'VendorOwnerCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}">
-                        <p:ajax oncomplete="PF('VendorOwnerCreateDialog').hide;" listener="#{vendorOwnerController.resetSelection}" update=":VendorOwnerListForm:datalist,:VendorOwnerListForm:editButton,:VendorOwnerListForm:createButton" />
+                        <p:ajax oncomplete="PF('VendorOwnerCreateDialog').hide;" listener="#{vendorOwnerController.resetSelection}" update=":VendorOwnerListForm:datalist,:VendorOwnerListForm:editButton,:VendorOwnerListForm:createButton @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

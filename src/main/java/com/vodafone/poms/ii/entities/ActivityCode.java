@@ -100,6 +100,10 @@ public class ActivityCode implements Serializable {
 
     public void setVendorPrice(Float vendorPrice) {
         this.vendorPrice = vendorPrice;
+        if(this.vendorPrice!=null && this.subcontractorPrice!=null){
+        this.um = this.vendorPrice-this.subcontractorPrice;
+        this.umPercent = this.um/this.vendorPrice;
+        }
     }
 
     public Float getSubcontractorPrice() {
@@ -108,6 +112,10 @@ public class ActivityCode implements Serializable {
 
     public void setSubcontractorPrice(Float subcontractorPrice) {
         this.subcontractorPrice = subcontractorPrice;
+        if(this.vendorPrice!=null && this.subcontractorPrice!=null){
+        this.um = this.vendorPrice-this.subcontractorPrice;
+        this.umPercent = this.um/this.vendorPrice;
+        }
     }
 
     public Float getUm() {

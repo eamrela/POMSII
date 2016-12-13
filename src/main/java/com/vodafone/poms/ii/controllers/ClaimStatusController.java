@@ -31,6 +31,9 @@ public class ClaimStatusController implements Serializable {
     public ClaimStatusController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public ClaimStatus getSelected() {
         return selected;
     }

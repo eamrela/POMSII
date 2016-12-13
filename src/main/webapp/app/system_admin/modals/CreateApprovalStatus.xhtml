@@ -20,7 +20,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{approvalStatusController.create}" value="#{bundle.Save}" update="display,@([id$=datalist]),@([id$=growl])" oncomplete="handleSubmit(args,'ApprovalStatusCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" >
-                        <p:ajax listener="#{approvalStatusController.resetSelection}" oncomplete="PF('ApprovalStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                        <p:ajax listener="#{approvalStatusController.resetSelection}" oncomplete="PF('ApprovalStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

@@ -16,51 +16,51 @@
             <div class="col-xs-12">
                 <div class="panel panel-indigo" data-widget='{"draggable": "false"}'>
                     <div class="panel-heading">
-                        <h2>Customer Summary</h2>
+                        <h2>Customer Summary (All POs)</h2>
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
                         <p:dataTable var="custSum" 
                                      value="#{dashboardManager.customerSummary}"
                                      styleClass="fixed-size">
-                            <p:column headerText="TotalPOValue">
+                            <p:column headerText="Total PO Value">
                                 <h:outputText value="#{custSum.totalPoValue}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="MDRecieved">
+                            <p:column headerText="MD Recieved">
                                 <h:outputText value="#{custSum.totalMdRecieved}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="MDDeserved">
+                            <p:column headerText="MD Deserved">
                                 <h:outputText value="#{custSum.totalMdDeserved}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="RemainingFromMD">
+                            <p:column headerText="Remaining From MD">
                                 <h:outputText value="#{custSum.totalRemainingFromMd}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="InvoiceValue">
+                            <p:column headerText="Invoice Value">
                                 <h:outputText value="#{custSum.totalMdValue}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="RemainingNotYetInvoiced">
+                            <p:column headerText="Remaining Not Yet Invoiced">
                                 <h:outputText value="#{custSum.totalMdNotYetInvoiced}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="RemainingInPo">
+                            <p:column headerText="Remaining In Po">
                                 <h:outputText value="#{custSum.totalRemainingInPo}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="CommittedCost">
+                            <p:column headerText="Committed Cost">
                                 <h:outputText value="#{custSum.totalCommittedCost}" >
                                     <f:convertNumber currencySymbol="EGP" type="currency"/>
                                 </h:outputText>

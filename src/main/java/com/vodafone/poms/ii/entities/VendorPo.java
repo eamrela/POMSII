@@ -50,6 +50,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "VendorPo.findByTaxes", query = "SELECT v FROM VendorPo v WHERE v.taxes = :taxes")})
 public class VendorPo implements Serializable {
 
+    @OneToMany(mappedBy = "vPoId")
+    private Collection<VendorPoWorkDone> vendorPoWorkDoneCollection;
+
     @JoinColumn(name = "po_chaser", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private EricssonPoChaser poChaser;
@@ -110,6 +113,8 @@ public class VendorPo implements Serializable {
     @JoinColumn(name = "creator", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Users creator;
+    @ManyToMany(mappedBy = "vendorPoCollection")
+    private Collection<Activity> activityCollection;
 
     public VendorPo() {
     }
@@ -239,7 +244,7 @@ public class VendorPo implements Serializable {
         this.aspPoCollection = aspPoCollection;
     }
 
-//    @XmlTransient
+    @XmlTransient
     public Collection<VendorMd> getVendorMdCollection() {
         return vendorMdCollection;
     }
@@ -300,6 +305,15 @@ public class VendorPo implements Serializable {
         return true;
     }
 
+    @XmlTransient
+    public Collection<Activity> getActivityCollection() {
+        return activityCollection;
+    }
+
+    public void setActivityCollection(Collection<Activity> activityCollection) {
+        this.activityCollection = activityCollection;
+    }
+    
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.VendorPo[ poNumber=" + poNumber + " ]";
@@ -312,7 +326,6 @@ public class VendorPo implements Serializable {
         for (Object grn : grns) {
             deserved = deserved.subtract(((VendorMd) grn).getMdDeserved());
         }
-        setMdDeserved(deserved);
         setRemainingInPo(getPoValue().subtract(deservedI));
     }
 
@@ -330,6 +343,15 @@ public class VendorPo implements Serializable {
 
     public void setPoOwner(PoOwner poOwner) {
         this.poOwner = poOwner;
+    }
+
+    @XmlTransient
+    public Collection<VendorPoWorkDone> getVendorPoWorkDoneCollection() {
+        return vendorPoWorkDoneCollection;
+    }
+
+    public void setVendorPoWorkDoneCollection(Collection<VendorPoWorkDone> vendorPoWorkDoneCollection) {
+        this.vendorPoWorkDoneCollection = vendorPoWorkDoneCollection;
     }
 
     

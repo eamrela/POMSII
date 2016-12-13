@@ -31,6 +31,9 @@ public class AreaController implements Serializable {
     public AreaController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public Area getSelected() {
         return selected;
     }

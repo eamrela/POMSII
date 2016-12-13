@@ -35,8 +35,12 @@
     top:100px;
 }
 .fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
+    table-layout: auto;
+    white-space: normal;
+    word-wrap: normal;
+    font-size: 0.7vw;
+    text-align: left;
+    float: left;
 }
         </style>
 
@@ -87,8 +91,15 @@
                                                                     >
 
                                                            <p:ajax event="rowSelect"   
-                                                                   update="editButton,:VendorPOListForm:growl,
+                                                                   update="editButton,deleteButton,closeButton,:VendorPOListForm:growl,
                                                                                                :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice"/>
+                                                           <p:ajax event="rowUnselect"   
+                                                                   update="editButton,deleteButton,closeButton,:VendorPOListForm:growl,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
                                                                                                :VendorPOListForm:selectedVendorPOMD,
                                                                                                :VendorPOListForm:selectedVendorPOMDInvoice"/>
                                                            <p:ajax  event="rowSelect" listener="#{vendorMdController.clearSelected}"/>
@@ -124,31 +135,31 @@
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="ServiceValue"/>
+                                                                   <h:outputText value="Service Value"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.serviceValue}">
-                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                   <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="POValue"/>
+                                                                   <h:outputText value="PO Value"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.poValue}">
-                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="POValueTaxes"/>
+                                                                   <h:outputText value="PO Value Taxes"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.poValueTaxes}">
-                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="WorkDone"/>
+                                                                   <h:outputText value="Work Done"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.workDone}"/>
                                                            </p:column>
@@ -157,14 +168,14 @@
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.remainingInPo}">
-                                                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Taxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.taxes*100}%"/>
+                                                               <h:outputText value="#{item.taxes}%"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
@@ -195,7 +206,25 @@
                                                            </p:column>
                                                            
                                                            <f:facet name="footer">
-                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorPoEditForm" oncomplete="PF('VendorPoEditDialog').show()" disabled="#{empty vendorPoController.selected}"/>
+                                                               <p:commandButton id="editButton" actionListener="#{vendorPoWorkDoneController.prepareCreate}"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorPoEditForm" oncomplete="PF('VendorPoEditDialog').show()" disabled="#{empty vendorPoController.selected}"/>
+                                                                <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{vendorPoController.destroy}" 
+                                                                                         update="editButton,:VendorPOListForm:growl,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice,
+                                                                                               :VendorPOListForm:datalistVendorPO" 
+                                                                                    disabled="#{empty vendorPoController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                <p:commandButton id="closeButton" icon="ui-icon-closethick"  
+                                                                                 value="Close" actionListener="#{vendorPoController.closePO}" 
+                                                                                         update="editButton,:VendorPOListForm:growl,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice,
+                                                                                               :VendorPOListForm:datalistVendorPO" 
+                                                                                    disabled="#{empty vendorPoController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                            </f:facet>
                                                        </p:dataTable>
                                                     </div>
@@ -219,7 +248,7 @@
                                                                 <p:dataTable 
                                                                     id="associatedMD"
                                                                         var="vendorMD" 
-                                                                        value="#{vendorPoController.selected.vendorMdCollection}"
+                                                                        value="#{vendorMdController.selectedPoItems}"
                                                                         emptyMessage="This PO doesn't have any MD"
                                                                         selection="#{vendorMdController.selected}"
                                                                         selectionMode="single"
@@ -238,21 +267,21 @@
                                                                 </p:column>
                                                                 <p:column headerText="Deserved" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdDeserved}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Factor" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdFactor}" />
                                                                 </p:column>
-                                                                <p:column headerText="MDValue" style="font-size: 9px;">
+                                                                <p:column headerText="MD Value" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdValue}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
-                                                                <p:column headerText="Remaining">
+                                                                <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.remainingInMd}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Invoiced" style="font-size: 9px;">
@@ -260,19 +289,27 @@
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="editButton"  actionListener="#{vendorMdController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorMdEditForm" oncomplete="PF('VendorMdEditDialog').show()" disabled="#{empty vendorMdController.selected}"/>
+                                                                    <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{vendorMdController.destroy}" 
+                                                                                         update="editButton,:VendorPOListForm:growl,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice" 
+                                                                                    disabled="#{empty vendorMdController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
                                                                  <div class="col-xs-6">
                                                                      <label for="grndeserved">MD Needed</label>
                                                                      <h:outputText id="grndeserved"
-                                                                                   value="#{vendorPoController.selected.mdDeserved}"
+                                                                                   value="#{vendorPoController.selectedMdDeserved}"
                                                                                    styleClass="form-control">
-                                                                          <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                          <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                  </div>
                                                                  <div class="col-xs-6">
-                                                                     <h:panelGroup rendered="#{vendorPoController.selected.mdDeserved>0}">
+                                                                     <h:panelGroup rendered="#{vendorPoController.selectedMdDeserved>0}">
                                                                          <p:commandButton 
                                                                                      class="btn-raised btn-success btn"
                                                                                       value="Create MD"
@@ -309,7 +346,7 @@
                                                                 <p:dataTable 
                                                                     id="associatedMDInvoice"
                                                                         var="vendorMDInvoice" 
-                                                                        value="#{vendorMdController.selected.vendorInvoiceCollection}"
+                                                                        value="#{vendorInvoiceController.selectedMdItems}"
                                                                         emptyMessage="This MD doesn't have any Invoice"
                                                                         selection="#{vendorInvoiceController.selected}"
                                                                         selectionMode="single"
@@ -328,21 +365,21 @@
                                                                 </p:column>
                                                                 <p:column headerText="Deserved" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMDInvoice.invoiceDeserved}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Factor" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMDInvoice.invoiceFactor}" />
                                                                 </p:column>
-                                                                <p:column headerText="InvoiceValue" style="font-size: 9px;">
+                                                                <p:column headerText="Invoice Value" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMDInvoice.invoiceValue}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
-                                                                <p:column headerText="Remaining">
+                                                                <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMDInvoice.remainingInInvoice}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Invoiced" style="font-size: 9px;">
@@ -350,15 +387,31 @@
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="editButton"  actionListener="#{vendorInvoiceController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":VendorInvoiceEditForm" oncomplete="PF('VendorInvoiceEditDialog').show()" disabled="#{empty vendorInvoiceController.selected}"/>
+                                                                    <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{vendorInvoiceController.destroy}" 
+                                                                                         update="editButton,:VendorPOListForm:growl,
+                                                                                               :VendorPOListForm:selectedVendorPOASPPO ,
+                                                                                               :VendorPOListForm:selectedVendorPOActivities ,
+                                                                                               :VendorPOListForm:selectedVendorPOMD,
+                                                                                               :VendorPOListForm:selectedVendorPOMDInvoice" 
+                                                                                    disabled="#{empty vendorInvoiceController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
-                                                                 <div class="col-xs-6">
-                                                                     <label for="invoicedeserved">Invoice Needed</label>
+                                                                 <div class="col-xs-3">
+                                                                     <label for="invoicedeserved">Invoice Needed (Md)</label>
                                                                 <h:outputText id="invoicedeserved"
                                                                               value="#{vendorMdController.selectedMdInvoiceValue}"
                                                                                    styleClass="form-control">
-                                                                          <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                          <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                                                </h:outputText>
+                                                                 </div>
+                                                                 <div class="col-xs-3">
+                                                                     <label for="totalinvoicedeserved">Invoice Needed (Po)</label>
+                                                                <h:outputText id="totalinvoicedeserved"
+                                                                              value="#{vendorMdController.selectedPoInvoiceValue}"
+                                                                                   styleClass="form-control">
+                                                                          <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                  </div>
                                                                  <div class="col-xs-6">
@@ -419,19 +472,19 @@
                                                                 </p:column>
                                                                 <p:column headerText="Value" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.poValue}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.remainingInPo}" >
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="ASP" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.asp.subcontractorName}" />
                                                                 </p:column>
-                                                                <p:column headerText="WorkDone" style="font-size: 9px;">
+                                                                <p:column headerText="Work Done" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.workDone}" />
                                                                 </p:column>
                                                                 <p:column headerText="Margin" style="font-size: 9px;">
@@ -449,28 +502,207 @@
                                             </div>
                                         </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                            <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                        <h2>Associated Activities</h2>
+                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                       <p:outputPanel id="selectedVendorPOActivities">
+                                                           <h:panelGroup rendered="#{vendorPoController.selected!=null}">
+                                                                 <div class="col-xs-12">
+                                                                <p:dataTable 
+                                                                    id="associatedPOActivity"
+                                                                        var="vendorActivity" 
+                                                                        value="#{vendorPoController.selected.activityCollection}"
+                                                                        emptyMessage="This PO doesn't have any Activity"
+                                                                        selection="#{activityController.selected}"
+                                                                        selectionMode="single"
+                                                                        rowKey="#{vendorActivity.activityId}"
+                                                                        styleClass="fixed-size">
+                                                                
+                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                
+                                                                <p:column headerText="Activity#" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.activityId}" />
+                                                                </p:column>
+                                                                <p:column headerText="Qty" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.qty}" />
+                                                                </p:column>
+                                                                <p:column headerText="ASP" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.asp.subcontractorName}" />
+                                                                </p:column>
+                                                                <p:column headerText="Description" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.acDescription}" />
+                                                                </p:column>
+                                                                <p:column headerText="Date" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.activityDate}">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Price ASP" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.totalPriceAsp}" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Price Customer" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.totalPriceVendor}" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="UM" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.totalUm}" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="UM%" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.totalUmPercent*100}" >
+                                                                        <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="Qty" style="font-size: 9px;">
+                                                                    <h:outputText value="#{vendorActivity.qty}" />
+                                                                </p:column>
+                                                                <f:facet name="footer">
+                                                                    <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ActivityViewForm" oncomplete="PF('ActivityViewDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                </f:facet>
+                                                                </p:dataTable> 
+                                                                      </div> 
+                                                             </h:panelGroup>
+                                                         </p:outputPanel> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
                                 <!--page content end here--> 
                                 </h:form>
-                                <p:dialog id="VendorPoEditDlg" widgetVar="VendorPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorPoTitle}">
+                            <p:dialog id="VendorPoEditDlg" widgetVar="VendorPoEditDialog" closable="true" closeOnEscape="true" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditVendorPoTitle}">
                                     <h:form id="VendorPoEditForm">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                            <p:dataTable id="previousWD"
+                                                         var="vPoWorkDone" 
+                                                         value="#{vendorPoWorkDoneController.selectedPoItems}"
+                                                         style="width: 600px;"
+                                                         >
+                                                <p:column headerText="Work Done">
+                                                    <h:outputText value="#{vPoWorkDone.workDone}" />
+                                                </p:column>
+
+                                                <p:column headerText="Work Value">
+                                                    <h:outputText value="#{vPoWorkDone.workValue}" />
+                                                </p:column>
+
+                                                <p:column headerText="Date" sortBy="#{vPoWorkDone.insertionDate}">
+                                                    <h:outputText value="#{vPoWorkDone.insertionDate}" >
+                                                        <f:convertDateTime pattern="yyyy/MM/dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:dataTable>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                        <div class="col-xs-6">
                                         <h:panelGroup id="display">
-                                            <p:panelGrid columns="2" rendered="#{vendorPoController.selected != null}">
-                                                <p:outputLabel value="#{bundle.EditVendorPoLabel_workDone}" for="workDone" />
-                                                <p:inputText id="workDone" 
-                                                             value="#{vendorPoController.selected.workDone}" 
-                                                             title="#{bundle.EditVendorPoTitle_workDone}" >
-                                                    <f:validateDoubleRange minimum="#{vendorPoController.selected.workDone}" 
-                                                                           maximum="#{vendorPoController.selected.factor}"/>
+                                            <p:panelGrid columns="2" rendered="#{vendorPoWorkDoneController.selected != null and vendorPoController.selected != null}">
+                                                <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_workDone}" for="workDone" />
+                                                <p:inputText id="workDone" value="#{vendorPoWorkDoneController.selected.workDone}" 
+                                                             title="#{bundle.CreateVendorPoWorkDoneTitle_workDone}" >
+                                                     <f:validateDoubleRange maximum="#{vendorPoController.selected.factor}"/>
+                                                     <p:ajax update="workValue"/>
                                                 </p:inputText>
+                                                <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_workValue}" for="workValue" />
+                                                <p:inputText id="workValue" value="#{vendorPoWorkDoneController.selected.workValue}" title="#{bundle.CreateVendorPoWorkDoneTitle_workValue}">
+                                                     <p:ajax update="workDone"/>
+                                                </p:inputText>
+                                                <p:outputLabel value="Work Date" for="insertionDate" />
+                                                <p:calendar id="insertionDate" pattern="MM/dd/yyyy"  value="#{vendorPoWorkDoneController.selected.insertionDate}" title="Work Date"  showOn="button"/>
+                                                
                                             </p:panelGrid>
-                                            <p:commandButton actionListener="#{vendorPoController.update}" value="#{bundle.Save}" 
+                                            <p:commandButton actionListener="#{vendorPoWorkDoneController.createWD}" value="Add Work Done" 
                                                              update="display,:VendorPOListForm:datalistVendorPO,:VendorPOListForm:growl,
-                                                                    :VendorPOListForm:selectedVendorPOMD" oncomplete="handleSubmit(args, 'VendorPoEditDialog');"/>
-                                            <p:commandButton value="#{bundle.Cancel}" onclick="VendorPoEditDialog.hide()"/>
+                                                                    :VendorPOListForm:selectedVendorPOMD,:VendorPoEditForm:previousWD" oncomplete="handleSubmit(args, 'VendorPoEditDialog');"/>
                                         </h:panelGroup>
+                                        </div>       
+                                        <div class="col-xs-6">
+                                                <h:form>
+                                                    <p:panelGrid columns="2" rendered="#{vendorPoController.selected != null}">
+                                                        <p:outputLabel value="#{bundle.EditVendorPoLabel_poDate}" for="poDate" />
+                                                        <p:calendar id="poDate" pattern="MM/dd/yyyy" value="#{vendorPoController.selected.poDate}" title="#{bundle.EditVendorPoTitle_poDate}" required="true" requiredMessage="#{bundle.EditVendorPoRequiredMessage_poDate}" showOn="button"/>
+                                                        <p:outputLabel value="#{bundle.EditVendorPoLabel_poDescription}" for="poDescription" />
+                                                        <p:inputText id="poDescription" value="#{vendorPoController.selected.poDescription}" title="#{bundle.EditVendorPoTitle_poDescription}" />
+                                                        <p:outputLabel for="poowner" value="Po Owner" />
+                                                         <h:selectOneMenu id="poowner" 
+                                                                          value="#{vendorPoController.selected.poOwner}" 
+                                                                         converter="PoOwnerControllerConverter"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{poOwnerController.itemsAvailableSelectOne}"
+                                                                           var="poOwnerItem"
+                                                                           itemValue="#{poOwnerItem}"
+                                                                           itemLabel="#{poOwnerItem.ownerName}"/>
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="pochaser" value="Po Chaser" />
+                                                        <h:selectOneMenu id="pochaser" 
+                                                                          value="#{vendorPoController.selected.poChaser}" 
+                                                                         converter="EricssonPoChaserControllerConverter"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{ericssonPoChaserController.itemsAvailableSelectOne}"
+                                                                           var="poChaserItem"
+                                                                           itemValue="#{poChaserItem}"
+                                                                           itemLabel="#{poChaserItem.chaserName}"/>
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="potype" value="Type" />
+                                                        <h:selectOneMenu id="potype" 
+                                                                         value="#{vendorPoController.selected.poType}" 
+                                                                         required="true" 
+                                                                         requiredMessage="PO Type is required"
+                                                                         converter="PoTypesControllerConverter"
+                                                                         styleClass="form-control"
+                                                                         disabled="#{vendorPoController.selected.aspPoCollection.size()>0}">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
+                                                                           var="poTypeItem"
+                                                                           itemValue="#{poTypeItem}"
+                                                                           itemLabel="#{poTypeItem.typeName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="podomain" value="Domain" />
+                                                        <h:selectOneMenu id="podomain" 
+                                                                         value="#{vendorPoController.selected.domainName}" 
+                                                                         required="true" 
+                                                                         converter="DomainNamesControllerConverter"
+                                                                         requiredMessage="PO Domain is required"
+                                                                         styleClass="form-control"
+                                                                         disabled="#{vendorPoController.selected.aspPoCollection.size()>0}">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{domainNamesController.items}"
+                                                                            var="domainItem"
+                                                                           itemValue="#{domainItem}"
+                                                                           itemLabel="#{domainItem.domainName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                    </p:panelGrid>
+                                                    
+                                                    <p:commandButton actionListener="#{vendorPoController.update}" value="Update" 
+                                                             update=":VendorPOListForm:datalistVendorPO,:VendorPOListForm:growl,
+                                                                    :VendorPOListForm:selectedVendorPOMD,:VendorPoEditForm:previousWD" oncomplete="handleSubmit(args, 'VendorPoEditDialog');"/>
+                                                </h:form>
+                                            </div>
+                                        </div>    
                                     </h:form>
                             </p:dialog>
-                                <p:dialog id="ASPPOViewDlg" widgetVar="ASPPOViewDialog" modal="true" resizable="false" appendTo="@(body)" header="ASP PO">
+                            <p:dialog id="ASPPOViewDlg" widgetVar="ASPPOViewDialog" modal="true" resizable="false" appendTo="@(body)" header="ASP PO">
                                     <h:form id="ASPPOViewForm">
                                         <h:panelGroup id="display">
                                             <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
@@ -486,21 +718,21 @@
                                                     <h:outputText value="#{aspPoController.selected.factor}" title="#{bundle.ViewAspPoTitle_factor}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_serviceValue}"/>
                                                     <h:outputText value="#{aspPoController.selected.serviceValue}" title="#{bundle.ViewAspPoTitle_serviceValue}">
-                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                     </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poValue}"/>
                                                     <h:outputText value="#{aspPoController.selected.poValue}" title="#{bundle.ViewAspPoTitle_poValue}">
-                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                     </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poValueTaxes}"/>
                                                     <h:outputText value="#{aspPoController.selected.poValueTaxes}" title="#{bundle.ViewAspPoTitle_poValueTaxes}">
-                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                     </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_workDone}"/>
                                                     <h:outputText value="#{aspPoController.selected.workDone}" title="#{bundle.ViewAspPoTitle_workDone}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_remainingInPo}"/>
                                                     <h:outputText value="#{aspPoController.selected.remainingInPo}" title="#{bundle.ViewAspPoTitle_remainingInPo}">
-                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                         <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                     </h:outputText>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_sysDate}"/>
                                                     <h:outputText value="#{aspPoController.selected.sysDate}" title="#{bundle.ViewAspPoTitle_sysDate}">
@@ -509,7 +741,7 @@
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poMargin}"/>
                                                     <h:outputText value="#{aspPoController.selected.poMargin}%" title="#{bundle.ViewAspPoTitle_poMargin}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_taxes}"/>
-                                                    <h:outputText value="#{aspPoController.selected.taxes*100}%" title="#{bundle.ViewAspPoTitle_taxes}"/>
+                                                    <h:outputText value="#{aspPoController.selected.taxes}%" title="#{bundle.ViewAspPoTitle_taxes}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_domainName}"/>
                                                     <h:outputText value="#{aspPoController.selected.domainName.domainName}" title="#{bundle.ViewAspPoTitle_domainName}"/>
                                                     <h:outputText value="#{bundle.ViewAspPoLabel_poStatus}"/>
@@ -525,7 +757,7 @@
                                         </h:panelGroup>
                                     </h:form>
                                 </p:dialog>
-                                <p:dialog id="VendorMdEditDlg" widgetVar="VendorMdEditDialog" modal="true" resizable="false" appendTo="@(body)" 
+                            <p:dialog id="VendorMdEditDlg" widgetVar="VendorMdEditDialog" modal="true" resizable="false" appendTo="@(body)" 
                                       header="Customer MD">
                                     <h:form id="VendorMdEditForm">
                                         <h:panelGroup id="display">
@@ -561,7 +793,7 @@
                                 </h:panelGroup>
                                 </h:form>
                             </p:dialog>
-                                <p:dialog id="VendorInvoiceEditDlg" widgetVar="VendorInvoiceEditDialog" modal="true" resizable="false" appendTo="@(body)" 
+                            <p:dialog id="VendorInvoiceEditDlg" widgetVar="VendorInvoiceEditDialog" modal="true" resizable="false" appendTo="@(body)" 
                                       header="Customer MD-Invoice">
                                     <h:form id="VendorInvoiceEditForm">
                                         <h:panelGroup id="display">
@@ -598,7 +830,74 @@
                                 </h:panelGroup>
                                 </h:form>
                                 </p:dialog>
-                            
+                            <p:dialog id="ActivityViewDlg" widgetVar="ActivityViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewActivityTitle}">
+                                <h:form id="ActivityViewForm">
+                                    <h:panelGroup id="display">
+                                        <p:panelGrid columns="2" rendered="#{activityController.selected != null}">
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityId}"/>
+                                            <h:outputText value="#{activityController.selected.activityId}" title="#{bundle.ViewActivityTitle_activityId}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityDate}"/>
+                                            <h:outputText value="#{activityController.selected.activityDate}" title="#{bundle.ViewActivityTitle_activityDate}">
+                                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityDetails}"/>
+                                            <h:outputText value="#{activityController.selected.activityDetails}" title="#{bundle.ViewActivityTitle_activityDetails}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_qty}"/>
+                                            <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
+                                            <h:outputText value="TotalPriceCustomer"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendor}" title="TotalPriceCustomer">
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                            </h:outputText>
+                                            <h:outputText value="TotalPriceCustomerWithTaxes"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="TotalpriceCustomerWithTaxes">
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
+                                            <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}">
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
+                                            <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}">
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
+                                            <h:outputText value="#{activityController.selected.totalUmPercent*100}" 
+                                                          title="#{bundle.ViewActivityTitle_totalUmPercent}">
+                                                <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityComment}"/>
+                                            <h:outputText value="#{activityController.selected.activityComment}" title="#{bundle.ViewActivityTitle_activityComment}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_sysDate}"/>
+                                            <h:outputText value="#{activityController.selected.sysDate}" title="#{bundle.ViewActivityTitle_sysDate}">
+                                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                                            </h:outputText>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_taxes}"/>
+                                            <h:outputText value="#{activityController.selected.taxes}%" title="#{bundle.ViewActivityTitle_taxes}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityCode}"/>
+                                            <h:outputText value="#{activityController.selected.activityCode.materialId}" title="#{bundle.ViewActivityTitle_activityCode}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_approvalStatus}"/>
+                                            <h:outputText value="#{activityController.selected.approvalStatus.statusName}" title="#{bundle.ViewActivityTitle_approvalStatus}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_area}"/>
+                                            <h:outputText value="#{activityController.selected.area.areaName}" title="#{bundle.ViewActivityTitle_area}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_claimStatus}"/>
+                                            <h:outputText value="#{activityController.selected.claimStatus.claimName}" title="#{bundle.ViewActivityTitle_claimStatus}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_activityType}"/>
+                                            <h:outputText value="#{activityController.selected.activityType.domainName}" title="#{bundle.ViewActivityTitle_activityType}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_phase}"/>
+                                            <h:outputText value="#{activityController.selected.phase.phaseName}" title="#{bundle.ViewActivityTitle_phase}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_site}"/>
+                                            <h:outputText value="#{activityController.selected.site.sitePhysical}" title="#{bundle.ViewActivityTitle_site}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_asp}"/>
+                                            <h:outputText value="#{activityController.selected.asp.subcontractorName}" title="#{bundle.ViewActivityTitle_asp}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_creator}"/>
+                                            <h:outputText value="#{activityController.selected.creator.email}" title="#{bundle.ViewActivityTitle_creator}"/>
+                                            <h:outputText value="#{bundle.ViewActivityLabel_vendorOwner}"/>
+                                            <h:outputText value="#{activityController.selected.vendorOwner.ownerName}" title="#{bundle.ViewActivityTitle_vendorOwner}"/>
+                                        </p:panelGrid>
+                                        <p:commandButton value="#{bundle.Close}" onclick="ActivityViewDialog.hide()"/>
+                                    </h:panelGroup>
+                                </h:form>
+                            </p:dialog>
                             </div>
                         </div>
                     </div>

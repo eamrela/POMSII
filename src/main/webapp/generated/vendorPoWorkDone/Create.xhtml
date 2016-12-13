@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VendorPoWorkDoneCreateDlg" widgetVar="VendorPoWorkDoneCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateVendorPoWorkDoneTitle}">
+            <h:form id="VendorPoWorkDoneCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vendorPoWorkDoneController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{vendorPoWorkDoneController.selected.id}" title="#{bundle.CreateVendorPoWorkDoneTitle_id}" required="true" requiredMessage="#{bundle.CreateVendorPoWorkDoneRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_workDone}" for="workDone" />
+                        <p:inputText id="workDone" value="#{vendorPoWorkDoneController.selected.workDone}" title="#{bundle.CreateVendorPoWorkDoneTitle_workDone}" />
+                        <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_workValue}" for="workValue" />
+                        <p:inputText id="workValue" value="#{vendorPoWorkDoneController.selected.workValue}" title="#{bundle.CreateVendorPoWorkDoneTitle_workValue}" />
+                        <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_insertionDate}" for="insertionDate" />
+                        <p:calendar id="insertionDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{vendorPoWorkDoneController.selected.insertionDate}" title="#{bundle.EditVendorPoWorkDoneTitle_insertionDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_VPoId}" for="VPoId" />
+                        <p:selectOneMenu id="VPoId" value="#{vendorPoWorkDoneController.selected.VPoId}" >
+                            <f:selectItems value="#{vendorPoController.itemsAvailableSelectOne}"
+                                           var="VPoIdItem"
+                                           itemValue="#{VPoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{vendorPoWorkDoneController.create}" value="#{bundle.Save}" update="display,:VendorPoWorkDoneListForm:datalist,:growl" oncomplete="handleSubmit(args,'VendorPoWorkDoneCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="VendorPoWorkDoneCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

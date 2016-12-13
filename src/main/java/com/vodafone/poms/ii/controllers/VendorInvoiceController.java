@@ -4,6 +4,8 @@ import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.beans.VendorInvoiceFacade;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
+import com.vodafone.poms.ii.entities.DomainNames;
+import com.vodafone.poms.ii.entities.VendorMd;
 
 
 import java.io.Serializable;
@@ -22,6 +24,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("vendorInvoiceController")
 @SessionScoped
@@ -37,7 +40,11 @@ public class VendorInvoiceController implements Serializable {
     @EJB
     private com.vodafone.poms.ii.beans.VendorInvoiceFacade ejbFacade;
     private List<VendorInvoice> items = null;
+    private List<VendorInvoice> selectedMdItems = null;
     private VendorInvoice selected;
+    
+    @Inject 
+    private VendorMdController vendorMdController;
 
     public VendorInvoiceController() {
     }
@@ -66,16 +73,16 @@ public class VendorInvoiceController implements Serializable {
         return selected;
     }
 
-    public VendorInvoice create() {
-        selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorInvoiceCreated"));
+    public void create() {
+        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorInvoiceCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedMdItems = null;
         }
-        return selected;
     }
 
     public void update() {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("VendorInvoiceUpdated"));
+         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("VendorInvoiceUpdated"));
     }
 
     public void destroy() {
@@ -83,6 +90,7 @@ public class VendorInvoiceController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedMdItems = null;
         }
     }
 
@@ -93,12 +101,20 @@ public class VendorInvoiceController implements Serializable {
         return items;
     }
 
-    private VendorInvoice persist(PersistAction persistAction, String successMessage) {
+    public List<VendorInvoice> getSelectedMdItems() {
+        if(vendorMdController.getSelected()!=null){
+            selectedMdItems = getFacade().findRelatedItems(vendorMdController.getSelected());
+        }
+        return selectedMdItems;
+    }
+
+    
+    private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    selected = getFacade().merge(selected);
+                    getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);
                 }
@@ -120,7 +136,7 @@ public class VendorInvoiceController implements Serializable {
             }
             
         }
-            return selected;
+
     }
 
     public VendorInvoice getVendorInvoice(java.lang.Long id) {
@@ -135,8 +151,12 @@ public class VendorInvoiceController implements Serializable {
         return getFacade().findAll();
     }
 
-    public List<VendorInvoice> findDashboardItems(Date start, Date end) {
-        return getFacade().findDashboardItems(start,end);
+    public List<VendorInvoice> findDashboardItems(Date start, Date end,String domains) {
+        return getFacade().findDashboardItems(start,end,domains);
+    }
+
+    List<VendorInvoice> getSelectedMdItems(VendorMd md) {
+            return getFacade().findRelatedItems(md);
     }
 
     @FacesConverter(forClass = VendorInvoice.class)
@@ -272,16 +292,18 @@ public class VendorInvoiceController implements Serializable {
     
     public void updateEdit() {
         if(editInvoiceDate!=null && editinvoiceFactor!=null && editInvoiceValue!=null){
-            if(getFacade().findByMdNumber(editInvoiceNumber).isEmpty()){
+            if(editInvoiceDeserved.compareTo(editInvoiceValue)==1
+                    || editInvoiceDeserved.compareTo(editInvoiceValue)==0){
             selected.setInvoiceDate(editInvoiceDate);
             selected.setInvoiceFactor(editinvoiceFactor);
             selected.setInvoiceValue(editInvoiceValue);
             selected.setInvoiced(editInvoiced);
             selected.setInvoiceNumber(editInvoiceNumber);
             selected.setRemainingInInvoice(editRemainingInInvoice);
-            persist(PersistAction.UPDATE, "Invoice updated");
+            update();
+//            vendorMdController.update();
             }else{
-                JsfUtil.addErrorMessage("Invoice Number already exist");
+                JsfUtil.addErrorMessage("Invoice Value is more than the amount deserved.");
             }
         }
     }

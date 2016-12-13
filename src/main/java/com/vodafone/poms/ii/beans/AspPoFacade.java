@@ -40,7 +40,7 @@ public class AspPoFacade extends AbstractFacade<AspPo> {
                 totalPriceASP+=selected.get(i).getTotalPriceAsp();
             }
         return em.createNativeQuery("select * from asp_po " +
-                                    "where po_type = 'Extra Work' " +
+                                    "where po_status != 'COMPLETED' and po_type = 'Extra Work' " +
                                     "and domain_name = '"+selected.get(0).getActivityType().getDomainName()+"' " +
                                     "and asp = '"+selected.get(0).getAsp().getSubcontractorName()+"' " +
                                     "and remaining_in_po >= "+totalPriceASP,AspPo.class).getResultList();
@@ -53,18 +53,23 @@ public class AspPoFacade extends AbstractFacade<AspPo> {
         return em.createNativeQuery("select * from asp_po where po_date between '"+sdf.format(fromDate)+"' and '"+sdf.format(toDate)+"' ", AspPo.class).getResultList();
     }
 
-    public List<AspPo> findCommittedCostItems(Date start, Date end) {
+    public List<AspPo> findCommittedCostItems(String domains) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return em.createNativeQuery("select *  " +
-                                    "from asp_po " +
-                                    "where grn_deserved > 0 " +
-                                    "and po_date between '"+sdf.format(start)+"' and '"+sdf.format(end)+"' ", AspPo.class).getResultList();
+        return em.createNativeQuery(" select * " +
+                                    " from asp_po asppo " +
+                                    " where po_status != 'COMPLETED' and (work_done*service_value) > " +
+                                    " (select sum(grn_value) from asp_grn where asp_po_id = asppo.po_number)"
+                                    +(!domains.contains("*")?" and domain_name in ("+domains+") ":""), AspPo.class).getResultList();
     }
 
     public List<AspPo> findUncorrelatedItems() {
         return em.createNativeQuery("select *  " +
                                     "from asp_po " +
-                                    "where po_number not in (select asp_po_id from vendor_po_j_asp_po) ", AspPo.class).getResultList();
+                                    "where po_status != 'COMPLETED' and po_number not in (select asp_po_id from vendor_po_j_asp_po) ", AspPo.class).getResultList();
+    }
+
+    public List<AspPo> findAllOpen() {
+       return em.createNativeQuery("select * from asp_po where po_status != 'COMPLETED'", AspPo.class).getResultList();
     }
     
 }

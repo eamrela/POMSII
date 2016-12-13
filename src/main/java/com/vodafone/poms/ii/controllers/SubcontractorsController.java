@@ -31,6 +31,9 @@ public class SubcontractorsController implements Serializable {
     public SubcontractorsController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public Subcontractors getSelected() {
         return selected;
     }

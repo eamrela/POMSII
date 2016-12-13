@@ -124,6 +124,9 @@ public class PoStatusController implements Serializable {
     public PoStatus getInitialStatus() {
         return getFacade().findByValue("INITIAL");
     }
+    public PoStatus getFinalStatus() {
+        return getFacade().findByValue("COMPLETED");
+    }
 
     @FacesConverter(forClass = PoStatus.class)
     public static class PoStatusControllerConverter implements Converter {

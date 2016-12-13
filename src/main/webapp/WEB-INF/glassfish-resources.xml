@@ -5,12 +5,19 @@
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="5432"/>
         <property name="databaseName" value="POMSII"/>
-<!--        <property name="User" value="postgres"/>
-        <property name="Password" value="Reverse*321"/>-->
-        <property name="User" value="webadmin"/>
-        <property name="Password" value="hk3yAGRH6P"/>
+        <property name="User" value="postgres"/>
+        <property name="Password" value="Reverse*321"/>
         <property name="URL" value="jdbc:postgresql://localhost:5432/POMSII"/>
-        <property name="driverClass" value="org.postgresql.Driver"/>
+        
+<!--        <property name="serverName" value="node18154-pomsiii.njs.jelastic.vps-host.net"/>
+        <property name="portNumber" value="5432"/>
+        <property name="databaseName" value="POMSII"/>
+        <property name="User" value="postgres"/>
+        <property name="Password" value="Reverse*321"/>
+        <property name="URL" value="jdbc:postgresql://node18154-pomsiii.njs.jelastic.vps-host.net:5432/POMSII"/>
+        <property name="driverClass" value="org.postgresql.Driver"/>-->
+        
     </jdbc-connection-pool>
     <jdbc-resource enabled="true" jndi-name="java:app/POMSIIDs" object-type="user" pool-name="post-gre-sql_POMSII_postgresPool"/>
+    <!--<jdbc-resource enabled="true" jndi-name="java:comp/DefaultDataSource" object-type="user" pool-name="DerbyPool"/>-->
 </resources>

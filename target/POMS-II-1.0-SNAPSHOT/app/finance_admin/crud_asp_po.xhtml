@@ -35,9 +35,14 @@
     top:100px;
 }
 .fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
+    table-layout: auto;
+    white-space: normal;
+    word-wrap: normal;
+    font-size: 0.7vw;
+    text-align: left;
+    float: left;
 }
+
         </style>
 
     </h:head>
@@ -85,12 +90,12 @@
                                                                     styleClass="fixed-size"
                                                                     >
 
-                                                           <p:ajax event="rowSelect"   update="editButton, :ASPPOListForm:selectedCorrelation,
+                                                           <p:ajax event="rowSelect"   update="editButton, deleteButton, closeButton,:ASPPOListForm:selectedCorrelation,
                                                                                                :ASPPOListForm:selectedASPPOActivities ,
                                                                                                :ASPPOListForm:selectedASPPOGRN,
                                                                                                :ASPPOListForm:growl,
                                                                                                :ASPPOListForm:datalistASPPO"/>
-                                                           <p:ajax event="rowUnselect"   update="editButton, :ASPPOListForm:selectedCorrelation,
+                                                           <p:ajax event="rowUnselect"   update="editButton,  deleteButton, closeButton,:ASPPOListForm:selectedCorrelation,
                                                                                                :ASPPOListForm:selectedASPPOActivities ,
                                                                                                :ASPPOListForm:selectedASPPOGRN,
                                                                                                :ASPPOListForm:growl,
@@ -126,31 +131,31 @@
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="ServiceValue"/>
+                                                                   <h:outputText value="Service Value"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.serviceValue}">
-                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                   <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="POValue"/>
+                                                                   <h:outputText value="PO Value"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.poValue}">
-                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                   <f:convertNumber currencySymbol="" type="currency"  minFractionDigits="0"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="POValueTaxes"/>
+                                                                   <h:outputText value="PO Value Taxes"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.poValueTaxes}">
-                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                   <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="WorkDone"/>
+                                                                   <h:outputText value="Work Done"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.workDone}">
                                                                    <f:convertNumber groupingUsed="false" minFractionDigits="1" />
@@ -161,7 +166,7 @@
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.remainingInPo}">
-                                                                   <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                   <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poMargin}">
@@ -176,7 +181,7 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="Taxes"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.taxes*100}">
+                                                               <h:outputText value="#{item.taxes}">
                                                                    <f:convertNumber groupingUsed="false" minFractionDigits="1" />
                                                                </h:outputText>%
                                                            </p:column>
@@ -209,13 +214,29 @@
                                                            </p:column>
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
-                                                                   <h:outputText value="CustomerPO"/>
+                                                                   <h:outputText value="Customer PO"/>
                                                                </f:facet>
                                                                <h:outputText value="#{item.vendorPoCollection.size()>0?'Correlated':'Not Correlated'}"/>
                                                            </p:column>
                                                            <f:facet name="footer">
-                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" 
+                                                               <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" actionListener="#{aspPoWorkDoneController.prepareCreate}"
                                                                                 update=":AspPoEditForm" oncomplete="PF('AspPoEditDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                                                               <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{aspPoController.destroy}" 
+                                                                                         update="editButton,deleteButton, :ASPPOListForm:selectedCorrelation,
+                                                                                               :ASPPOListForm:selectedASPPOActivities ,
+                                                                                               :ASPPOListForm:selectedASPPOGRN,
+                                                                                               :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO" 
+                                                                                         disabled="#{empty aspPoController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                               <p:commandButton id="closeButton" icon="ui-icon-closethick"  
+                                                                                value="Close" actionListener="#{aspPoController.closePO}" 
+                                                                                         update="editButton,deleteButton, :ASPPOListForm:selectedCorrelation,
+                                                                                               :ASPPOListForm:selectedASPPOActivities ,
+                                                                                               :ASPPOListForm:selectedASPPOGRN,
+                                                                                               :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO" 
+                                                                                         disabled="#{empty aspPoController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                            </f:facet>
                                                        </p:dataTable>
                                                     </div>
@@ -242,19 +263,19 @@
                                                                 styleClass="fixed-size">
 
                                                                 
-                                                                <p:column headerText="PO#">
-                                                                    <h:outputText value="#{vendorPOC.poNumber}" />
+                                                                <p:column headerText="PO#" style="font-size:0.7vw;">
+                                                                    <h:outputText value="#{vendorPOC.poNumber}"/>
                                                                 </p:column>
 
-                                                                <p:column headerText="Remaining">
-                                                                    <h:outputText value="#{vendorPOC.remainingInPo}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                <p:column headerText="Remaining" style="font-size:0.7vw;">
+                                                                    <h:outputText value="#{vendorPOC.remainingInPo}" style="float: left;font-size:0.7vw;" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
-                                                                <p:column headerText="PO Value">
-                                                                    <h:outputText value="#{vendorPOC.poValue}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                <p:column headerText="PO Value" style="font-size:0.7vw;">
+                                                                    <h:outputText value="#{vendorPOC.poValue}" style="font-size:0.7vw;" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                             </p:dataTable>
@@ -263,7 +284,7 @@
                                                              <label >Total PO price with Margin: 
                                                                  (
                                                                  <h:outputText value="#{aspPoController.totalPOASPPrice}">
-                                                                     <f:convertNumber type="currency" currencySymbol="EGP"/>
+                                                                     <f:convertNumber type="currency"  minFractionDigits="0" currencySymbol=""/>
                                                                  </h:outputText>                       
                                                                  )
                                                              </label>
@@ -282,19 +303,19 @@
                                                                             :ASPPOListForm:growl,
                                                                                                :ASPPOListForm:datalistASPPO"/>
                                                                 
-                                                                <p:column headerText="PO#">
+                                                                <p:column headerText="PO#" style="font-size:0.7vw;">
                                                                     <h:outputText value="#{vendorPO.poNumber}" />
                                                                 </p:column>
 
-                                                                <p:column headerText="Remaining">
+                                                                <p:column headerText="Remaining" style="font-size:0.7vw;">
                                                                     <h:outputText value="#{vendorPO.remainingInPo}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
-                                                                <p:column headerText="PO Value">
+                                                                <p:column headerText="PO Value" style="font-size:0.7vw;">
                                                                     <h:outputText value="#{vendorPO.poValue}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                             </p:dataTable>
@@ -337,7 +358,7 @@
                                                                 <p:dataTable 
                                                                     id="associatedGRN"
                                                                         var="aspGRN" 
-                                                                        value="#{aspPoController.selected.aspGrnCollection}"
+                                                                        value="#{aspGrnController.selectedPoItems}"
                                                                         emptyMessage="This PO doesn't have any GRN"
                                                                         selection="#{aspGrnController.selected}"
                                                                         selectionMode="single"
@@ -356,38 +377,46 @@
                                                                 </p:column>
                                                                 <p:column headerText="Deserved" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.grnDeserved}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="Factor" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.grnFactor}" />
                                                                 </p:column>
-                                                                <p:column headerText="GRNValue" style="font-size: 9px;">
+                                                                <p:column headerText="GRN Value" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.grnValue}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="Remaining" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspGRN.remainingInGrn}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="editButton"  actionListener="#{aspGrnController.prepareEdit}" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":AspGrnEditForm" oncomplete="PF('AspGrnEditDialog').show()" disabled="#{empty aspGrnController.selected}"/>
+                                                                     <p:commandButton id="deleteButton" icon="ui-icon-trash"  
+                                                                                         value="#{bundle.Delete}" actionListener="#{aspGrnController.destroy}" 
+                                                                                         update="editButton, :ASPPOListForm:selectedCorrelation,
+                                                                                               :ASPPOListForm:selectedASPPOActivities ,
+                                                                                               :ASPPOListForm:selectedASPPOGRN,
+                                                                                               :ASPPOListForm:growl,
+                                                                                               :ASPPOListForm:datalistASPPO" 
+                                                                                               disabled="#{empty aspGrnController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
                                                                  <div class="col-xs-6">
                                                                      <label for="grndeserved">GRN Needed</label>
                                                                      <h:outputText id="grndeserved"
-                                                                                   value="#{aspPoController.selected.grnDeserved}"
+                                                                                   value="#{aspPoController.selectedGrnDeserved}"
                                                                                    styleClass="form-control">
-                                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                         <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                  </div>
                                                                  <div class="col-xs-6">
-                                                                     <h:panelGroup rendered="#{aspPoController.selected.grnDeserved>0}">
+                                                                     <h:panelGroup rendered="#{aspPoController.selectedGrnDeserved>0}">
                                                                          <p:commandButton 
                                                                                      class="btn-raised btn-success btn"
                                                                                       value="Create GRN"
@@ -438,20 +467,20 @@
                                                                         <f:convertDateTime pattern="yyyy-MM-dd"/>
                                                                     </h:outputText>
                                                                 </p:column>
-                                                                <p:column headerText="PriceASP" style="font-size: 9px;">
+                                                                <p:column headerText="Price ASP" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalPriceAsp}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
-                                                                <p:column headerText="PriceCustomer" style="font-size: 9px;">
+                                                                <p:column headerText="Price Customer" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalPriceVendor}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="UM" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.totalUm}" >
-                                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                                 <p:column headerText="UM%" style="font-size: 9px;">
@@ -478,22 +507,133 @@
                                         
                                 <!--page content end here--> 
                                 </h:form>
-                            <p:dialog id="AspPoEditDlg" widgetVar="AspPoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspPoTitle}">
+                            <p:dialog id="AspPoEditDlg" widgetVar="AspPoEditDialog" modal="true" closable="true" closeOnEscape="true" resizable="false" appendTo="@(body)" 
+                                      header="#{bundle.EditAspPoTitle}">
                                     <h:form id="AspPoEditForm">
+                                        <div class="row">
+                                            <div class="col-xs-12">    
+                                        <p:dataTable id="previousWD"
+                                                         var="aspPoWorkDone" 
+                                                         value="#{aspPoWorkDoneController.selectedPoItems}"
+                                                         style="width: 600px;"
+                                                         >
+                                                <p:column headerText="Work Done">
+                                                    <h:outputText value="#{aspPoWorkDone.workDone}" />
+                                                </p:column>
+
+                                                <p:column headerText="Work Value">
+                                                    <h:outputText value="#{aspPoWorkDone.workValue}" />
+                                                </p:column>
+
+                                                <p:column headerText="Date" sortBy="#{aspPoWorkDone.insertionDate}">
+                                                    <h:outputText value="#{aspPoWorkDone.insertionDate}" >
+                                                        <f:convertDateTime pattern="yyyy/MM/dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:dataTable>  
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                        <div class="col-xs-6">
                                         <h:panelGroup id="display">
-                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
-                                                <p:outputLabel value="#{bundle.EditAspPoLabel_workDone}" for="workDone" />
-                                                <p:inputText id="workDone" 
-                                                             value="#{aspPoController.selected.workDone}" 
-                                                             title="#{bundle.EditAspPoTitle_workDone}" >
-                                                    <f:validateDoubleRange minimum="#{aspPoController.selected.workDone}" 
-                                                                           maximum="#{aspPoController.selected.factor}"/>
+                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null and aspPoWorkDoneController.selected != null}">
+                                                <p:outputLabel value="#{bundle.CreateAspPoWorkDoneLabel_workDone}" for="workDone" />
+                                                <p:inputText id="workDone" value="#{aspPoWorkDoneController.selected.workDone}" 
+                                                             title="#{bundle.CreateAspPoWorkDoneTitle_workDone}" >
+                                                    <f:validateDoubleRange maximum="#{aspPoController.selected.factor}"/>
+                                                     <p:ajax update="workValue"/>
                                                 </p:inputText>
+                                                <p:outputLabel value="#{bundle.CreateAspPoWorkDoneLabel_workValue}" for="workValue" />
+                                                <p:inputText id="workValue" value="#{aspPoWorkDoneController.selected.workValue}" title="#{bundle.CreateAspPoWorkDoneTitle_workValue}" >
+                                                    <p:ajax update="workDone"/>
+                                                </p:inputText>
+                                                <p:outputLabel value="Work Date" for="insertionDate" />
+                                                <p:calendar id="insertionDate" pattern="MM/dd/yyyy"  value="#{aspPoWorkDoneController.selected.insertionDate}" title="Work Date"  showOn="button"/>
                                             </p:panelGrid>
-                                            <p:commandButton actionListener="#{aspPoController.update}" value="#{bundle.Save}" update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
-                                                                                                                                    :ASPPOListForm:selectedASPPOGRN" oncomplete="handleSubmit(args, 'AspPoEditDialog');"/>
-                                            <p:commandButton value="#{bundle.Cancel}" onclick="AspPoEditDialog.hide()"/>
+                                            <p:commandButton actionListener="#{aspPoWorkDoneController.createWD}" value="Add Work Done" 
+                                                             update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
+                                                                    :ASPPOListForm:selectedASPPOGRN,:AspPoEditForm:previousWD" oncomplete="handleSubmit(args, 'AspPoEditDialog');"/>
                                         </h:panelGroup>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <h:form>
+                                                <p:panelGrid columns="2" rendered="#{aspPoController.selected != null}">
+                                                        <p:outputLabel value="#{bundle.EditVendorPoLabel_poDate}" for="poDate" />
+                                                        <p:calendar id="poDate" pattern="MM/dd/yyyy" value="#{aspPoController.selected.poDate}" title="#{bundle.EditVendorPoTitle_poDate}" required="true" requiredMessage="#{bundle.EditVendorPoRequiredMessage_poDate}" showOn="button"/>
+                                                        <p:outputLabel value="#{bundle.EditVendorPoLabel_poDescription}" for="poDescription" />
+                                                        <p:inputText id="poDescription" value="#{aspPoController.selected.poDescription}" title="#{bundle.EditVendorPoTitle_poDescription}" />
+                                                        <p:outputLabel for="pochaser" value="Po Chaser" />
+                                                        <h:selectOneMenu id="pochaser" 
+                                                                         value="#{aspPoController.selected.poChaser}" 
+                                                                         converter="EricssonPoChaserControllerConverter"
+                                                                         styleClass="form-control">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{ericssonPoChaserController.itemsAvailableSelectOne}"
+                                                                           var="poChaserItem"
+                                                                           itemValue="#{poChaserItem}"
+                                                                           itemLabel="#{poChaserItem.chaserName}"/>
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="potype" value="Type" />
+                                                        <h:selectOneMenu id="potype" 
+                                                                         value="#{aspPoController.selected.poType}" 
+                                                                         required="true" 
+                                                                         requiredMessage="PO Type is required"
+                                                                         converter="PoTypesControllerConverter"
+                                                                         styleClass="form-control"
+                                                                         disabled="#{(aspPoController.selected.activityCollection.size()>0)
+                                                                                     or 
+                                                                                     (aspPoController.selected.vendorPoCollection.size()>0)}">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
+                                                                           var="poTypeItem"
+                                                                           itemValue="#{poTypeItem}"
+                                                                           itemLabel="#{poTypeItem.typeName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="podomain" value="Domain" />
+                                                        <h:selectOneMenu id="podomain" 
+                                                                         value="#{aspPoController.selected.domainName}" 
+                                                                         required="true" 
+                                                                         converter="DomainNamesControllerConverter"
+                                                                         requiredMessage="PO Domain is required"
+                                                                         styleClass="form-control"
+                                                                         disabled="#{(aspPoController.selected.activityCollection.size()>0)
+                                                                                     or 
+                                                                                     (aspPoController.selected.vendorPoCollection.size()>0)}">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{domainNamesController.items}"
+                                                                            var="domainItem"
+                                                                           itemValue="#{domainItem}"
+                                                                           itemLabel="#{domainItem.domainName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                        <p:outputLabel for="poasp" value="ASP" />
+                                                        <h:selectOneMenu id="poasp" 
+                                                                        value="#{aspPoController.selected.asp}" 
+                                                                         required="true" 
+                                                                         converter="SubcontractorsControllerConverter"
+                                                                         requiredMessage="ASP is required"
+                                                                         styleClass="form-control"
+                                                                         disabled="#{(aspPoController.selected.activityCollection.size()>0)}">
+                                                            <f:selectItem itemLabel="" 
+                                                                          itemValue="#{null}" noSelectionOption="false" />
+                                                            <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
+                                                                            var="ASPItem"
+                                                                            itemValue="#{ASPItem}"
+                                                                            itemLabel="#{ASPItem.subcontractorName}"
+                                                                        />
+                                                        </h:selectOneMenu>
+                                                    </p:panelGrid>
+                                                    
+                                                <p:commandButton actionListener="#{aspPoController.update}" value="Update" 
+                                                             update=":ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
+                                                                    :ASPPOListForm:selectedASPPOGRN,:AspPoEditForm:previousWD" oncomplete="handleSubmit(args, 'AspPoEditDialog');"/>
+                                                </h:form>
+                                        </div>
+                                        </div>
                                     </h:form>
                             </p:dialog>
                             <p:dialog id="ActivityViewDlg" widgetVar="ActivityViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewActivityTitle}">
@@ -512,19 +652,19 @@
                                             <h:outputText value="#{activityController.selected.qty}" title="#{bundle.ViewActivityTitle_qty}"/>
                                             <h:outputText value="TotalPriceCustomer"/>
                                             <h:outputText value="#{activityController.selected.totalPriceVendor}" title="TotalPriceCustomer">
-                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                             </h:outputText>
                                             <h:outputText value="TotalPriceCustomerWithTaxes"/>
                                             <h:outputText value="#{activityController.selected.totalPriceVendorTaxes}" title="TotalpriceCustomerWithTaxes">
-                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                             </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalPriceAsp}"/>
                                             <h:outputText value="#{activityController.selected.totalPriceAsp}" title="#{bundle.ViewActivityTitle_totalPriceAsp}">
-                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                             </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUm}"/>
                                             <h:outputText value="#{activityController.selected.totalUm}" title="#{bundle.ViewActivityTitle_totalUm}">
-                                                <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                             </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_totalUmPercent}"/>
                                             <h:outputText value="#{activityController.selected.totalUmPercent*100}" 
@@ -538,7 +678,7 @@
                                                 <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                                             </h:outputText>
                                             <h:outputText value="#{bundle.ViewActivityLabel_taxes}"/>
-                                            <h:outputText value="#{activityController.selected.taxes*100}%" title="#{bundle.ViewActivityTitle_taxes}"/>
+                                            <h:outputText value="#{activityController.selected.taxes}%" title="#{bundle.ViewActivityTitle_taxes}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_activityCode}"/>
                                             <h:outputText value="#{activityController.selected.activityCode.materialId}" title="#{bundle.ViewActivityTitle_activityCode}"/>
                                             <h:outputText value="#{bundle.ViewActivityLabel_approvalStatus}"/>

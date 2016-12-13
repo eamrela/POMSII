@@ -4,7 +4,9 @@ import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.AspPoFacade;
+import com.vodafone.poms.ii.entities.AspGrn;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -24,8 +26,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("aspPoController")
 @SessionScoped
@@ -36,6 +36,7 @@ public class AspPoController implements Serializable {
     private String poIds;
     private BigInteger totalPOASPPrice;
     private BigInteger itemsUncorrelatedPoValue;
+    private BigInteger selectedGrnDeserved;
     private boolean disabled = false;
     @EJB
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
@@ -118,6 +119,11 @@ public class AspPoController implements Serializable {
             selectedItems = null;
         }
         prepareCreate();
+        try {   
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/finance_admin/crud_asp_po.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void update() {
@@ -131,12 +137,21 @@ public class AspPoController implements Serializable {
             items = null;    // Invalidate list of items to trigger re-query.
             itemsUncorrelated = null;
             selectedItems = null;
+            selectedGrnDeserved = null;
         }
     }
 
+     public void closePO(){
+        if(selected!=null){
+            selected.setPoStatus(poStatusController.getFinalStatus());
+            update();
+        }
+    }
+
+     
     public List<AspPo> getItems() {
         if (items == null) {
-            items = getFacade().findAll();
+            items = getFacade().findAllOpen();
         }
         return items;
     }
@@ -174,6 +189,7 @@ public class AspPoController implements Serializable {
                 }
             }
             selected = null;
+            selectedGrnDeserved = null;
         }
     }
 
@@ -255,8 +271,12 @@ public class AspPoController implements Serializable {
         return getFacade().findExportItems(fromDate,toDate);
     }
 
-    public List<AspPo> getDashboardCommittedCost(Date start, Date end) {
-        return getFacade().findCommittedCostItems(start,end);
+    public List<AspPo> findAll(){
+        return getFacade().findAll();
+    }
+    
+    public List<AspPo> getDashboardCommittedCost(String domains) {
+        return getFacade().findCommittedCostItems(domains);
     }
 
     @FacesConverter(forClass = AspPo.class)
@@ -307,8 +327,9 @@ public class AspPoController implements Serializable {
         }
         return suggestedPOs;
     }
+    
 
-    public void createGRN(){
+   public void createGRN(){
         if(selected!=null){
             if(selected.getGrnDeserved().compareTo(BigInteger.ZERO)==1){
                 aspGrnController.prepareCreate();
@@ -316,8 +337,7 @@ public class AspPoController implements Serializable {
                 aspGrnController.getSelected().setCreator(usersController.getLoggedInUser());
                 aspGrnController.getSelected().setGrnDeserved(selected.getGrnDeserved());
                 aspGrnController.getSelected().setSysDate(new Date());
-                selected.getAspGrnCollection().add(aspGrnController.create());
-                selected.setGrnDeserved(BigInteger.ZERO);
+                aspGrnController.create();
                 update();
                 
             }
@@ -363,10 +383,31 @@ public class AspPoController implements Serializable {
             selectedVendorPo=null;
         }
     }
+
+    public BigInteger getSelectedGrnDeserved() {
+        if(selected!=null){
+        BigInteger totalGrnValue = BigInteger.ZERO;
+        BigInteger totalGrnDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone()).toBigInteger();
+        List<AspGrn> grns = aspGrnController.getSelectedPoItems();
+        for (int i = 0; i < grns.size(); i++) {
+            totalGrnValue  = totalGrnValue.add(grns.get(i).getGrnValue()!=null?
+                                    grns.get(i).getGrnValue():BigInteger.ZERO);
+        }
+        selected.setGrnDeserved(totalGrnDeserved.subtract(totalGrnValue));
+        selectedGrnDeserved = selected.getGrnDeserved();
+        return selectedGrnDeserved;
+        
+        }
+        selectedGrnDeserved = BigInteger.ZERO;
+        return selectedGrnDeserved;
+    }
+    
+    
     
     public void clearSelected(){
         selected=null;
         items = null;
+        selectedGrnDeserved = null;
         itemsUncorrelated = null;
     }
 

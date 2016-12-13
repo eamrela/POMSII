@@ -31,6 +31,9 @@ public class ApprovalStatusController implements Serializable {
     public ApprovalStatusController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public ApprovalStatus getSelected() {
         return selected;
     }

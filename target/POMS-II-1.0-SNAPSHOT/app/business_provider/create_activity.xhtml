@@ -15,8 +15,6 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-<!--        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
-        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> -->
 
         <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
         <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
@@ -71,8 +69,7 @@
                                     <div class="col-md-9">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
-                                                        <h2>Activity Details</h2>
-                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                                            <h2>Activity Details</h2>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
@@ -170,9 +167,7 @@
                                                         <label for="activityphase">Phase</label>
                                                         <h:selectOneMenu id="activityphase" 
                                                                          value="#{activityController.selected.phase}" 
-                                                                         required="true" 
                                                                          converter="PhasesControllerConverter"
-                                                                         requiredMessage="Phase is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
                                                                           itemValue="#{null}" noSelectionOption="true" />
@@ -186,9 +181,7 @@
                                                         <label for="activityclaim">Claim</label>
                                                         <h:selectOneMenu id="activityclaim" 
                                                                          value="#{activityController.selected.claimStatus}" 
-                                                                         required="true" 
                                                                          converter="ClaimStatusControllerConverter"
-                                                                         requiredMessage="Claim is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
                                                                           itemValue="#{null}" noSelectionOption="true" />
@@ -204,9 +197,7 @@
                                                         <label for="activityapproval">Approval</label>
                                                         <h:selectOneMenu id="activityapproval" 
                                                                          value="#{activityController.selected.approvalStatus}" 
-                                                                         required="true" 
                                                                          converter="ApprovalStatusControllerConverter"
-                                                                         requiredMessage="Approval is required"
                                                                          styleClass="form-control">
                                                             <f:selectItem itemLabel="" 
                                                                           itemValue="#{null}" noSelectionOption="true" />
@@ -229,9 +220,7 @@
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.qty}"
                                                                      class="form-control" 
-                                                                     id="activityQTY"
-                                                                     onkeypress="if(event.which &lt; 48 || event.which &gt; 57) 
-                                                                                    return false;">
+                                                                     id="activityQTY">
                                                             <p:ajax event="keyup" update="activitytpricev,activitytprivea,
                                                                     activitypricet,activitytum,activitytump"
                                                                      oncomplete="removeClasses();"/>
@@ -256,7 +245,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-4">
-                                                        <label for="activitypricet">Total Price Customer (#{activityController.selected.taxes*100}%)</label>
+                                                        <label for="activitypricet">Total Price Customer (#{activityController.selected.taxes}%)</label>
                                                         <h:inputText required="true" 
                                                                      value="#{activityController.selected.totalPriceVendorTaxes}"
                                                                      class="form-control" id="activitypricet" disabled="true">
@@ -297,8 +286,10 @@
                                                     <div class="col-xs-6">
                                                         <label for="activitytump">Total UM%</label>
                                                         <h:inputText required="true" 
-                                                                     value="#{activityController.selected.totalUmPercent}"
-                                                                     class="form-control" id="activitytump" disabled="true"/>
+                                                                     value="#{activityController.selected.totalUmPercent*100}"
+                                                                     class="form-control" id="activitytump" disabled="true">
+                                                            <f:convertNumber groupingUsed="false" minFractionDigits="1" />
+                                                        </h:inputText>
                                                     </div>
                                                 </div>
                                                 </div>
@@ -357,17 +348,24 @@
                                                 <div class="col-xs-6">
                                                     <label for="activitycodevunitprice">Customer Price</label>
                                                     <h:inputText required="true" 
-                                                                 value="#{activityController.selected.activityCode.vendorPrice}"
-                                                                 class="form-control" id="activitycodevunitprice" disabled="true">
-                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                 value="#{activityController.selected.acVendorPrice}"
+                                                                 class="form-control" id="activitycodevunitprice" >
+                                                        <p:ajax listener="#{activityController.validateUMPercent}" update="activitycodeaspunitprice,activitycodeum,activitycodeump,
+                                                                activitytpricev,activitytprivea,
+                                                                    activitypricet,activitytum,activitytump,activitycode,activitycodedescription,activitycodevunitprice,
+                                                                    activitycodeaspunitprice,activitycodeum,activitycodeump,:createActivityForm:growl"/>
                                                     </h:inputText>
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label for="activitycodeaspunitprice">ASP Price</label>
                                                     <h:inputText required="true" 
-                                                                 value="#{activityController.selected.activityCode.subcontractorPrice}"
-                                                                 class="form-control" id="activitycodeaspunitprice" disabled="true">
-                                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                                                 value="#{activityController.selected.acSubcontractorPrice}"
+                                                                 class="form-control" id="activitycodeaspunitprice" >
+                                                           <p:ajax listener="#{activityController.validateUMPercent}" 
+                                                                   update="activitycodevunitprice,activitycodeum,activitycodeump,
+                                                                   activitytpricev,activitytprivea,
+                                                                    activitypricet,activitytum,activitytump,activitycode,activitycodedescription,activitycodevunitprice,
+                                                                    activitycodeaspunitprice,activitycodeum,activitycodeump,:createActivityForm:growl" />
                                                     </h:inputText>
                                                 </div>
                                             </div>
@@ -375,7 +373,7 @@
                                                 <div class="col-xs-6">
                                                     <label for="activitycodeum">UM/Unit</label>
                                                     <h:inputText required="true" 
-                                                                 value="#{activityController.selected.activityCode.um}"
+                                                                 value="#{activityController.selected.acUm}"
                                                                  class="form-control" id="activitycodeum" disabled="true">
                                                         <f:convertNumber currencySymbol="EGP" type="currency"/>
                                                     </h:inputText>
@@ -383,12 +381,35 @@
                                                 <div class="col-xs-6">
                                                     <label for="activitycodeump">UM%/Unit</label>
                                                     <h:inputText required="true" 
-                                                                 value="#{activityController.selected.activityCode.umPercent}"
+                                                                 value="#{activityController.selected.acUmPercent}"
                                                                  class="form-control" id="activitycodeump" disabled="true"/>
                                                 </div>
                                             </div>     
                                             </div>
                                     </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                            <div class="panel-heading">
+                                                    <h2>Activity Future Correlation</h2>
+                                                    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
+                                            </div>
+                                            <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <label for="activitycorrelateto">Activity For:</label>
+                                                    <h:selectOneMenu id="activitycorrelateto" 
+                                                                     value="#{activityController.selected.correlateTo}" 
+                                                                        required="true" 
+                                                                        requiredMessage="Activity for is required"
+                                                                        styleClass="form-control">
+                                                           <f:selectItem itemLabel="ASP" itemValue="ASP" />
+                                                           <f:selectItem itemLabel="CUSTOMER" itemValue="CUSTOMER" />
+                                                    </h:selectOneMenu>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <p:commandButton 

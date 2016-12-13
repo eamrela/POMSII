@@ -2,6 +2,7 @@ package com.vodafone.poms.ii.entities;
 
 import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.entities.AspGrn;
+import com.vodafone.poms.ii.entities.AspPoWorkDone;
 import com.vodafone.poms.ii.entities.DomainNames;
 import com.vodafone.poms.ii.entities.EricssonPoChaser;
 import com.vodafone.poms.ii.entities.PoStatus;
@@ -16,18 +17,19 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-11-29T19:56:30")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2016-12-10T23:07:24")
 @StaticMetamodel(AspPo.class)
 public class AspPo_ { 
 
     public static volatile SingularAttribute<AspPo, Double> poMargin;
     public static volatile SingularAttribute<AspPo, EricssonPoChaser> poChaser;
-    public static volatile SingularAttribute<AspPo, Double> workDone;
     public static volatile SingularAttribute<AspPo, BigInteger> remainingInPo;
+    public static volatile SingularAttribute<AspPo, Double> workDone;
     public static volatile SingularAttribute<AspPo, String> poDescription;
     public static volatile SingularAttribute<AspPo, BigInteger> serviceValue;
     public static volatile SingularAttribute<AspPo, DomainNames> domainName;
     public static volatile SingularAttribute<AspPo, String> poNumber;
+    public static volatile CollectionAttribute<AspPo, AspPoWorkDone> aspPoWorkDoneCollection;
     public static volatile SingularAttribute<AspPo, Double> factor;
     public static volatile CollectionAttribute<AspPo, AspGrn> aspGrnCollection;
     public static volatile SingularAttribute<AspPo, Users> creator;

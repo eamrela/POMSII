@@ -31,6 +31,9 @@ public class DomainNamesController implements Serializable {
     public DomainNamesController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public DomainNames getSelected() {
         return selected;
     }

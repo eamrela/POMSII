@@ -21,7 +21,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{subcontractorsController.create}" value="#{bundle.Save}" update="display,@([id$=growl]) @([id$=datalist])" oncomplete="handleSubmit(args,'SubcontractorsCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}">
-                        <p:ajax listener="#{subcontractorsController.resetSelection}" oncomplete="PF('SubcontractorsCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                        <p:ajax listener="#{subcontractorsController.resetSelection}" oncomplete="PF('SubcontractorsCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

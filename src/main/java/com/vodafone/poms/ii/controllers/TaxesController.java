@@ -31,6 +31,9 @@ public class TaxesController implements Serializable {
     public TaxesController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public Taxes getSelected() {
         return selected;
     }
@@ -125,7 +128,7 @@ public class TaxesController implements Serializable {
         return getFacade().findCurrentTaxes().getTaxValue();
     }
 
-    @FacesConverter(forClass = Taxes.class)
+    @FacesConverter("TaxesControllerConverter")
     public static class TaxesControllerConverter implements Converter {
 
         @Override

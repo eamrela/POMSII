@@ -37,6 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EricssonPoChaser.findByChaserNumber", query = "SELECT e FROM EricssonPoChaser e WHERE e.chaserNumber = :chaserNumber")})
 public class EricssonPoChaser implements Serializable {
 
+    @OneToMany(mappedBy = "poChaser")
+    private Collection<AspPo> aspPoCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,6 +118,15 @@ public class EricssonPoChaser implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.temp.EricssonPoChaser[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<AspPo> getAspPoCollection() {
+        return aspPoCollection;
+    }
+
+    public void setAspPoCollection(Collection<AspPo> aspPoCollection) {
+        this.aspPoCollection = aspPoCollection;
     }
     
 }

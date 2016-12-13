@@ -34,6 +34,9 @@ public class SitesController implements Serializable {
 
     public SitesController() {
     }
+    public void resetSelection(){
+        selected= null;
+    }
 
     public Sites getSelected() {
         return selected;
@@ -202,6 +205,7 @@ public class SitesController implements Serializable {
                 for (int i = 0; i < list.size(); i++) {
                     getFacade().edit(list.get(i));
                 }
+                items=null;
                 JsfUtil.addSuccessMessage("Bulk upload succeeded");
             } catch (EJBException ex) {
                 String msg = "";

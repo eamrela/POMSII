@@ -5,12 +5,11 @@
  */
 package com.vodafone.poms.ii.entities;
 
-import com.vodafone.poms.ii.entities.Users;
-import com.vodafone.poms.ii.entities.VendorMd;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

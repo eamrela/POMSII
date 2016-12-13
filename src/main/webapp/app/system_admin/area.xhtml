@@ -16,26 +16,27 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
-        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
-        <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
-        <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
-        <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
-        <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
-        
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>Settings | Areas</title>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
         <style>
-            .ui-growl{top: 100px;}
-            .fixed-size {
+            .ui-growl{
+    top:100px;
+}
+.fixed-size {
     table-layout: fixed;
     word-wrap: break-word;
 }
-            </style>
-
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -46,7 +47,7 @@
                 <div class="static-sidebar-wrapper sidebar-blue">
                     <div class="static-sidebar">
                         <div class="sidebar">
-                            <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
+                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
                                 <POMSII:NavigationMenu/>
@@ -86,13 +87,13 @@
                                                         <p:ajax event="rowSelect"   update=":AreaListForm:createButton :AreaListForm:editButton"/>
                                                         <p:ajax event="rowUnselect" update=":AreaListForm:createButton :AreaListForm:editButton"/>
 
-                                                        <p:column>
+                                                        <p:column filterBy="#{item.areaName}" sortBy="#{item.areaName}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
                                                             <f:facet name="header">
                                                                 <h:outputText value="#{bundle.ListAreaTitle_areaName}"/>
                                                             </f:facet>
                                                             <h:outputText value="#{item.areaName}"/>
                                                         </p:column>
-                                                        <p:column>
+                                                        <p:column sortBy="#{item.areaOwner}" filterBy="#{item.areaOwner}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
                                                             <f:facet name="header">
                                                                 <h:outputText value="#{bundle.ListAreaTitle_areaOwner}"/>
                                                             </f:facet>
@@ -103,8 +104,22 @@
                                                     </p:dataTable>
                                                     <!-- panel body end -->
                                             </div>
-                                            <div class="panel-footer" style="display: block;">
-                                                <span class="text-gray"><em>"#{areaController.items.size()}" Area items</em></span>
+                                            <div class="panel-footer" style="display: block;" id="datalistfooter">
+                                                <div class="row-fluid">
+                                                        <div class="col-lg-6">
+                                                            <span class="text-gray"><em>"#{areaController.items.size()}" Area items</em></span>
+                                                            
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <h:commandButton value="Export"  class="btn btn-sm btn-raised pull-right">
+                                                                <p:dataExporter type="csv" target="datalist" fileName="AreasExport" encoding="utf-8" />
+                                                            </h:commandButton>
+                                                            <div class="panel-ctrls pull-right">
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        
+                                                    </div>
                                             </div>
                                         </div>
                                     </h:form>
@@ -135,6 +150,7 @@
         <script src="#{resource['assets/js/application.js']}"></script>
         <script src="#{resource['assets/plugins/form-daterangepicker/moment.min.js']}"></script>
         <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
+
     </h:body>
     <ui:fragment>
         <ui:include src="modals/CreateArea.xhtml"/>

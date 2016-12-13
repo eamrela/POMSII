@@ -35,9 +35,13 @@
             .ui-growl{
     top:100px;
         }
-        .fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
+.fixed-size {
+    table-layout: auto;
+    white-space: normal;
+    word-wrap: normal;
+    font-size: 0.7vw;
+    text-align: left;
+    float: left;
 }
         </style>
         
@@ -61,7 +65,7 @@
                 <div class="static-content-wrapper">
                     <div class="static-content">
                         <div class="page-content">
-                            <POMSII:PageHeadings largeText="Dashboard" smallText="From: #{dashboardManager.start} , To: #{dashboardManager.end}"/>
+                            <POMSII:PageHeadings largeText="Dashboard" smallText="From: #{dashboardManager.startStr} , To: #{dashboardManager.endStr} Domain(s): #{dashboardManager.selectedDomainsStr}"/>
                             <div class="container-fluid">
                                 <h:form id="dashboardForm">
                                     <p:growl id="growl" sticky="true"/>
@@ -72,7 +76,7 @@
                                 <POMSII:Dashboard_Committed_Remaining/>
                                 <POMSII:Dashboard_ASPAnalysis/>
                                 <POMSII:Dashboard_DomainAnalysis/>
-                                <POMSII:MDNotYetGenerated/>
+                                <!--<POMSII:MDNotYetGenerated/>-->
                                 <POMSII:Dashboard_Uncorrelated/>
                                 <POMSII:Dashboard_CustomerSummary/>
                                 
@@ -82,18 +86,28 @@
                                                  class="btn btn-primary btn-fab demo-switcher-fab"
                                                  onclick="PF('dlg3').show();" >
                                 </p:commandButton>
-                                <p:dialog header="Modify Dashboard Dates" widgetVar="dlg3" modal="true">
+                                <p:dialog header="Modify Dashboard Criteria" widgetVar="dlg3" modal="true">
                                     <p:panelGrid columns="2"> 
                                         <h:outputText value="From" />
-                                        <p:calendar id="startDate" 
-                                                            value="#{dashboardManager.start}"
-                                                            styleClass="form-control"/>
-
+                                        <p:calendar id="startDate" value="#{dashboardManager.start}" styleClass="form-control"
+                                                    pattern="MM/dd/yyyy">
+                                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                                        </p:calendar>
                                         <h:outputText value="To" />
-                                        <p:calendar id="toDate" 
-                                                    value="#{dashboardManager.end}"
-                                                    styleClass="form-control"/>
-
+                                        <p:calendar id="toDate" value="#{dashboardManager.end}" styleClass="form-control"
+                                                    pattern="MM/dd/yyyy">
+                                        <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                                        </p:calendar>
+                                        <h:outputText value="Domains" />
+                                        <p:selectManyMenu id="advanced" 
+                                                          value="#{dashboardManager.selectedDomains}" 
+                                                          converter="DomainNamesControllerConverter" showCheckbox="true">
+                                            <f:selectItems value="#{domainNamesController.itemsAvailableSelectMany}" 
+                                                           var="domain" 
+                                                           itemLabel="#{domain.domainName}" 
+                                                           itemValue="#{domain}" />
+                                       </p:selectManyMenu>
+ 
                                         <h:outputText value="Refresh" />
                                          <p:commandButton 
                                                       value="Refresh"

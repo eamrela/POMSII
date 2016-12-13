@@ -51,6 +51,28 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Activity.findByTaxes", query = "SELECT a FROM Activity a WHERE a.taxes = :taxes")})
 public class Activity implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "qty")
+    private Double qty=0.0;
+    @Basic(optional = false)
+    @Column(name = "taxes")
+    private Double taxes;
+    @Size(max = 2147483647)
+    @Column(name = "ac_material_id")
+    private String acMaterialId;
+    @Size(max = 2147483647)
+    @Column(name = "ac_description")
+    private String acDescription;
+    @Column(name = "ac_vendor_price")
+    private Float acVendorPrice=0.0f;
+    @Column(name = "ac_subcontractor_price")
+    private Float acSubcontractorPrice=0.0f;
+    @Column(name = "ac_um")
+    private Float acUm=0.0f;
+    @Column(name = "ac_um_percent")
+    private Float acUmPercent=0.0f;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,37 +89,38 @@ public class Activity implements Serializable {
     @Size(min = 1, max = 2147483647)
     @Column(name = "activity_details")
     private String activityDetails;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "qty")
-    private int qty;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_price_vendor")
-    private Float totalPriceVendor;
+    private Float totalPriceVendor=0.0f;
     @Column(name = "total_price_vendor_taxes")
-    private Float totalPriceVendorTaxes;
+    private Float totalPriceVendorTaxes=0.0f;
     @Column(name = "total_price_asp")
-    private Float totalPriceAsp;
+    private Float totalPriceAsp=0.0f;
     @Column(name = "total_um")
-    private Float totalUm;
+    private Float totalUm=0.0f;
     @Column(name = "total_um_percent")
-    private Float totalUmPercent;
+    private Float totalUmPercent=0.0f;
     @Size(max = 2147483647)
     @Column(name = "activity_comment")
     private String activityComment;
+    @Size(max = 2147483647)
+    @Column(name = "correlate_to")
+    private String correlateTo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "sys_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date sysDate;
-    @Basic(optional = false)
-    @Column(name = "taxes")
-    private Double taxes;
     @JoinTable(name = "asp_po_j_activity", joinColumns = {
         @JoinColumn(name = "activity_id", referencedColumnName = "activity_id")}, inverseJoinColumns = {
         @JoinColumn(name = "asp_po_id", referencedColumnName = "po_number")})
     @ManyToMany
     private Collection<AspPo> aspPoCollection;
+    @JoinTable(name = "vendor_po_j_activity", joinColumns = {
+        @JoinColumn(name = "activity_id", referencedColumnName = "activity_id")}, inverseJoinColumns = {
+        @JoinColumn(name = "v_po_id", referencedColumnName = "po_number")})
+    @ManyToMany
+    private Collection<VendorPo> vendorPoCollection;
     @JoinColumn(name = "activity_code", referencedColumnName = "material_id")
     @ManyToOne(optional = false)
     private ActivityCode activityCode;
@@ -136,13 +159,21 @@ public class Activity implements Serializable {
         this.activityId = activityId;
     }
 
-    public Activity(Long activityId, Date activityDate, String activityDetails, int qty, Date sysDate, Double taxes) {
+    public Activity(Long activityId, Date activityDate, String activityDetails, Double qty, Date sysDate, Double taxes) {
         this.activityId = activityId;
         this.activityDate = activityDate;
         this.activityDetails = activityDetails;
         this.qty = qty;
         this.sysDate = sysDate;
         this.taxes = taxes;
+    }
+
+    public String getCorrelateTo() {
+        return correlateTo;
+    }
+
+    public void setCorrelateTo(String correlateTo) {
+        this.correlateTo = correlateTo;
     }
 
     public Long getActivityId() {
@@ -169,17 +200,10 @@ public class Activity implements Serializable {
         this.activityDetails = activityDetails;
     }
 
-    public int getQty() {
-        return qty;
-    }
-
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
 
     public Float getTotalPriceVendor() {
-        if(activityCode!=null){
-        totalPriceVendor = activityCode.getVendorPrice()*qty;
+        if(acVendorPrice!=null && qty!=0.0){
+        totalPriceVendor = acVendorPrice*qty.floatValue();
         }
         return totalPriceVendor;
     }
@@ -189,8 +213,8 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalPriceVendorTaxes() {
-        if(totalPriceVendor!=null){
-        totalPriceVendorTaxes = totalPriceVendor+(totalPriceVendor*Float.valueOf(taxes.toString()));
+        if(totalPriceVendor!=null && taxes!=null){
+        totalPriceVendorTaxes = totalPriceVendor+(totalPriceVendor*(Float.valueOf(taxes.toString()))/100);
         }
         return totalPriceVendorTaxes;
     }
@@ -200,8 +224,8 @@ public class Activity implements Serializable {
     }
 
     public Float getTotalPriceAsp() {
-        if(activityCode!=null){
-        totalPriceAsp = activityCode.getSubcontractorPrice()*qty;
+        if(acSubcontractorPrice!=null && qty!=null){
+        totalPriceAsp =acSubcontractorPrice*qty.floatValue();
         }
         return totalPriceAsp;
     }
@@ -248,13 +272,6 @@ public class Activity implements Serializable {
         this.sysDate = sysDate;
     }
 
-    public Double getTaxes() {
-        return taxes;
-    }
-
-    public void setTaxes(Double taxes) {
-        this.taxes = taxes;
-    }
 
     @XmlTransient
     public Collection<AspPo> getAspPoCollection() {
@@ -265,12 +282,34 @@ public class Activity implements Serializable {
         this.aspPoCollection = aspPoCollection;
     }
 
+    @XmlTransient
+    public Collection<VendorPo> getVendorPoCollection() {
+        return vendorPoCollection;
+    }
+
+    public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
+        this.vendorPoCollection = vendorPoCollection;
+    }
+
+    
     public ActivityCode getActivityCode() {
         return activityCode;
     }
 
     public void setActivityCode(ActivityCode activityCode) {
         this.activityCode = activityCode;
+        initAcData();
+    }
+    
+    public void initAcData(){
+        if(activityCode!=null){
+            acMaterialId=activityCode.getMaterialId();
+            acDescription=activityCode.getDescription();
+            acSubcontractorPrice=activityCode.getSubcontractorPrice();
+            acVendorPrice=activityCode.getVendorPrice();
+            acUm=activityCode.getUm();
+            acUmPercent=activityCode.getUmPercent();
+            }
     }
 
     public ApprovalStatus getApprovalStatus() {
@@ -369,6 +408,74 @@ public class Activity implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.Activity[ activityId=" + activityId + " ]";
+    }
+
+    public double getQty() {
+        return qty;
+    }
+
+    public void setQty(double qty) {
+        this.qty = qty;
+    }
+
+    public double getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(double taxes) {
+        this.taxes = taxes;
+    }
+
+    public String getAcMaterialId() {
+        return acMaterialId;
+    }
+
+    public void setAcMaterialId(String acMaterialId) {
+        this.acMaterialId = acMaterialId;
+    }
+
+    public String getAcDescription() {
+        return acDescription;
+    }
+
+    public void setAcDescription(String acDescription) {
+        this.acDescription = acDescription;
+    }
+
+    public Float getAcVendorPrice() {
+        return acVendorPrice;
+    }
+
+    public void setAcVendorPrice(Float acVendorPrice) {
+        this.acVendorPrice = acVendorPrice;
+        this.acUm = this.acVendorPrice-this.acSubcontractorPrice;
+        this.acUmPercent = (this.acUm/this.acVendorPrice)*100;
+    }
+
+    public Float getAcSubcontractorPrice() {
+        return acSubcontractorPrice;
+    }
+
+    public void setAcSubcontractorPrice(Float acSubcontractorPrice) {
+        this.acSubcontractorPrice = acSubcontractorPrice;
+        this.acUm = this.acVendorPrice-this.acSubcontractorPrice;
+        this.acUmPercent = (this.acUm/this.acVendorPrice)*100;
+    }
+
+    public Float getAcUm() {
+        return acUm;
+    }
+
+    public void setAcUm(Float acUm) {
+        this.acUm = acUm;
+    }
+
+    public Float getAcUmPercent() {
+        return acUmPercent;
+    }
+
+    public void setAcUmPercent(Float acUmPercent) {
+        this.acUmPercent = acUmPercent;
     }
     
 }

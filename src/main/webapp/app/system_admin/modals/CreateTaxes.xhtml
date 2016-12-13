@@ -20,7 +20,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{taxesController.create}" value="#{bundle.Save}" update="display,:TaxesListForm:datalist,:TaxesListForm:growl" oncomplete="handleSubmit(args,'TaxesCreateDialog');"/>
                     <p:commandButton  value="#{bundle.Cancel}" update=":TaxesListForm:editButton , :TaxesListForm:datalist">
-                        <p:ajax listener="#{taxesController.resetSelection}" oncomplete="PF('TaxesCreateDialog').hide();" update=":TaxesListForm:editButton , :TaxesListForm:datalist"/>
+                        <p:ajax listener="#{taxesController.resetSelection}" oncomplete="PF('TaxesCreateDialog').hide();" update=":TaxesListForm:editButton , :TaxesListForm:datalist @([id$=datalistfooter])"/>
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

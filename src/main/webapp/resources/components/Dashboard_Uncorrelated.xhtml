@@ -24,28 +24,31 @@
                             <p:dataTable var="ucActivity" 
                                          value="#{activityController.itemsUncorrelated}"
                                          styleClass="fixed-size">
-                                <p:column headerText="Id">
+                                <p:column headerText="Id" style="font-size: 9px;">
                                     <h:outputText value="#{ucActivity.activityId}" />
                                 </p:column>
 
-                                <p:column headerText="Type">
+                                <p:column headerText="Type" style="font-size: 9px;">
                                     <h:outputText value="#{ucActivity.activityType.domainName}" />
                                 </p:column>
 
-                                <p:column headerText="ASP">
+                                <p:column headerText="ASP" style="font-size: 9px;"> 
                                     <h:outputText value="#{ucActivity.asp.subcontractorName}" />
                                 </p:column>
-                                <p:column headerText="Details">
+                                <p:column headerText="Details" style="font-size: 9px;" >
                                     <h:outputText value="#{ucActivity.activityDetails}" />
                                 </p:column>
-                                <p:column headerText="PriceASP">
+                                <p:column headerText="Price ASP" style="font-size: 9px;">
                                     <h:outputText value="#{ucActivity.totalPriceAsp}" >
-                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                        <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                     </h:outputText>
+                                </p:column>
+                                <p:column headerText="Needed PO" style="font-size: 9px;" >
+                                    <h:outputText value="#{ucActivity.correlateTo}" />
                                 </p:column>
                                 <f:facet name="footer">
                                 <h:outputText value="#{activityController.itemsUncorrelatedActivityValue}">
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
                                 </h:outputText>
                                 </f:facet>
                             </p:dataTable> 
@@ -63,37 +66,41 @@
                         <div class="row">
                             <p:dataTable var="ucAspPo" 
                                          value="#{aspPoController.itemsUncorrelated}"
-                                         styleClass="fixed-size">
-                                <p:column headerText="Id">
+                                         styleClass="fixed-size"
+                                         >
+                                <p:column headerText="Id" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poNumber}" />
                                 </p:column>
 
-                                <p:column headerText="Domain">
+                                <p:column headerText="Domain" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.domainName.domainName}" />
                                 </p:column>
-                                <p:column headerText="Type">
+                                <p:column headerText="Type" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poType.typeName}" />
                                 </p:column>
+                                <p:column headerText="Remaining in Po" style="font-size: 9px;">
+                                    <h:outputText value="#{ucAspPo.remainingInPo}" />
+                                </p:column>
 
-                                <p:column headerText="ASP">
+                                <p:column headerText="ASP" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.asp.subcontractorName}" />
                                 </p:column>
-                                <p:column headerText="Details">
+                                <p:column headerText="Details" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poDescription}" />
                                 </p:column>
-                                <p:column headerText="PoValue">
+                                <p:column headerText="Po Value" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poValue}" >
-                                        <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                        <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Margin">
+                                <p:column headerText="Margin" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poMargin}" >
                                         <f:convertNumber groupingUsed="false" minFractionDigits="1" />
                                     </h:outputText>%
                                 </p:column>
                                 <f:facet name="footer">
                                     <h:outputText value="#{aspPoController.itemsUncorrelatedPoValue}">
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
                                 </h:outputText>
                                 </f:facet>
                             </p:dataTable>

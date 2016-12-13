@@ -21,6 +21,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("aspGrnController")
 @SessionScoped
@@ -36,9 +37,12 @@ public class AspGrnController implements Serializable {
     @EJB
     private com.vodafone.poms.ii.beans.AspGrnFacade ejbFacade;
     private List<AspGrn> items = null;
+    private List<AspGrn> selectedPoItems = null;
     private AspGrn selected;
     
-
+    @Inject
+    private AspPoController aspPoController;
+    
     public AspGrnController() {
     }
 
@@ -81,6 +85,7 @@ public class AspGrnController implements Serializable {
         selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedPoItems = null;
         }
         return selected;
     }
@@ -91,7 +96,8 @@ public class AspGrnController implements Serializable {
     
     public void updateEdit() {
         if(editGrnDate!=null && editGrnFactor!=null && editGrnValue!=null){
-            if(getFacade().findByGRNNumber(editGrnNumber).isEmpty()){
+            if(editGrnDeserved.compareTo(editGrnValue)==1
+                    || editGrnDeserved.compareTo(editGrnValue)==0){
             selected.setGrnDate(editGrnDate);
             selected.setGrnFactor(editGrnFactor);
             selected.setGrnValue(editGrnValue);
@@ -99,7 +105,7 @@ public class AspGrnController implements Serializable {
             selected.setGrnNumber(editGrnNumber);
             persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
             }else{
-                JsfUtil.addErrorMessage("GRN Number already exist");
+                JsfUtil.addErrorMessage("GRN Value is more than the amount deserved");
             }
         }
     }
@@ -109,6 +115,7 @@ public class AspGrnController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedPoItems = null;
         }
     }
 
@@ -119,6 +126,13 @@ public class AspGrnController implements Serializable {
         return items;
     }
 
+    public List<AspGrn> getSelectedPoItems() {
+        if(aspPoController.getSelected()!=null){
+            selectedPoItems = getFacade().findRelatedItems(aspPoController.getSelected());
+        }
+        return selectedPoItems;
+    }
+    
     private AspGrn persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
@@ -161,8 +175,8 @@ public class AspGrnController implements Serializable {
         return getFacade().findAll();
     }
 
-    public List<AspGrn> getDashboardItems(Date start, Date end) {
-        return getFacade().findDashboardItems(start,end);
+    public List<AspGrn> getDashboardItems(Date start, Date end,String domains) {
+        return getFacade().findDashboardItems(start,end,domains);
     }
 
     @FacesConverter(forClass = AspGrn.class)

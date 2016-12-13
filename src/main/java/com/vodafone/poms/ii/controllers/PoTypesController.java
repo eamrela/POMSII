@@ -31,6 +31,9 @@ public class PoTypesController implements Serializable {
     public PoTypesController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public PoTypes getSelected() {
         return selected;
     }

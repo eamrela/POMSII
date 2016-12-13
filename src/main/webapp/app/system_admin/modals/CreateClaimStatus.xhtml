@@ -20,7 +20,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{claimStatusController.create}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args,'ClaimStatusCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" >
-                        <p:ajax listener="#{claimStatusController.resetSelection}" oncomplete="PF('ClaimStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                        <p:ajax listener="#{claimStatusController.resetSelection}" oncomplete="PF('ClaimStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

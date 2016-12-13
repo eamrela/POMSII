@@ -20,7 +20,7 @@
                     </p:panelGrid>
                     <p:commandButton actionListener="#{sitesController.create}" value="#{bundle.Save}" update="display,:SitesListForm:datalist,:SitesListForm:growl" oncomplete="handleSubmit(args,'SitesCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}">
-                        <p:ajax listener="#{sitesController.resetSelection}" oncomplete="PF('SitesCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
+                        <p:ajax listener="#{sitesController.resetSelection}" oncomplete="PF('SitesCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

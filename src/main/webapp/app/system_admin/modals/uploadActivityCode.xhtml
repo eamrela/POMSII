@@ -18,7 +18,7 @@
                     <p:panelGrid columns="1" rendered="#{activityCodeController != null}" style="width: 100%;">
                         <!--<h:commandButton class="btn btn-raised btn-primary" value="Browse" />-->
                         <p:fileUpload label="Browse" allowTypes="/(\.|\/)(xlsx)$/" fileUploadListener="#{activityCodeController.uploadActivityCodes}"
-                                      update="growll"
+                                      update="growll @([id$=datalist]) @([id$=datalistfooter])"
                                       skinSimple="true"
                                       onstart="PF('blockUIUpload').block();"
                                       oncomplete="PF('blockUIUpload').unblock(); PF('ActivityCodeUploadDialog').hide();"

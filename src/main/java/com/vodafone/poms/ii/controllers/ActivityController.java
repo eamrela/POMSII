@@ -6,6 +6,8 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.ActivityFacade;
 import com.vodafone.poms.ii.entities.AspPo;
 import com.vodafone.poms.ii.entities.Sites;
+import com.vodafone.poms.ii.entities.VendorPo;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -25,16 +27,16 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import org.primefaces.event.SelectEvent;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("activityController")
 @SessionScoped
 public class ActivityController implements Serializable {
     
     private AspPo selectedASPPo;
+    private VendorPo selectedVendorPo;
     private String activityIds;
     private Float totalPriceASP;
+    private Float totalPriceVendor;
     private Float itemsUncorrelatedActivityValue;
     
     @EJB
@@ -51,6 +53,9 @@ public class ActivityController implements Serializable {
     private UsersController usersController;
     @Inject
     private AspPoController aspPOController;
+    @Inject
+    private VendorPoController vendorPOController;
+   
 
     public ActivityController() {
     }
@@ -62,6 +67,7 @@ public class ActivityController implements Serializable {
     public void setSelected(Activity selected) {
         this.selected = selected;
         selectedASPPo = null;
+        selectedVendorPo = null;
     }
 
     public List<Activity> getSelectedItems() {
@@ -87,6 +93,16 @@ public class ActivityController implements Serializable {
         }
         return totalPriceASP;
     }
+
+    public Float getTotalPriceVendor() {
+        if(selectedItems!=null){
+            totalPriceVendor = 0f;
+            for (int i = 0; i < selectedItems.size(); i++) {
+                totalPriceVendor += selectedItems.get(i).getTotalPriceVendor();
+            }
+        }
+        return totalPriceVendor;
+    }
     
     
 
@@ -98,20 +114,33 @@ public class ActivityController implements Serializable {
     public void setSelectedItems(List<Activity> selectedItems) {
         this.selectedItems = selectedItems;
         selectedASPPo = null;
+        selectedVendorPo = null;
         if(selectedItems.size()==1){
             selected = selectedItems.get(0);
         }
         else{
-            // Check ASP,Type,
+            // Check ASP,Type,CorrelateTo
             String domain = selectedItems.get(0).getActivityType().getDomainName();
             String asp = selectedItems.get(0).getAsp().getSubcontractorName();
+            String correlateTo = selectedItems.get(0).getCorrelateTo();
+            if(correlateTo.equals("ASP")){
             for (int i = 1; i < selectedItems.size(); i++) {
                 if(!selectedItems.get(i).getActivityType().getDomainName().equals(domain)
                         ||
-                    !selectedItems.get(i).getAsp().getSubcontractorName().equals(asp)){
+                    !selectedItems.get(i).getAsp().getSubcontractorName().equals(asp)
+                        || !selectedItems.get(i).getCorrelateTo().equals(correlateTo)){
                     selectedItems.remove(selectedItems.get(i));
-                    JsfUtil.addErrorMessage("Selected Activity doesn't have a matching ASP/Type");
+                    JsfUtil.addErrorMessage("Selected Activity doesn't have a matching ASP/Type/CorrelationType");
                 }
+            }
+            } else if(correlateTo.equals("CUSTOMER")){
+             for (int i = 1; i < selectedItems.size(); i++) {
+                if(!selectedItems.get(i).getActivityType().getDomainName().equals(domain)
+                        || !selectedItems.get(i).getCorrelateTo().equals(correlateTo)){
+                    selectedItems.remove(selectedItems.get(i));
+                    JsfUtil.addErrorMessage("Selected Activity doesn't have a matching Type/CorrelationType");
+                }
+            }   
             }
             selected = null;
         }
@@ -126,6 +155,15 @@ public class ActivityController implements Serializable {
     public void setSelectedASPPo(AspPo selectedASPPo) {
         this.selectedASPPo = selectedASPPo;
     }
+
+    public VendorPo getSelectedVendorPo() {
+        return selectedVendorPo;
+    }
+
+    public void setSelectedVendorPo(VendorPo selectedVendorPo) {
+        this.selectedVendorPo = selectedVendorPo;
+    }
+    
     
     public void onItemSelectSetSite(SelectEvent event){
     if(selected!=null){
@@ -162,6 +200,12 @@ public class ActivityController implements Serializable {
             itemsUncorrelated = null;
         }
         prepareCreate();
+        try {
+            //http://localhost:8080/POMS-II/app/business_provider/crud_activity.xhtml
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/business_provider/crud_activity.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void update() {
@@ -339,10 +383,43 @@ public class ActivityController implements Serializable {
         }
     }
     
+    public void correlateVendorPo(){
+         if(selectedItems!=null && selectedVendorPo!=null){
+            Float totalPrice = 0f;
+            for (int i = 0; i < selectedItems.size(); i++) {
+            selectedItems.get(i).setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
+            totalPrice += selectedItems.get(0).getTotalPriceVendor();
+            selected = selectedItems.get(i);
+            update(); 
+            selected = null;
+            }
+            selectedVendorPo.getActivityCollection().addAll(selectedItems);
+            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone()+
+                    (totalPrice/selectedVendorPo.getServiceValue().floatValue()));
+            vendorPOController.setSelected(selectedVendorPo);
+            vendorPOController.update();
+            vendorPOController.setSelected(null);
+            itemsUncorrelated = null;
+            selectedItems = null;
+            JsfUtil.addSuccessMessage("Activity "+activityIds+" is now correlated to Vendor PO "+selectedVendorPo.getPoNumber());
+        }
+    }
+    
     public void clearSelected(){
         selected=null;
         items = null;
         itemsUncorrelated = null;
         itemsUncorrelated = null;
+        selectedASPPo = null;
+        selectedVendorPo = null;
+    }
+    
+    public void validateUMPercent(){
+        if(selected!=null && !usersController.getRole().equals("ROLE_SYSADMIN")){
+            if(selected.getAcUmPercent().compareTo(0.2f)==-1){
+                selected.setActivityCode(selected.getActivityCode());
+                JsfUtil.addErrorMessage("UM% Can't be less than 20%, Please contact your manager");
+            }
+        }
     }
 }

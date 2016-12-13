@@ -244,7 +244,11 @@
                                                         </h:inputText>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <label for="povaluetax">PO Value(#{vendorPoController.selected.taxes*100}%)</label>
+                                                        <label for="povaluetax">PO Value
+                                                            (<h:inputText value="#{vendorPoController.selected.taxes}">
+                                                                <f:convertNumber minFractionDigits="2" />
+                                                            </h:inputText>)%
+                                                        </label>
                                                         <h:inputText id="povaluetax" 
                                                                      value="#{vendorPoController.selected.poValueTaxes}"
                                                                      required="true"

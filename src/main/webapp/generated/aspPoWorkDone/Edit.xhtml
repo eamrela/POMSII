@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AspPoWorkDoneEditDlg" widgetVar="AspPoWorkDoneEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspPoWorkDoneTitle}">
+            <h:form id="AspPoWorkDoneEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{aspPoWorkDoneController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditAspPoWorkDoneLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{aspPoWorkDoneController.selected.id}" title="#{bundle.EditAspPoWorkDoneTitle_id}" required="true" requiredMessage="#{bundle.EditAspPoWorkDoneRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditAspPoWorkDoneLabel_workDone}" for="workDone" />
+                        <p:inputText id="workDone" value="#{aspPoWorkDoneController.selected.workDone}" title="#{bundle.EditAspPoWorkDoneTitle_workDone}" />
+                        <p:outputLabel value="#{bundle.EditAspPoWorkDoneLabel_workValue}" for="workValue" />
+                        <p:inputText id="workValue" value="#{aspPoWorkDoneController.selected.workValue}" title="#{bundle.EditAspPoWorkDoneTitle_workValue}" />
+                        <p:outputLabel value="#{bundle.EditAspPoWorkDoneLabel_insertionDate}" for="insertionDate" />
+                        <p:calendar id="insertionDate" pattern="MM/dd/yyyy HH:mm:ss" value="#{aspPoWorkDoneController.selected.insertionDate}" title="#{bundle.EditAspPoWorkDoneTitle_insertionDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditAspPoWorkDoneLabel_aspPoId}" for="aspPoId" />
+                        <p:selectOneMenu id="aspPoId" value="#{aspPoWorkDoneController.selected.aspPoId}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{aspPoController.itemsAvailableSelectOne}"
+                                           var="aspPoIdItem"
+                                           itemValue="#{aspPoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{aspPoWorkDoneController.update}" value="#{bundle.Save}" update="display,:AspPoWorkDoneListForm:datalist,:growl" oncomplete="handleSubmit(args, 'AspPoWorkDoneEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="AspPoWorkDoneEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

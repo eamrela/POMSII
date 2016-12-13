@@ -43,6 +43,7 @@ public class ActivityFacade extends AbstractFacade<Activity> {
         return em.createNativeQuery("select * " +
                                     "from activity " +
                                     "where activity_id not in (select activity_id from asp_po_j_activity) "
+                + " and activity_id not in (select activity_id from vendor_po_j_activity) "
                 ,Activity.class).getResultList();
     }
 

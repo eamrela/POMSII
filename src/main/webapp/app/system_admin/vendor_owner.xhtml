@@ -16,26 +16,29 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/fontAwesome.css"  />
-        <h:outputStylesheet name="fortawesome.github.io/Font-Awesome/materialIcons.css"  />
-        <h:outputStylesheet name="assets/plugins/form-daterangepicker/daterangepicker-bs3.css"  />
-        <h:outputStylesheet name="assets/fonts/font-awesome/css/font-awesome.min.css"  />
-        <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
-        <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         
+
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>Settings | Vendor Owners</title>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
         <style>
-            .ui-growl{top: 100px;}
-            .fixed-size {
+            .ui-growl{
+    top:100px;
+}
+.fixed-size {
     table-layout: fixed;
     word-wrap: break-word;
 }
-            </style>
-
+        </style>
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -46,7 +49,7 @@
                 <div class="static-sidebar-wrapper sidebar-blue">
                     <div class="static-sidebar">
                         <div class="sidebar">
-                            <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
+                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
                                 <POMSII:NavigationMenu/>
@@ -85,19 +88,19 @@
                                             <p:ajax event="rowSelect"   update="@([id$=createButton]) @([id$=editButton])"/>
                                             <p:ajax event="rowUnselect" update="@([id$=createButton]) @([id$=editButton])"/>
 
-                                            <p:column>
+                                            <p:column sortBy="#{item.id}" filterBy="#{item.id}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
                                                 <f:facet name="header">
                                                     <h:outputText value="#{bundle.ListVendorOwnerTitle_id}"/>
                                                 </f:facet>
                                                 <h:outputText value="#{item.id}"/>
                                             </p:column>
-                                            <p:column>
+                                            <p:column sortBy="#{item.ownerName}" filterBy="#{item.ownerName}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
                                                 <f:facet name="header">
                                                     <h:outputText value="#{bundle.ListVendorOwnerTitle_ownerName}"/>
                                                 </f:facet>
                                                 <h:outputText value="#{item.ownerName}"/>
                                             </p:column>
-                                            <p:column>
+                                            <p:column sortBy="#{item.ownerNumber}" filterBy="#{item.ownerNumber}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
                                                 <f:facet name="header">
                                                     <h:outputText value="#{bundle.ListVendorOwnerTitle_ownerNumber}"/>
                                                 </f:facet>
@@ -109,8 +112,22 @@
                                         </p:dataTable>
                                                     <!-- panel body end -->
                                             </div>
-                                            <div class="panel-footer" style="display: block;">
-                                                <span class="text-gray"><em>"#{vendorOwnerController.items.size()}" Vendor Owner items</em></span>
+                                            <div class="panel-footer" style="display: block;" id="datalistfooter">
+                                                <div class="row-fluid">
+                                                        <div class="col-lg-6">
+                                                        <span class="text-gray"><em>"#{vendorOwnerController.items.size()}" Vendor Owner items</em></span>
+                                                            
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <h:commandButton value="Export"  class="btn btn-sm btn-raised pull-right">
+                                                                <p:dataExporter type="csv" target="datalist" fileName="VendorOwnerExport" encoding="utf-8" />
+                                                            </h:commandButton>
+                                                            <div class="panel-ctrls pull-right">
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        
+                                                    </div>
                                             </div>
                                         </div>
                                         

@@ -16,36 +16,46 @@
             <div class="col-xs-6">
                 <div class="panel panel-indigo" data-widget='{"draggable": "false"}'>
                     <div class="panel-heading">
-                        <h2>Remaining not yet Invoiced</h2>
+                        <h2>Remaining not yet Invoiced (All Invoices) Domain(s): #{dashboardManager.selectedDomainsStr}</h2>
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
                         <p:dataTable var="NSRItems" 
-                                     value="#{dashboardManager.vendorRemainingNotYetinvoiced}"
+                                     value="#{dashboardManager.remainingNotyetInvoiced}"
                                      emptyMessage="No remaining invoices for this period!"
                                      sortBy="#{NSRItems.vendorPoId.poNumber}"
-                                     styleClass="fixed-size">
-                            <p:column headerText="PO#">
+                                     styleClass="fixed-size"
+                                     >
+                            <p:column headerText="PO#" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.vendorPoId.poNumber}" />
                             </p:column>
 
-                            <p:column headerText="PO Value">
+                            <p:column headerText="PO Value" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.vendorPoId.poValue}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="MD Deserved">
+                            <p:column headerText="MD Deserved" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.mdDeserved}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Description">
+                            <p:column headerText="Remaining in PO" style="font-size: 9px;">
+                                <h:outputText value="#{NSRItems.vendorPoId.remainingInPo}" />
+                            </p:column>
+                            <p:column headerText="Type" style="font-size: 9px;">
+                                <h:outputText value="#{NSRItems.vendorPoId.poType.typeName}" />
+                            </p:column>
+                            <p:column headerText="Domain" style="font-size: 9px;">
+                                <h:outputText value="#{NSRItems.vendorPoId.domainName.domainName}" />
+                            </p:column>
+                            <p:column headerText="Description" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.vendorPoId.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
-                                <h:outputText value="#{dashboardManager.remainingNotYetInvoiced}">
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                <h:outputText value="#{dashboardManager.remainingNotyetInvoiced_Value}">
+                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
                                 </h:outputText>
                             </f:facet>
                         </p:dataTable>
@@ -55,36 +65,46 @@
             <div class="col-xs-6">
                 <div class="panel panel-danger" data-widget='{"draggable": "false"}'>
                     <div class="panel-heading">
-                        <h2>Committed Cost</h2>
+                        <h2>Committed Cost (All ASP POs) Domain(s): #{dashboardManager.selectedDomainsStr}</h2>
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
                         <p:dataTable var="COSCItems" 
-                                     value="#{dashboardManager.aspCommittedCost}"
+                                     value="#{dashboardManager.committedCost}"
                                      emptyMessage="No committed cost for this period!"
                                      sortBy="#{COSCItems.poNumber}"
-                                     styleClass="fixed-size">
-                            <p:column headerText="PO#">
+                                     styleClass="fixed-size"
+                                     >
+                            <p:column headerText="PO#" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.poNumber}" />
                             </p:column>
 
-                            <p:column headerText="POValue">
+                            <p:column headerText="POValue" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.poValue}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="GRN Deserved">
+                            <p:column headerText="GRN Deserved" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.grnDeserved}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Description">
+                            <p:column headerText="Remaining in Po" style="font-size: 9px;">
+                                <h:outputText value="#{COSCItems.remainingInPo}" />
+                            </p:column>
+                            <p:column headerText="Type" style="font-size: 9px;">
+                                <h:outputText value="#{COSCItems.poType.typeName}" />
+                            </p:column>
+                            <p:column headerText="Domain" style="font-size: 9px;">
+                                <h:outputText value="#{COSCItems.domainName.domainName}" />
+                            </p:column>
+                            <p:column headerText="Description" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
-                                <h:outputText value="#{dashboardManager.committedCost}">
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                <h:outputText value="#{dashboardManager.committedCost_Value}">
+                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
                                 </h:outputText>
                             </f:facet>
                         </p:dataTable>

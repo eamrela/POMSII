@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -46,7 +48,19 @@ public class Taxes implements Serializable {
     @Column(name = "activation_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date activationDate;
+    
+    @Transient
+    private SimpleDateFormat sdf= new SimpleDateFormat("MM/dd/YYYY");
+    @Transient
+    String activationDateString;
 
+    public String getActivationDateString() {
+        return activationDateString=sdf.format(activationDate);
+    }
+
+    public void setActivationDateString(String activationDateString) {
+        this.activationDateString = activationDateString;
+    }
     public Taxes() {
     }
 

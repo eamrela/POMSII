@@ -37,6 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Users implements Serializable {
 
     @OneToMany(mappedBy = "creator")
+    private Collection<AspPo> aspPoCollection;
+
+    @OneToMany(mappedBy = "creator")
     private Collection<VendorPo> vendorPoCollection;
     @OneToMany(mappedBy = "creator")
     private Collection<VendorInvoice> vendorInvoiceCollection;
@@ -171,6 +174,15 @@ public class Users implements Serializable {
 
     public void setVendorMdCollection(Collection<VendorMd> vendorMdCollection) {
         this.vendorMdCollection = vendorMdCollection;
+    }
+
+    @XmlTransient
+    public Collection<AspPo> getAspPoCollection() {
+        return aspPoCollection;
+    }
+
+    public void setAspPoCollection(Collection<AspPo> aspPoCollection) {
+        this.aspPoCollection = aspPoCollection;
     }
     
 }

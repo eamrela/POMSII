@@ -35,10 +35,12 @@ public class VendorMdController implements Serializable {
     private String editMdNumber;
     private BigInteger editRemainingInMd;
     private BigInteger selectedMdInvoiceValue;
+    private BigInteger selectedPoInvoiceValue;
     private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.VendorMdFacade ejbFacade;
     private List<VendorMd> items = null;
+    private List<VendorMd> selectedPoItems = null;
     private VendorMd selected;
     
     
@@ -46,6 +48,8 @@ public class VendorMdController implements Serializable {
     private VendorInvoiceController vendorInvoiceController;
     @Inject
     private UsersController usersController;
+    @Inject
+    private VendorPoController vendorPoController;
 
     public VendorMdController() {
     }
@@ -88,6 +92,7 @@ public class VendorMdController implements Serializable {
         selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorMdCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedPoItems = null;
         }
         return selected;
     }
@@ -106,7 +111,7 @@ public class VendorMdController implements Serializable {
             selected.setInvoiced(editInvoiced);
             selected.setMdNumber(editMdNumber);
             selected.setRemainingInMd(editRemainingInMd);
-            persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspGrnUpdated"));
+            persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("VendorMdUpdated"));
             }else{
                 JsfUtil.addErrorMessage("MD Value is more than the amount deserved.");
             }
@@ -117,6 +122,7 @@ public class VendorMdController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedPoItems = null;
         }
     }
 
@@ -127,6 +133,14 @@ public class VendorMdController implements Serializable {
         return items;
     }
 
+    public List<VendorMd> getSelectedPoItems() {
+        if(vendorPoController.getSelected()!=null){
+            selectedPoItems = getFacade().findRelatedItems(vendorPoController.getSelected());
+        }
+        return selectedPoItems;
+    }
+
+    
     private VendorMd persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
@@ -169,24 +183,46 @@ public class VendorMdController implements Serializable {
         return getFacade().findAll();
     }
 
-    public List<VendorMd> getDashboardItems(Date start, Date end) {
-        return getFacade().findDashboardItems(start,end);
+    public List<VendorMd> getDashboardItems(String domains) {
+        return getFacade().findDashboardItems(domains);
     }
 
     public BigInteger getSelectedMdInvoiceValue() {
         selectedMdInvoiceValue = BigInteger.ZERO;
         BigInteger totalInvoices = BigInteger.ZERO;
         if(selected!=null){
-        Object[] invoices = selected.getVendorInvoiceCollection().toArray();
-        for (int i = 0; i < invoices.length; i++) {
-            if(((VendorInvoice)invoices[i]).getInvoiceValue()!=null)
-            totalInvoices = totalInvoices.add(((VendorInvoice)invoices[i]).getInvoiceValue());
+        List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
+        for (int i = 0; i < invoices.size(); i++) {
+            if(invoices.get(i).getInvoiceValue()!=null)
+            totalInvoices = totalInvoices.add(invoices.get(i).getInvoiceValue());
         }
         if(selected.getMdValue()!=null){
             selectedMdInvoiceValue = selected.getMdValue().subtract(totalInvoices);
         }
         }
         return selectedMdInvoiceValue;
+    }
+    
+    public BigInteger getSelectedPoInvoiceValue() {
+        selectedPoInvoiceValue = BigInteger.ZERO;
+        BigInteger totalInvoices = BigInteger.ZERO;
+        BigInteger totalMdValue = BigInteger.ZERO;
+        if(vendorPoController.getSelected()!=null){
+        List<VendorMd> mds = getSelectedPoItems();
+        for (VendorMd md : mds) {
+            if(md.getMdValue()!=null){
+                totalMdValue = totalMdValue.add(md.getMdValue());
+            }
+            List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems(md);
+            for (VendorInvoice invoice : invoices) {
+                if(invoice.getInvoiceValue()!=null){
+                    totalInvoices = totalInvoices.add(invoice.getInvoiceValue());
+                }
+            }
+        }
+        selectedPoInvoiceValue = totalMdValue.subtract(totalInvoices);
+        }
+        return selectedPoInvoiceValue;
     }
 
     
@@ -323,7 +359,7 @@ public class VendorMdController implements Serializable {
                 vendorInvoiceController.getSelected().setCreator(usersController.getLoggedInUser());
                 vendorInvoiceController.getSelected().setInvoiceDeserved(getSelectedMdInvoiceValue());
                 vendorInvoiceController.getSelected().setSysDate(new Date());
-                selected.getVendorInvoiceCollection().add(vendorInvoiceController.create());
+                vendorInvoiceController.create();
                 selected.setInvoiced(Boolean.TRUE);
                 update();
         }

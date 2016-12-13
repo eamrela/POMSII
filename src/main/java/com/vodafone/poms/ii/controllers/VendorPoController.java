@@ -4,8 +4,12 @@ import com.vodafone.poms.ii.entities.VendorPo;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.VendorPoFacade;
-
+import com.vodafone.poms.ii.entities.Taxes;
+import com.vodafone.poms.ii.entities.VendorMd;
+import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,12 +30,15 @@ import javax.inject.Inject;
 @Named("vendorPoController")
 @SessionScoped
 public class VendorPoController implements Serializable {
-
+    
+    private BigInteger selectedMdDeserved;
     @EJB
     private com.vodafone.poms.ii.beans.VendorPoFacade ejbFacade;
     private List<VendorPo> items = null;
     private VendorPo selected;
     
+    @Inject
+    private ActivityController activityController;
     @Inject
     private TaxesController taxesController;
     @Inject
@@ -83,23 +90,36 @@ public class VendorPoController implements Serializable {
             items = null;    // Invalidate list of items to trigger re-query.
         }
         prepareCreate();
+         try {   
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/finance_admin/crud_v_po.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("VendorPoUpdated"));
     }
 
+    public void closePO(){
+        if(selected!=null){
+            selected.setPoStatus(poStatusController.getFinalStatus());
+            update();
+        }
+    }
+    
     public void destroy() {
         persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("VendorPoDeleted"));
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            selectedMdDeserved = null;
         }
     }
 
     public List<VendorPo> getItems() {
         if (items == null) {
-            items = getFacade().findAll();
+            items = getFacade().findAllOpen();
         }
         return items;
     }
@@ -149,6 +169,10 @@ public class VendorPoController implements Serializable {
         return getFacade().findExportItems(fromDate,toDate);
     }
 
+    public List<VendorPo> findAll(){
+        return getFacade().findAll();
+    }
+    
     public List<VendorPo> getDashboardRemainingNotInvoiced(Date start, Date end) {
         return getFacade().findRemainingNotYetinvoiced(start,end);
     }
@@ -206,8 +230,7 @@ public class VendorPoController implements Serializable {
                 vendorMdController.getSelected().setCreator(usersController.getLoggedInUser());
                 vendorMdController.getSelected().setMdDeserved(selected.getMdDeserved());
                 vendorMdController.getSelected().setSysDate(new Date());
-                selected.getVendorMdCollection().add(vendorMdController.create());
-                selected.setMdDeserved(BigInteger.ZERO);
+                vendorMdController.create();
                 update();
                 
             }
@@ -221,9 +244,38 @@ public class VendorPoController implements Serializable {
         }
         return suggestedPOs;
     }
+
+    public BigInteger getSelectedMdDeserved() {
+        selectedMdDeserved = BigInteger.ZERO;
+        if(selected!=null){
+            BigInteger totalMdValue = BigInteger.ZERO;
+            BigInteger totalMdDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone()).toBigInteger();
+            List<VendorMd> mds = vendorMdController.getSelectedPoItems();
+        for (int i = 0; i < mds.size(); i++) {
+            totalMdValue  = totalMdValue.add(mds.get(i).getMdValue()!=null?
+                                    mds.get(i).getMdValue():BigInteger.ZERO);
+        }
+            selected.setMdDeserved(totalMdDeserved.subtract(totalMdValue));
+            selectedMdDeserved = selected.getMdDeserved();
+        }
+        return selectedMdDeserved;
+    }
+
+    public void setSelectedMdDeserved(BigInteger selectedMdDeserved) {
+        this.selectedMdDeserved = selectedMdDeserved;
+    }
+    
+    public List<VendorPo> findMatchingVendorPOForActivity(){
+        List<VendorPo> suggestedPOs = new ArrayList<>();
+        if(activityController.getSelectedItems()!=null){
+            suggestedPOs = getFacade().findPOforActivity(activityController.getSelectedItems());
+        }
+        return suggestedPOs;
+    }
     
     public void clearSelected(){
         selected=null;
         items = null;
+        selectedMdDeserved = null;
     }
 }

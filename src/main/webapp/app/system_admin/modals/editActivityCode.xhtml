@@ -9,18 +9,19 @@
 
     <ui:composition>
 
-        <p:dialog id="ActivityCodeEditDlg" widgetVar="ActivityCodeEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditActivityCodeTitle}">
+        <p:dialog id="ActivityCodeEditDlg" widgetVar="ActivityCodeEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditActivityCodeTitle}"
+                  closable="false">
             <h:form id="ActivityCodeEditForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{activityCodeController.selected != null}">
                         <p:outputLabel value="#{bundle.EditActivityCodeLabel_materialId}" for="materialId" />
                         <h:outputText id="materialId" value="#{activityCodeController.selected.materialId}" title="#{bundle.EditActivityCodeTitle_materialId}"/>
                         <p:outputLabel value="#{bundle.EditActivityCodeLabel_description}" for="description" />
-                        <p:inputText id="description" value="#{activityCodeController.selected.description}" title="#{bundle.EditActivityCodeTitle_description}" />
+                        <p:inputText id="description" value="#{activityCodeController.selected.description}" title="#{bundle.EditActivityCodeTitle_description}" style="color: black;"/>
                         <p:outputLabel value="#{bundle.EditActivityCodeLabel_vendorPrice}" for="vendorPrice" />
                         <p:inputText id="vendorPrice" value="#{activityCodeController.vendorPrice}" title="#{bundle.EditActivityCodeTitle_vendorPrice}" required="true"
                                               requiredMessage="Vendor price is a manadtory field"
-                                              validatorMessage="Invalid price value" >
+                                              validatorMessage="Invalid price value" style="color: black;">
                             <p:ajax event="keydown" delay="100" partialSubmit="true" listener="#{activityCodeController.autoCalculateMargin}" update="um umPercent"
                                     onstart="PF('blockUIMargin').block()" oncomplete="PF('blockUIMargin').unblock()"/>
                             <f:validateRegex pattern="^([+]?\d*\.?\d*)$" for="vendorPrice" />
@@ -29,7 +30,7 @@
                         <p:inputText id="subcontractorPrice" value="#{activityCodeController.subcontractorPrice}" title="#{bundle.EditActivityCodeTitle_subcontractorPrice}" required="true" 
                                      requiredMessage="Subcontractor price is a manadatory field" 
                                      validatorMessage="Invalid price value" 
-                                     validator="#{activityCodeController.validateSubcontractorPrice()}">
+                                     validator="#{activityCodeController.validateSubcontractorPrice()}" style="color: black;">
                             <p:ajax event="keyup" delay="100" partialSubmit="true"  listener="#{activityCodeController.autoCalculateMargin}" update="um umPercent"
                                     onstart="PF('blockUIMargin').block()" oncomplete="PF('blockUIMargin').unblock(); #{activityCodeController.autoCalculateMargin()}"/>
                             
@@ -42,7 +43,8 @@
                         <h:outputText id="umPercent" value="#{activityCodeController.umPercent}" title="#{bundle.EditActivityCodeTitle_umPercent}" />
                     </p:panelGrid>
                     <p:commandButton styleClass="btn btn-raised" actionListener="#{activityCodeController.update}" value="#{bundle.Save}" update="display, :ActivityCodeListForm:datalist, :ActivityCodeListForm:growl" oncomplete="handleSubmit(args, 'ActivityCodeEditDialog');"/>
-                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}" onclick="ActivityCodeEditDialog.hide()">
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:ajax listener="#{activityCodeController.resetSelection}" oncomplete="PF('ActivityCodeEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
                         <p:resetInput target=":ActivityCodeEditForm"/>
                     </p:commandButton>
                 </h:panelGroup>

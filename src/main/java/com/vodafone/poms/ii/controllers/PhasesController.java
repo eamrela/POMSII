@@ -31,6 +31,9 @@ public class PhasesController implements Serializable {
     public PhasesController() {
     }
 
+    public void resetSelection(){
+        selected= null;
+    }
     public Phases getSelected() {
         return selected;
     }

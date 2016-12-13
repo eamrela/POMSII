@@ -4,6 +4,7 @@ import com.vodafone.poms.ii.entities.Users;
 import com.vodafone.poms.ii.beans.UsersFacade;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
+import com.vodafone.poms.ii.entities.UsersRoles;
 
 
 import java.io.Serializable;
@@ -25,7 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Named("usersController")
 @SessionScoped
 public class UsersController implements Serializable {
-
+    
+    private String role;
     @EJB
     private com.vodafone.poms.ii.beans.UsersFacade ejbFacade;
     private List<Users> items = null;
@@ -41,10 +43,19 @@ public class UsersController implements Serializable {
             if(auth.getName()!=null){
                LoggedInUser=getUsers(auth.getName());
             }
+            
         }
         return LoggedInUser;
     }
 
+    public String getRole() {
+        if(LoggedInUser!=null){
+            role = ((UsersRoles)LoggedInUser.getUsersRolesCollection().toArray()[0]).getRole();
+        }
+        return role;
+    }
+
+    
     public void setLoggedInUser(Users LoggedInUser) {
         this.LoggedInUser = LoggedInUser;
     }

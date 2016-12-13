@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.VendorMd;
+import com.vodafone.poms.ii.entities.VendorPo;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +41,17 @@ public class VendorMdFacade extends AbstractFacade<VendorMd> {
         return em.merge(selected);
     }
 
-    public List<VendorMd> findDashboardItems(Date start, Date end) {
+    public List<VendorMd> findDashboardItems(String domains) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return em.createNativeQuery("select * " +
-                                    "from vendor_md " +
-                                    "where md_date between '"+sdf.format(start)+"' and  '"+sdf.format(end)+"' "
-                                    + " and remaining_in_md > 0 ", 
+        return em.createNativeQuery(" select * " +
+                                    " from vendor_md vmd "
+                + (!domains.contains("*")?" where vendor_po_id in  " +
+                                    " (select po_number from vendor_po where domain_name in ("+domains+"))":""), 
                 VendorMd.class).getResultList();
+    }
+
+    public List<VendorMd> findRelatedItems(VendorPo selected) {
+        return em.createNativeQuery("select * from vendor_md where vendor_po_id = '"+selected.getPoNumber()+"'",VendorMd.class).getResultList();
     }
     
 }

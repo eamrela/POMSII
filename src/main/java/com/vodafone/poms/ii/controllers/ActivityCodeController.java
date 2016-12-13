@@ -43,6 +43,9 @@ public class ActivityCodeController implements Serializable {
         uploadedItems=new ArrayList<>();
     }
     
+    public void resetSelection(){
+        selected= null;
+    }
     
     public ActivityCodeController() {
     }
@@ -88,6 +91,7 @@ public class ActivityCodeController implements Serializable {
                     getFacade().edit(list.get(i));
                 }
                 JsfUtil.addSuccessMessage("Bulk upload succeeded");
+                items=null;
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -125,6 +129,9 @@ public class ActivityCodeController implements Serializable {
 
     public ActivityCode prepareCreate() {
         selected = new ActivityCode();
+        selected.setVendorPrice(Float.valueOf("0"));
+        selected.setSubcontractorPrice(Float.valueOf("0"));
+        prepareEdit();
         initializeEmbeddableKey();
         return selected;
     }
@@ -160,12 +167,12 @@ public class ActivityCodeController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-//                     if (persistAction == PersistAction.UPDATE) {
-//                        selected.setSubcontractorPrice(Float.valueOf(subcontractorPrice));
-//                        selected.setVendorPrice(Float.valueOf(vendorPrice));
-//                        selected.setUm(um);
-//                        selected.setUmPercent(umPercent);
-//                    }
+                     if (persistAction == PersistAction.UPDATE || persistAction == PersistAction.CREATE) {
+                        selected.setSubcontractorPrice(Float.valueOf(subcontractorPrice));
+                        selected.setVendorPrice(Float.valueOf(vendorPrice));
+                        selected.setUm(um);
+                        selected.setUmPercent(umPercent);
+                    }
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);

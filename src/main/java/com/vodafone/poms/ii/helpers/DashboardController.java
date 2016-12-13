@@ -12,10 +12,12 @@ import com.vodafone.poms.ii.controllers.VendorMdController;
 import com.vodafone.poms.ii.controllers.VendorPoController;
 import com.vodafone.poms.ii.entities.AspGrn;
 import com.vodafone.poms.ii.entities.AspPo;
+import com.vodafone.poms.ii.entities.DomainNames;
 import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.entities.VendorMd;
 import com.vodafone.poms.ii.entities.VendorPo;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,24 +42,28 @@ public class DashboardController implements Serializable{
     
     private Date start;
     private Date end;
+    private String startStr;
+    private String endStr;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    private List<CustomerSummary> customerSummary;
-    private List<AspGrn> aspGrns;
-    private List<AspGrn> aspGrnsCOS;
-    private List<AspPo> aspCommittedCost;
-    private List<VendorMd> vendorMds;
+    private List<DomainNames> selectedDomains;
+    private String selectedDomainsStr="*";
     
-    private List<VendorInvoice> vendorInvoices;
-    private List<VendorMd> vendorRemainingNotYetinvoiced;
-    
-    private List<VendorPo> vendorMdNotYetGenrated;
+    // Figures 
     private BigInteger NS;
     private BigInteger COS;
     private BigInteger UM;
     private Double UMPercent;
-    private BigInteger committedCost;
-    private BigInteger remainingNotYetInvoiced;
-    private BigInteger vendorMdNotYetGenratedValue;
+    private List<VendorInvoice> NS_invoices;
+    private List<AspGrn> COS_Grns;
+    // Remaining Not Yet invoiced
+    private List<VendorMd> remainingNotyetInvoiced;
+    private BigInteger remainingNotyetInvoiced_Value;
+    // Commited Cost
+     private List<AspPo> committedCost;
+    private BigInteger committedCost_Value;
+    
+    
+    private List<CustomerSummary> customerSummary;
     
     private List<ASPAnalysis> aspAnalysis;
     private List<DomainAnalysis> domainAnalysis;
@@ -105,20 +111,13 @@ public class DashboardController implements Serializable{
     
     @PostConstruct
     public void refresh(){
-        boolean asp = calculateASP();
-        boolean vendor = calculateVendor();
-        if(asp && vendor){
-            UM = NS.subtract(COS);
-            if(NS.compareTo(BigInteger.ZERO)==1){
-            UMPercent = round(Double.valueOf((UM.floatValue()/NS.floatValue())*100),1);
-            }else{
-            UMPercent = 0.0;
-            }
-        }
+        calculateDashboardFigues();
+        calculateRemainingNotYetInvoiced();
+        calculateCommitedCost();
+        
         getAspAnalysis();
         getDomainAnalysis();
-        getVendorRemainingNotYetinvoiced();
-        getAspCommittedCost();
+       
         calculateCustomerSummary();
         
     }
@@ -128,55 +127,6 @@ public class DashboardController implements Serializable{
     return (double) Math.round(value * scale) / scale;
 }
     
-    public boolean calculateASP() {
-            aspGrns = aspGrnController.getDashboardItems(start,end);
-            aspCommittedCost = aspPoController.getDashboardCommittedCost(start,end);
-            COS = BigInteger.ZERO;
-            committedCost = BigInteger.ZERO;
-            aspGrnsCOS = new ArrayList<>();
-            for (AspPo aspCommittedCost1 : aspCommittedCost) {
-                committedCost = committedCost.add(aspCommittedCost1.getGrnDeserved());
-            }
-            for (AspGrn aspGrn : aspGrns) {
-                if(aspGrn.getGrnValue()!=null){
-                COS = COS.add(aspGrn.getGrnValue());
-                aspGrnsCOS.add(aspGrn);
-                }else if(aspGrn.getRemainingInGrn()!=null){ 
-                    if(aspGrn.getRemainingInGrn().compareTo(BigInteger.ZERO)!=0){
-                            aspCommittedCost.add(aspGrn.getAspPoId());
-                            committedCost = committedCost.add(aspGrn.getRemainingInGrn());
-                    }
-                }
-            }
-            
-            return true;
-    }
-
-    public boolean calculateVendor(){
-        vendorInvoices = vendorInvoiceController.findDashboardItems(start,end);
-        vendorRemainingNotYetinvoiced = vendorMdController.getDashboardItems(start, end);
-        NS = BigInteger.ZERO;
-        remainingNotYetInvoiced = BigInteger.ZERO;
-        // Calculate total remaining in MDs
-        for (int i = 0; i < vendorRemainingNotYetinvoiced.size(); i++) {
-            remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorRemainingNotYetinvoiced.get(i).getRemainingInMd());
-        }
-        // Calculate total NS and Remaining in Invoices
-        for (int i = 0; i < vendorInvoices.size(); i++) {
-            NS = NS.add(vendorInvoices.get(i).getInvoiceValue());
-            if(vendorInvoices.get(i).getRemainingInInvoice()!=null){
-                if(vendorInvoices.get(i).getRemainingInInvoice().compareTo(BigInteger.ZERO)!=0){
-                    remainingNotYetInvoiced = remainingNotYetInvoiced.add(vendorInvoices.get(i).getRemainingInInvoice());
-                    vendorRemainingNotYetinvoiced.add(vendorInvoices.get(i).getMdId());
-                }
-            }
-        }
-        
-        
-        
-        return true;
-    }
-
     public List<ASPAnalysis> getAspAnalysis() {
         if(aspAnalysis == null){
             aspAnalysis = em.createNativeQuery(" select asp_name, "+
@@ -251,18 +201,108 @@ public class DashboardController implements Serializable{
         domainAnalysis = null;
         aspAnalysisChartData = null;
         domainAnalysisChartData = null;
-        aspCommittedCost = null;
-        aspGrns = null;
-        aspGrnsCOS = null;
-        committedCost = null;
-        remainingNotYetInvoiced = null;
-        vendorMds = null;
-        vendorInvoices = null;
-        vendorRemainingNotYetinvoiced = null;
-        vendorMdNotYetGenrated = null;
-        vendorMdNotYetGenratedValue = BigInteger.ZERO;
+        
         customerSummary = null;
         refresh();
+    }
+
+    
+    
+    
+    //<editor-fold defaultstate="collapsed" desc="new Dashboard">
+    public void calculateDashboardFigues(){
+        NS_invoices = vendorInvoiceController.findDashboardItems(start, end,getSelectedDomainsStr());
+        COS_Grns = aspGrnController.getDashboardItems(start, end,getSelectedDomainsStr());
+        NS = BigInteger.ZERO;
+        COS = BigInteger.ZERO;
+        for (VendorInvoice NS_invoice : NS_invoices) {
+            NS = NS.add(NS_invoice.getInvoiceValue());
+        }
+        for (AspGrn COS_Grn : COS_Grns) {
+            COS = COS.add(COS_Grn.getGrnValue());
+        }
+        UM = NS.subtract(COS);
+        if(NS.compareTo(BigInteger.ZERO)==1){
+        UMPercent = round(Double.valueOf((UM.floatValue()/NS.floatValue())*100),1);
+        }else{
+        UMPercent = 0.0;
+        }
+    }
+    public void calculateRemainingNotYetInvoiced(){
+        remainingNotyetInvoiced = vendorMdController.getDashboardItems(getSelectedDomainsStr());
+        remainingNotyetInvoiced_Value = BigInteger.ZERO;
+        BigInteger totalMdValue = BigInteger.ZERO;
+        BigInteger totalInvoiceValue = BigInteger.ZERO;
+        remainingNotyetInvoiced_Value = BigInteger.ZERO;
+        for (VendorMd vendorMd : remainingNotyetInvoiced) {
+           totalMdValue = totalMdValue.add(vendorMd.getMdValue()!=null?vendorMd.getMdValue():BigInteger.ZERO);
+           vendorMdController.setSelected(vendorMd);
+           List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
+            for (VendorInvoice invoice : invoices) {
+                totalInvoiceValue = totalInvoiceValue.add(invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigInteger.ZERO);
+            }
+        }
+        remainingNotyetInvoiced_Value = totalMdValue.subtract(totalInvoiceValue);
+    }
+    public void calculateCommitedCost(){
+        committedCost = aspPoController.getDashboardCommittedCost(getSelectedDomainsStr());
+        committedCost_Value = BigInteger.ZERO;
+        for (AspPo committedCost1 : committedCost) {
+            BigInteger totalWorkValue = 
+                    BigDecimal.valueOf(committedCost1.getWorkDone().floatValue()*committedCost1.getServiceValue().floatValue()).toBigInteger();
+            aspPoController.setSelected(committedCost1);
+            List<AspGrn> grns = aspGrnController.getSelectedPoItems();
+            BigInteger grnValues = BigInteger.ZERO;
+            for (int i = 0; i < grns.size(); i++) {
+                grnValues = grnValues.add(grns.get(i).getGrnValue()!=null?grns.get(i).getGrnValue():BigInteger.ZERO);
+            }
+            committedCost_Value = committedCost_Value.add((totalWorkValue.subtract(grnValues)));
+            
+        }
+    }
+//</editor-fold>
+    
+    
+    
+    
+    public List<AspGrn> getCOS_Grns() {
+        return COS_Grns;
+    }
+
+    public void setCOS_Grns(List<AspGrn> COS_Grns) {
+        this.COS_Grns = COS_Grns;
+    }
+
+    
+
+    
+    
+    public List<VendorInvoice> getNS_invoices() {
+        return NS_invoices;
+    }
+
+    public void setNS_invoices(List<VendorInvoice> NS_invoices) {
+        this.NS_invoices = NS_invoices;
+    }
+
+    public List<VendorMd> getRemainingNotyetInvoiced() {
+        return remainingNotyetInvoiced;
+    }
+
+    public void setRemainingNotyetInvoiced(List<VendorMd> remainingNotyetInvoiced) {
+        this.remainingNotyetInvoiced = remainingNotyetInvoiced;
+    }
+
+    public BigInteger getRemainingNotyetInvoiced_Value() {
+        return remainingNotyetInvoiced_Value;
+    }
+
+    public List<AspPo> getCommittedCost() {
+        return committedCost;
+    }
+
+    public BigInteger getCommittedCost_Value() {
+        return committedCost_Value;
     }
     
 
@@ -270,42 +310,10 @@ public class DashboardController implements Serializable{
     
     
     //<editor-fold defaultstate="collapsed" desc="Setters/Getters">
-    public void setRemainingNotYetInvoiced(BigInteger remainingNotYetInvoiced) {
-        this.remainingNotYetInvoiced = remainingNotYetInvoiced;
-    }
-
-    public BigInteger getVendorMdNotYetGenratedValue() {
-        return vendorMdNotYetGenratedValue;
-    }
-
-    public void setVendorMdNotYetGenratedValue(BigInteger vendorMdNotYetGenratedValue) {
-        this.vendorMdNotYetGenratedValue = vendorMdNotYetGenratedValue;
-    }
-
-    public List<VendorInvoice> getVendorInvoices() {
-        return vendorInvoices;
-    }
-
-    public void setVendorInvoices(List<VendorInvoice> vendorInvoices) {
-        this.vendorInvoices = vendorInvoices;
-    }
-    
-    
-    public void setStart(Date start) {
+   public void setStart(Date start) {
         this.start = start;
     }
 
-    public List<VendorPo> getVendorMdNotYetGenrated() {
-        return vendorMdNotYetGenrated;
-    }
-
-    public void setVendorMdNotYetGenrated(List<VendorPo> vendorMdNotYetGenrated) {
-        this.vendorMdNotYetGenrated = vendorMdNotYetGenrated;
-    }
-
-   
-
-    
     public void setEnd(Date end) {
         this.end = end;
     }
@@ -317,41 +325,7 @@ public class DashboardController implements Serializable{
     public Date getEnd() {
         return end;
     }
-        
-    public List<AspGrn> getAspGrnsCOS() {
-        return aspGrnsCOS;
-    }
-
-    public void setAspGrnsCOS(List<AspGrn> aspGrnsCOS) {
-        this.aspGrnsCOS = aspGrnsCOS;
-    }
-
-    public List<AspPo> getAspCommittedCost() {
-        return aspCommittedCost;
-    }
-
-    public void setAspCommittedCost(List<AspPo> aspCommittedCost) {
-        this.aspCommittedCost = aspCommittedCost;
-    }
-
-    public List<VendorMd> getVendorMds() {
-        return vendorMds;
-    }
-
-    public void setVendorMds(List<VendorMd> vendorMds) {
-        this.vendorMds = vendorMds;
-    }
-
-   
-
-    public List<VendorMd> getVendorRemainingNotYetinvoiced() {
-        return vendorRemainingNotYetinvoiced;
-    }
-
-    public void setVendorRemainingNotYetinvoiced(List<VendorMd> vendorRemainingNotYetinvoiced) {
-        this.vendorRemainingNotYetinvoiced = vendorRemainingNotYetinvoiced;
-    }
-
+    
     public BigInteger getNS() {
         return NS;
     }
@@ -363,6 +337,25 @@ public class DashboardController implements Serializable{
     public BigInteger getCOS() {
         return COS;
     }
+
+    public String getStartStr() {
+        startStr = sdf.format(start);
+        return startStr;
+    }
+
+    public void setStartStr(String startStr) {
+        this.startStr = startStr;
+    }
+
+    public void setEndStr(String endStr) {
+        this.endStr = endStr;
+    }
+
+    public String getEndStr() {
+        endStr = sdf.format(end);
+        return endStr;
+    }
+    
 
     public void setCOS(BigInteger COS) {
         this.COS = COS;
@@ -384,18 +377,7 @@ public class DashboardController implements Serializable{
         this.UMPercent = UMPercent;
     }
 
-    public BigInteger getCommittedCost() {
-        return committedCost;
-    }
-
-    public void setCommittedCost(BigInteger committedCost) {
-        this.committedCost = committedCost;
-    }
-
-    public BigInteger getRemainingNotYetInvoiced() {
-        return remainingNotYetInvoiced;
-    }
-
+    
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Charts Data">
@@ -458,42 +440,42 @@ public class DashboardController implements Serializable{
     public String getMasterGraphData() {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM-YYYY");
         //<editor-fold defaultstate="collapsed" desc="Data Access">
-        masterGraph = em.createNativeQuery(" select target_month,ns_t,cos_t,um_t,ns_iso,cos_iso, "+
-" case when um_iso is null then 0.0 else um_iso end um_iso "+
-" from ( "+
-" select target_month,ns_t,cos_t,um_t, "+
-" case when ns_iso is null then 0.0 else ns_iso end ns_iso, "+
-" case when cos_iso is null then 0.0 else cos_iso end cos_iso, "+
-" (ns_iso-cos_iso) um_iso "+
-" from ( "+
-" select target_month,ns_t,cos_t,um_t, "+
-" round(vendor.ns_iso/1000000,2) ns_iso, "+
-" round(asp.cos_iso/1000000,2) cos_iso "+
-" from targets "+
-" left join  "+
-" (select extract(month from md_date) month_no,sum(md_value) ns_iso "+
-" from vendor_md "+
-" where md_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
-        +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
-" and invoiced is true "+
-" group by extract(month from md_date)) vendor "+
-" on target_month=vendor.month_no "+
-" left join  "+
-" (select month_no,sum(cos_iso) cos_iso "+
-" from ( "+
-" select extract(month from grn_date) month_no,sum(grn_value) cos_iso "+
-" from asp_grn "+
-" where grn_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
-                +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
-" group by extract(month from grn_date)  "+
-" union  "+
-" select extract(month from po_date) month_no,sum(grn_deserved) cos_iso  "+
-" from asp_po  "+
-" where po_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"
-                +sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"' "+
-" group by extract(month from po_date) ) a "+
-" group by a.month_no) asp "+
-" on target_month=asp.month_no) master_initial) "+
+        masterGraph = em.createNativeQuery(" select target_month,ns_t,cos_t,um_t,ns_iso,cos_iso,  "+
+" case when um_iso is null then 0.0 else um_iso end um_iso  "+
+" from (  "+
+" select target_month,ns_t,cos_t,um_t,  "+
+" case when ns_iso is null then 0.0 else ns_iso end ns_iso,  "+
+" case when cos_iso is null then 0.0 else cos_iso end cos_iso,  "+
+" (ns_iso-cos_iso) um_iso  "+
+" from (  "+
+" select target_month,ns_t,cos_t,um_t,  "+
+" round(vendor.ns_iso/1000000,2) ns_iso,  "+
+" round(asp.cos_iso/1000000,2) cos_iso  "+
+" from targets  "+
+" left join   "+
+" (select extract(month from invoice_date) month_no,sum(invoice_value) ns_iso  "+
+" from vendor_invoice  "+
+" where invoice_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
+(!getSelectedDomainsStr().contains("*")?"and  md_id in " +
+" (select id from vendor_md where vendor_po_id in  " +
+" (select po_number from vendor_po where domain_name in ("+getSelectedDomainsStr()+")))":"")+
+" group by extract(month from invoice_date)) vendor  "+
+" on target_month=vendor.month_no  "+
+" left join   "+
+" (select month_no,sum(cos_iso) cos_iso  "+
+" from (  "+
+" select extract(month from grn_date) month_no,sum(grn_value) cos_iso  "+
+" from asp_grn  "+
+" where grn_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
+(!getSelectedDomainsStr().contains("*")?" and asp_po_id in (select po_number from asp_po where domain_name in ("+getSelectedDomainsStr()+"))":"")+
+" group by extract(month from grn_date)   "+
+" union   "+
+" select extract(month from po_date) month_no,sum(grn_deserved) cos_iso   "+
+" from asp_po   "+
+" where po_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
+" group by extract(month from po_date) ) a  "+
+" group by a.month_no) asp  "+
+" on target_month=asp.month_no) master_initial)  "+
 " master ", MasterGraph.class).getResultList();
 //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Start of string">
@@ -686,31 +668,54 @@ public class DashboardController implements Serializable{
     }
     
     public void calculateCustomerSummary(){
-       List<VendorPo> customerPos = vendorPoController.getExportItems(start, end);
-       List<AspPo> aspPos = aspPoController.getExportItems(start, end);
+       List<VendorPo> customerPos = vendorPoController.findAll();
+       List<AspPo> aspPos = aspPoController.findAll();
        customerSummary = new ArrayList<>();
        CustomerSummary summary = new CustomerSummary();
+       BigInteger totalPoValue=BigInteger.ZERO;
+       BigInteger totalRemainingFromPo=BigInteger.ZERO;
+       BigInteger totalMdRecieved=BigInteger.ZERO;
+       BigInteger totalMdDeserved=BigInteger.ZERO;
+       BigInteger totalInvoiceDeserved=BigInteger.ZERO;
+       BigInteger totalInvoiceValue=BigInteger.ZERO;
+       BigInteger totalRemainingFromInvoice=BigInteger.ZERO;
+       BigInteger totalRemainingFromMd=BigInteger.ZERO;
         for (VendorPo customerPo : customerPos) {
-            summary.setTotalPoValue(customerPo.getPoValue());
-            summary.setTotalRemainingInPo((customerPo.getRemainingInPo()!=null?customerPo.getRemainingInPo():BigInteger.ZERO));
-            summary.setTotalMdDeserved((customerPo.getMdDeserved()!=null?customerPo.getMdDeserved():BigInteger.ZERO));
-            Object[] mds = customerPo.getVendorMdCollection().toArray();
-           for (Object md : mds) {
-               VendorMd vMd = ((VendorMd)md);
-               summary.setTotalMdDeserved((vMd.getMdDeserved()!=null?vMd.getMdDeserved():BigInteger.ZERO));
-               summary.setTotalRemainingFromMd((vMd.getRemainingInMd()!=null?vMd.getRemainingInMd():BigInteger.ZERO));
-               summary.setTotalMdRecieved((vMd.getMdValue()!=null?vMd.getMdValue():BigInteger.ZERO));
-               if(vMd.getInvoiced()!=null){
-                if(vMd.getInvoiced()){
-                   summary.setTotalMdValue((vMd.getMdValue()!=null?vMd.getMdValue():BigInteger.ZERO));
+            totalPoValue = totalPoValue.add(customerPo.getPoValue());
+            totalRemainingFromPo = totalRemainingFromPo.add(customerPo.getRemainingInPo()!=null?
+                                customerPo.getRemainingInPo():BigInteger.ZERO);
+            totalMdDeserved = totalMdDeserved.add(
+                    BigDecimal.valueOf(customerPo.getWorkDone()*customerPo.getServiceValue().floatValue()).toBigInteger());
+            vendorPoController.setSelected(customerPo);
+            List<VendorMd> mds=vendorMdController.getSelectedPoItems();
+           for (VendorMd md : mds) {
+               totalMdRecieved = totalMdRecieved.add(md.getMdValue()!=null?md.getMdValue():BigInteger.ZERO);
+               vendorMdController.setSelected(md);
+               List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
+                for (VendorInvoice invoice : invoices) {
+                    totalInvoiceValue = totalInvoiceValue.add(
+                            invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigInteger.ZERO);
+                    totalInvoiceDeserved = totalInvoiceDeserved.add(
+                            invoice.getInvoiceDeserved()!=null?invoice.getInvoiceDeserved():BigInteger.ZERO);
+                    
                 }
-               }
            }
         }
+        totalRemainingFromInvoice = totalInvoiceDeserved.subtract(totalInvoiceValue);
+        totalRemainingFromMd = totalMdDeserved.subtract(totalMdRecieved);
         
         for (AspPo aspPo : aspPos) {
             summary.setTotalCommittedCost((aspPo.getGrnDeserved()!=null?aspPo.getGrnDeserved():BigInteger.ZERO));
         }
+        summary.setTotalMdDeserved(totalMdDeserved);
+        summary.setTotalMdRecieved(totalMdRecieved);
+        summary.setTotalRemainingFromMd(totalRemainingFromMd);
+        
+        summary.setTotalPoValue(totalPoValue);
+        summary.setTotalRemainingInPo(totalRemainingFromPo);
+        
+        summary.setTotalMdValue(totalInvoiceValue);
+        summary.setTotalMdNotYetInvoiced(totalRemainingFromInvoice);
         customerSummary.add(summary);
        
     }
@@ -721,4 +726,31 @@ public class DashboardController implements Serializable{
         int randomNumber = randomGenerator.nextInt(mColors.length);
         return mColors[randomNumber];
     }
+
+    public List<DomainNames> getSelectedDomains() {
+        return selectedDomains;
+    }
+
+    public void setSelectedDomains(List<DomainNames> selectedDomains) {
+        this.selectedDomains = selectedDomains;
+    }
+
+    public String getSelectedDomainsStr() {
+        selectedDomainsStr = "*";
+        if(selectedDomains!=null){
+            if(!selectedDomains.isEmpty()){
+                selectedDomainsStr="";
+            }
+            for (int i = 0; i < selectedDomains.size(); i++) {
+                if(i==selectedDomains.size()-1){
+                    selectedDomainsStr += "\'"+selectedDomains.get(i).getDomainName()+"\' ";
+                }else{
+                    selectedDomainsStr += "\'"+selectedDomains.get(i).getDomainName()+"\', ";
+                }
+            }
+        }
+        return selectedDomainsStr;
+    }
+    
+    
 }

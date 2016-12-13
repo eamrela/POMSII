@@ -53,6 +53,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "AspPo.findByTaxes", query = "SELECT a FROM AspPo a WHERE a.taxes = :taxes")})
 public class AspPo implements Serializable {
 
+    @OneToMany(mappedBy = "aspPoId")
+    private Collection<AspPoWorkDone> aspPoWorkDoneCollection;
+
      @JoinColumn(name = "po_chaser", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private EricssonPoChaser poChaser;
@@ -192,6 +195,7 @@ public class AspPo implements Serializable {
     }
 
     public BigInteger getGrnDeserved() {
+        
         return grnDeserved;
     }
 
@@ -268,7 +272,7 @@ public class AspPo implements Serializable {
         this.taxes = taxes;
     }
 
-//    @XmlTransient
+    @XmlTransient
     public Collection<Activity> getActivityCollection() {
         return activityCollection;
     }
@@ -334,7 +338,7 @@ public class AspPo implements Serializable {
         for (Object grn : grns) {
             deserved = deserved.subtract(((AspGrn) grn).getGrnDeserved());
         }
-        setGrnDeserved(deserved);
+
         setRemainingInPo(getPoValue().subtract(deservedI));
     }
     
@@ -370,6 +374,15 @@ public class AspPo implements Serializable {
     @Override
     public String toString() {
         return "com.vodafone.poms.ii.entities.AspPo[ poNumber=" + poNumber + " ]";
+    }
+
+    @XmlTransient
+    public Collection<AspPoWorkDone> getAspPoWorkDoneCollection() {
+        return aspPoWorkDoneCollection;
+    }
+
+    public void setAspPoWorkDoneCollection(Collection<AspPoWorkDone> aspPoWorkDoneCollection) {
+        this.aspPoWorkDoneCollection = aspPoWorkDoneCollection;
     }
     
 }
