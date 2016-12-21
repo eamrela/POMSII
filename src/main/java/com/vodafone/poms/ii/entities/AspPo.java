@@ -209,7 +209,7 @@ public class AspPo implements Serializable {
 
     public BigInteger getPoValueTaxes() {
         if(taxes!=null && poValue!=null){
-            poValueTaxes = poValue.add(BigDecimal.valueOf(poValue.intValue()*taxes).toBigInteger());
+            poValueTaxes = poValue.add(BigDecimal.valueOf(poValue.intValue()*taxes/100).toBigInteger());
         }
         return poValueTaxes;
     }

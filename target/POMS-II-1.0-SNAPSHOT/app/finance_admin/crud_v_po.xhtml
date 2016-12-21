@@ -215,7 +215,7 @@
                                                                                                :VendorPOListForm:selectedVendorPOMD,
                                                                                                :VendorPOListForm:selectedVendorPOMDInvoice,
                                                                                                :VendorPOListForm:datalistVendorPO" 
-                                                                                    disabled="#{empty vendorPoController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                    disabled="#{empty vendorPoController.selected or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 <p:commandButton id="closeButton" icon="ui-icon-closethick"  
                                                                                  value="Close" actionListener="#{vendorPoController.closePO}" 
                                                                                          update="editButton,:VendorPOListForm:growl,
@@ -224,7 +224,7 @@
                                                                                                :VendorPOListForm:selectedVendorPOMD,
                                                                                                :VendorPOListForm:selectedVendorPOMDInvoice,
                                                                                                :VendorPOListForm:datalistVendorPO" 
-                                                                                    disabled="#{empty vendorPoController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                    disabled="#{empty vendorPoController.selected or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                            </f:facet>
                                                        </p:dataTable>
                                                     </div>
@@ -255,7 +255,7 @@
                                                                         rowKey="#{vendorMD.id}"
                                                                         styleClass="fixed-size">
                                                                 
-                                                                <p:ajax event="rowSelect" update="editButton,:VendorPOListForm:selectedVendorPOMDInvoice"/>
+                                                                <p:ajax event="rowSelect" update="editButton,deleteButton,:VendorPOListForm:selectedVendorPOMDInvoice"/>
                                                                 
                                                                 <p:column headerText="MD#" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorMD.mdNumber}" />
@@ -296,7 +296,7 @@
                                                                                                :VendorPOListForm:selectedVendorPOActivities ,
                                                                                                :VendorPOListForm:selectedVendorPOMD,
                                                                                                :VendorPOListForm:selectedVendorPOMDInvoice" 
-                                                                                    disabled="#{empty vendorMdController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                               disabled="#{empty vendorMdController.selected or vendorInvoiceController.selectedMdItems.size()!=0 or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
@@ -394,7 +394,7 @@
                                                                                                :VendorPOListForm:selectedVendorPOActivities ,
                                                                                                :VendorPOListForm:selectedVendorPOMD,
                                                                                                :VendorPOListForm:selectedVendorPOMDInvoice" 
-                                                                                    disabled="#{empty vendorInvoiceController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                    disabled="#{empty vendorInvoiceController.selected or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
@@ -460,7 +460,7 @@
                                                                         rowKey="#{aspPO.poNumber}"
                                                                         styleClass="fixed-size">
                                                                 
-                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                <p:ajax event="rowSelect" update="viewButton,uncorrelateButton"/>
                                                                 
                                                                 <p:column headerText="PO#" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspPO.poNumber}" />
@@ -492,6 +492,13 @@
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ASPPOViewForm" oncomplete="PF('ASPPOViewDialog').show()" disabled="#{empty aspPoController.selected}"/>
+                                                                    <p:commandButton id="uncorrelateButton"   
+                                                                                     icon="ui-icon-close" 
+                                                                                     value="Uncorrelate" 
+                                                                                     update="associatedActivity" 
+                                                                                     ajax="false"
+                                                                                     actionListener="#{aspPoController.uncorrelate}"
+                                                                                     disabled="#{(empty aspPoController.selected) or (vendorMdController.selectedPoItems.size()!=0) or usersController.role != 'ROLE_SYSADMIN'}"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                       </div> 
@@ -524,7 +531,7 @@
                                                                         rowKey="#{vendorActivity.activityId}"
                                                                         styleClass="fixed-size">
                                                                 
-                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                <p:ajax event="rowSelect" update="viewButton,uncorrelateButton"/>
                                                                 
                                                                 <p:column headerText="Activity#" style="font-size: 9px;">
                                                                     <h:outputText value="#{vendorActivity.activityId}" />
@@ -569,6 +576,13 @@
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ActivityViewForm" oncomplete="PF('ActivityViewDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                    <p:commandButton id="uncorrelateButton"   
+                                                                                     icon="ui-icon-close" 
+                                                                                     value="Uncorrelate" 
+                                                                                     update="associatedPOActivity" 
+                                                                                     ajax="false"
+                                                                                     actionListener="#{activityController.uncorrelateVendor}"
+                                                                                     disabled="#{(empty activityController.selected) or (vendorMdController.selectedPoItems.size()!=0) or usersController.role != 'ROLE_SYSADMIN'}"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                       </div> 
@@ -609,7 +623,7 @@
                                         <div class="row">
                                         <div class="col-xs-6">
                                         <h:panelGroup id="display">
-                                            <p:panelGrid columns="2" rendered="#{vendorPoWorkDoneController.selected != null and vendorPoController.selected != null}">
+                                            <p:panelGrid columns="2" rendered="#{vendorPoWorkDoneController.selected != null or vendorPoController.selected != null}">
                                                 <p:outputLabel value="#{bundle.CreateVendorPoWorkDoneLabel_workDone}" for="workDone" />
                                                 <p:inputText id="workDone" value="#{vendorPoWorkDoneController.selected.workDone}" 
                                                              title="#{bundle.CreateVendorPoWorkDoneTitle_workDone}" >

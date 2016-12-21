@@ -26,12 +26,16 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.joda.time.DateTime;
 
 @Named("vendorPoController")
 @SessionScoped
 public class VendorPoController implements Serializable {
     
     private BigInteger selectedMdDeserved;
+    private Date startMonth;
+    private Integer numberOfMonths;
+    
     @EJB
     private com.vodafone.poms.ii.beans.VendorPoFacade ejbFacade;
     private List<VendorPo> items = null;
@@ -49,6 +53,8 @@ public class VendorPoController implements Serializable {
     private VendorMdController vendorMdController;
     @Inject
     private AspPoController aspPoController;
+    @Inject
+    private PoTypesController poTypesController;
     
     public VendorPoController() {
     }
@@ -77,7 +83,21 @@ public class VendorPoController implements Serializable {
         selected.setCreator(usersController.getLoggedInUser());
         selected.setSysDate(new Date());
         selected.setPoStatus(poStatusController.getInitialStatus());
+        selected.setPoType(poTypesController.getPoTypes("Extra Work"));
         initializeEmbeddableKey();
+        return selected;
+    }
+    
+    public VendorPo prepareCreateService() {
+        selected = new VendorPo();
+        selected.setTaxes(taxesController.getCurrentTaxes());
+        selected.setCreator(usersController.getLoggedInUser());
+        selected.setSysDate(new Date());
+        selected.setPoStatus(poStatusController.getInitialStatus());
+        selected.setPoType(poTypesController.getPoTypes("Service"));
+        initializeEmbeddableKey();
+        startMonth = null;
+        numberOfMonths = null;
         return selected;
     }
 
@@ -90,6 +110,34 @@ public class VendorPoController implements Serializable {
             items = null;    // Invalidate list of items to trigger re-query.
         }
         prepareCreate();
+         try {   
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/finance_admin/crud_v_po.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void createServicePo(){
+        DateTime start = new DateTime(startMonth);
+         if(selected.getRemainingInPo()==null){
+                selected.setRemainingInPo(selected.getPoValue());
+        }
+         String description = selected.getPoDescription();
+         String poNumber = selected.getPoNumber();
+         
+        for (int i = 0; i < numberOfMonths; i++) {
+            selected.setPoDate(start.plusMonths(i).toDate());
+            selected.setPoNumber(i+"-"+poNumber);
+            selected.setPoDescription("["+start.plusMonths(i).toString("MMM")+"] "+description);
+            persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("VendorPoCreated"));
+            if (!JsfUtil.isValidationFailed()) {
+            items = null;    // Invalidate list of items to trigger re-query.
+            }
+        }
+        
+        prepareCreate();
+        prepareCreateService();
+        
          try {   
             FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/finance_admin/crud_v_po.xhtml");
         } catch (IOException ex) {
@@ -240,7 +288,13 @@ public class VendorPoController implements Serializable {
     public List<VendorPo> findMatchingPOForASP(){
         List<VendorPo> suggestedPOs = new ArrayList<>();
         if(aspPoController.getSelectedItems()!=null){
-            suggestedPOs = getFacade().findPOforASP(aspPoController.getSelectedItems());
+            if(aspPoController.getSelectedItems().size()>0){
+                if(aspPoController.getSelectedItems().get(0).getPoType().getTypeName().equals("Service")){
+            suggestedPOs = getFacade().findPOforASPService(aspPoController.getSelectedItems());
+                }else{
+            suggestedPOs = getFacade().findPOforASPExtraWork(aspPoController.getSelectedItems());
+                }
+            }
         }
         return suggestedPOs;
     }
@@ -278,4 +332,22 @@ public class VendorPoController implements Serializable {
         items = null;
         selectedMdDeserved = null;
     }
+
+    public Date getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(Date startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getNumberOfMonths() {
+        return numberOfMonths;
+    }
+
+    public void setNumberOfMonths(Integer numberOfMonths) {
+        this.numberOfMonths = numberOfMonths;
+    }
+    
+    
 }

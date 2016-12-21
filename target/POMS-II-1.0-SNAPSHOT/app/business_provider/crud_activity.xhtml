@@ -93,12 +93,12 @@
 
                                                                     <p:ajax event="rowSelect"   
                                                                             update=":ActivityListForm:selectedActivityCode,
-                                                                                    :ActivityListForm:selectedCorrelation,editButton
+                                                                                    :ActivityListForm:selectedCorrelation,editButton, exportButton
                                                                                     ,:ActivityListForm:growl,
                                                                                     :ActivityListForm:datalistActivity"/>
                                                                     <p:ajax event="rowUnselect"   
                                                                             update=":ActivityListForm:selectedActivityCode,
-                                                                                    :ActivityListForm:selectedCorrelation,editButton
+                                                                                    :ActivityListForm:selectedCorrelation,editButton, exportButton
                                                                                     ,:ActivityListForm:growl,
                                                                                     :ActivityListForm:datalistActivity"/>
 
@@ -243,7 +243,13 @@
                                                                                                 :ActivityListForm:selectedCorrelation,editButton
                                                                                                 ,:ActivityListForm:growl,
                                                                                                 :ActivityListForm:datalistActivity" 
-                                                                                         disabled="#{empty activityController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                         disabled="#{empty activityController.selectedItems or usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                        <p:commandButton id="exportButton"   
+                                                                                         icon="ui-icon-arrowstop-1-s" 
+                                                                                         value="Export"
+                                                                                          ajax="false"
+                                                                                         actionListener="#{exportManager.exportActivityForUser}"
+                                                                                         disabled="#{empty activityController.selectedItems}"/>
                                                                     </f:facet>
                                                                 </p:dataTable> 
                                                     </div>

@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.joda.time.DateTime;
 
 @Named("aspPoController")
 @SessionScoped
@@ -38,6 +39,9 @@ public class AspPoController implements Serializable {
     private BigInteger itemsUncorrelatedPoValue;
     private BigInteger selectedGrnDeserved;
     private boolean disabled = false;
+    private Date startMonth;
+    private Integer numberOfMonths;
+    
     @EJB
     private com.vodafone.poms.ii.beans.AspPoFacade ejbFacade;
     private List<AspPo> items = null;
@@ -57,6 +61,8 @@ public class AspPoController implements Serializable {
     private AspGrnController aspGrnController;
     @Inject
     private VendorPoController vendorPoController;
+    @Inject 
+    private PoTypesController poTypesController;
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
@@ -104,6 +110,21 @@ public class AspPoController implements Serializable {
         selected.setCreator(usersController.getLoggedInUser());
         selected.setSysDate(new Date());
         selected.setPoStatus(poStatusController.getInitialStatus());
+        selected.setPoType(poTypesController.getPoTypes("Extra Work"));
+        initializeEmbeddableKey();
+        return selected;
+    }
+    
+    public AspPo prepareCreateService() {
+        selected = new AspPo();
+        startMonth = null;
+        numberOfMonths = null;
+        selected.setTaxes(taxesController.getCurrentTaxes());
+        selected.setCreator(usersController.getLoggedInUser());
+        selected.setSysDate(new Date());
+        selected.setPoStatus(poStatusController.getInitialStatus());
+        selected.setPoType(poTypesController.getPoTypes("Service"));
+        selected.setPoMargin(0.0);
         initializeEmbeddableKey();
         return selected;
     }
@@ -126,6 +147,35 @@ public class AspPoController implements Serializable {
         }
     }
 
+    public void createService(){
+        DateTime start = new DateTime(startMonth);
+         if(selected.getRemainingInPo()==null){
+                selected.setRemainingInPo(selected.getPoValue());
+        }
+         String description = selected.getPoDescription();
+         String poNumber = selected.getPoNumber();
+         
+        for (int i = 0; i < numberOfMonths; i++) {
+            selected.setPoDate(start.plusMonths(i).toDate());
+            selected.setPoNumber(i+"-"+poNumber);
+            selected.setPoDescription("["+start.plusMonths(i).toString("MMM")+"] "+description);
+            persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AspPoCreated"));
+            if (!JsfUtil.isValidationFailed()) {
+                items = null;    // Invalidate list of items to trigger re-query.
+                itemsUncorrelated = null;
+                selectedItems = null;
+            }
+        } 
+        
+        prepareCreate();
+        prepareCreateService();
+        try {   
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/finance_admin/crud_asp_po.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AspPoUpdated"));
     }
@@ -160,7 +210,9 @@ public class AspPoController implements Serializable {
         itemsUncorrelated=getFacade().findUncorrelatedItems();
         itemsUncorrelatedPoValue = BigInteger.ZERO;
         for (AspPo itemsUncorrelated1 : itemsUncorrelated) {
-            itemsUncorrelatedPoValue = itemsUncorrelatedPoValue.add(itemsUncorrelated1.getPoValue());
+            itemsUncorrelatedPoValue = itemsUncorrelatedPoValue.add(BigDecimal.valueOf(
+                                        itemsUncorrelated1.getPoValue().doubleValue()*(1+(itemsUncorrelated1.getPoMargin()/100.0))
+                                ).toBigInteger());
         }
         return itemsUncorrelated;
     }
@@ -371,9 +423,6 @@ public class AspPoController implements Serializable {
             selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone()+
                 (totalPrice.floatValue()/selectedVendorPo.getServiceValue().floatValue())
             );
-//            selectedVendorPo.setRemainingInPo(
-//                    selectedVendorPo.getRemainingInPo().subtract(
-//                            BigInteger.valueOf(totalPrice.intValue())));
             vendorPoController.setSelected(selectedVendorPo);
             vendorPoController.update();
             vendorPoController.setSelected(null);
@@ -384,6 +433,19 @@ public class AspPoController implements Serializable {
         }
     }
 
+    public void uncorrelate(){
+        if(selected!=null){
+            selected.getVendorPoCollection().remove(vendorPoController.getSelected());
+            vendorPoController.getSelected().getAspPoCollection().remove(selected);
+            vendorPoController.getSelected().setWorkDone(vendorPoController.getSelected().getWorkDone()-
+                    (BigDecimal.valueOf(
+                                        selected.getPoValue().doubleValue()*(1+(selected.getPoMargin()/100.0))
+                                ).floatValue()/vendorPoController.getSelected().getServiceValue().floatValue()));
+            update();
+            vendorPoController.update();
+            selected = null;
+        }
+    }
     public BigInteger getSelectedGrnDeserved() {
         if(selected!=null){
         BigInteger totalGrnValue = BigInteger.ZERO;
@@ -428,4 +490,22 @@ public class AspPoController implements Serializable {
             }
         }
     }
+
+    public Date getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(Date startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public Integer getNumberOfMonths() {
+        return numberOfMonths;
+    }
+
+    public void setNumberOfMonths(Integer numberOfMonths) {
+        this.numberOfMonths = numberOfMonths;
+    }
+    
+    
 }

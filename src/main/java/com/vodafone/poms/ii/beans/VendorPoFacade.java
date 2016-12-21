@@ -16,6 +16,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -36,7 +37,7 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
         super(VendorPo.class);
     }
 
-    public List<VendorPo> findPOforASP(List<AspPo> selected) {
+    public List<VendorPo> findPOforASPExtraWork(List<AspPo> selected) {
         if(selected!=null){
             if(!selected.isEmpty())
             {
@@ -53,7 +54,30 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
             return em.createNativeQuery("select * from vendor_po " +
                                     "where po_status != 'COMPLETED' and po_type = '"+poType+"' " +
                                     "and domain_name = '"+domain+"' " +
-                                    "and remaining_in_po >= "+ totalPOASPPrice,VendorPo.class).getResultList();
+                                    "and remaining_in_po >= "+ totalPOASPPrice+"",VendorPo.class).getResultList();
+            }
+        }
+        return null;
+        
+    }
+    
+    public List<VendorPo> findPOforASPService(List<AspPo> selected) {
+        if(selected!=null){
+            if(!selected.isEmpty())
+            {
+                String poType = selected.get(0).getPoType().getTypeName();
+                String domain = selected.get(0).getDomainName().getDomainName();
+                BigInteger totalPOASPPrice = BigInteger.ZERO;
+                int MonthNumber = new DateTime(selected.get(0).getPoDate()).getMonthOfYear();
+                    for (int i = 0; i < selected.size(); i++) {
+                        totalPOASPPrice = 
+                                totalPOASPPrice.add(selected.get(i).getPoValue());
+                    }
+            return em.createNativeQuery("select * from vendor_po " +
+                                    "where po_status != 'COMPLETED' and po_type = '"+poType+"' " +
+                                    "and domain_name = '"+domain+"' " +
+                                    "and remaining_in_po >= "+ totalPOASPPrice+" "
+                                            + "and extract(month from po_date) = "+MonthNumber,VendorPo.class).getResultList();
             }
         }
         return null;

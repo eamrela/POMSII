@@ -37,6 +37,24 @@
             <to-view-id>/app/finance_admin/create_v_po.xhtml</to-view-id>
           </navigation-case>
         </navigation-rule>
+        
+        <navigation-rule>
+            <from-view-id>/app/system_admin/extra/create_v_service_po.xhtml</from-view-id>
+            <navigation-case>
+            <from-action>#{vendorPoController.prepareCreateService}</from-action>
+            <from-outcome>com.vodafone.poms.ii.entities.VendorPo[ poNumber=null ]</from-outcome>
+            <to-view-id>/app/system_admin/extra/create_v_service_po.xhtml</to-view-id>
+          </navigation-case>
+        </navigation-rule>
+        
+        <navigation-rule>
+            <from-view-id>/app/system_admin/extra/create_asp_service_po.xhtml</from-view-id>
+            <navigation-case>
+            <from-action>#{aspPoController.prepareCreateService}</from-action>
+            <from-outcome>com.vodafone.poms.ii.entities.AspPo[ poNumber=null ]</from-outcome>
+            <to-view-id>/app/system_admin/extra/create_asp_service_po.xhtml</to-view-id>
+          </navigation-case>
+        </navigation-rule>
         <resource-bundle>
             <base-name>/Bundle</base-name>
             <var>bundle</var>

@@ -67,6 +67,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\UsersCon
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\CustomerSummary.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\SubcontractorsController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\UsersRoles.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\ActivityLoader.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\VendorPo.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\PoTypesFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\VendorPoWorkDoneController.java

@@ -38,8 +38,8 @@
                                     <h:outputText value="#{aspAnalysis.name}" />
                                 </p:column>
                                 <p:column headerText="Amount">
-                                    <h:outputText value="#{aspAnalysis.amount}" >
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                    <h:outputText value="#{aspAnalysis.amount*dashboardManager.sekConversionRate}" >
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" />
                                     </h:outputText>
                                 </p:column>
                             </p:dataTable>

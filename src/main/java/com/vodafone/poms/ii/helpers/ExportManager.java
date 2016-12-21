@@ -59,6 +59,70 @@ public class ExportManager implements Serializable {
     @Inject
     private AspPoController aspPOController;
     
+    public void exportActivityForUser(){
+        List<Activity> activities = activityController.getUserItems();
+        
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Master Track");
+        Row row = sheet.createRow(0);
+        for (int i = 0; i < activityHeaders.length; i++) {
+            row.createCell(i).setCellValue(activityHeaders[i]);
+        }
+        for (int i = 0; i < activities.size(); i++) {
+            row = sheet.createRow(i+1);
+            row.createCell(0).setCellValue(activities.get(i).getSite().getSitePhysical());
+            row.createCell(1).setCellValue(activities.get(i).getAsp().getSubcontractorName());
+            row.createCell(2).setCellValue(activities.get(i).getArea().getAreaName());
+            row.createCell(3).setCellValue(activities.get(i).getVendorOwner().getOwnerName());
+            if(activities.get(i).getClaimStatus()!=null){
+            row.createCell(4).setCellValue(activities.get(i).getClaimStatus().getClaimName());
+            }else{
+            row.createCell(4).setCellValue(""); 
+            }
+            if(activities.get(i).getApprovalStatus()!=null){
+            row.createCell(5).setCellValue(activities.get(i).getApprovalStatus().getStatusName());
+            }else{
+            row.createCell(5).setCellValue(""); 
+            }
+            row.createCell(6).setCellValue(activities.get(i).getActivityType().getDomainName());
+            if(activities.get(i).getPhase()!=null){
+            row.createCell(7).setCellValue(activities.get(i).getPhase().getPhaseName());
+            }else{
+            row.createCell(7).setCellValue(""); 
+            }
+            row.createCell(8).setCellValue(activities.get(i).getActivityDate());
+            row.createCell(9).setCellValue(activities.get(i).getAcMaterialId());
+            row.createCell(10).setCellValue(activities.get(i).getAcDescription());
+            row.createCell(11).setCellValue(activities.get(i).getActivityDetails());
+            row.createCell(12).setCellValue(activities.get(i).getQty());
+            row.createCell(13).setCellValue(activities.get(i).getAcVendorPrice());
+            row.createCell(14).setCellValue(activities.get(i).getTotalPriceVendor());
+            row.createCell(15).setCellValue(activities.get(i).getTotalPriceVendorTaxes());
+            row.createCell(16).setCellValue(activities.get(i).getAcSubcontractorPrice());
+            row.createCell(17).setCellValue(activities.get(i).getTotalPriceAsp());
+            row.createCell(18).setCellValue(activities.get(i).getTotalUm());
+            row.createCell(19).setCellValue(activities.get(i).getTotalUmPercent());
+            row.createCell(20).setCellValue(activities.get(i).getActivityComment());
+            row.createCell(21).setCellValue((activities.get(i).getAspPoCollection().isEmpty()?
+                                    "Uncorrelated":
+                                    ((AspPo)activities.get(i).getAspPoCollection().toArray()[0]).getPoNumber()));
+        }
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        externalContext.setResponseContentType("application/vnd.ms-excel");
+        externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"G-Cairo Region Extra Work.xlsx\"");
+
+        try {
+            workbook.write(externalContext.getResponseOutputStream());
+            externalContext.getResponseOutputStream().close();
+        } catch (IOException ex) {
+            Logger.getLogger(ExportManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        facesContext.responseComplete();
+        JsfUtil.addSuccessMessage("Activity Report is now exported");
+        
+    }
+    
     public void exportActivity(){
         List<Activity> activities = activityController.getExportItems(fromDate,toDate);
         
@@ -74,19 +138,31 @@ public class ExportManager implements Serializable {
             row.createCell(1).setCellValue(activities.get(i).getAsp().getSubcontractorName());
             row.createCell(2).setCellValue(activities.get(i).getArea().getAreaName());
             row.createCell(3).setCellValue(activities.get(i).getVendorOwner().getOwnerName());
+            if(activities.get(i).getClaimStatus()!=null){
             row.createCell(4).setCellValue(activities.get(i).getClaimStatus().getClaimName());
+            }else{
+            row.createCell(4).setCellValue(""); 
+            }
+            if(activities.get(i).getApprovalStatus()!=null){
             row.createCell(5).setCellValue(activities.get(i).getApprovalStatus().getStatusName());
+            }else{
+            row.createCell(5).setCellValue(""); 
+            }
             row.createCell(6).setCellValue(activities.get(i).getActivityType().getDomainName());
+            if(activities.get(i).getPhase()!=null){
             row.createCell(7).setCellValue(activities.get(i).getPhase().getPhaseName());
+            }else{
+            row.createCell(7).setCellValue(""); 
+            }
             row.createCell(8).setCellValue(activities.get(i).getActivityDate());
-            row.createCell(9).setCellValue(activities.get(i).getActivityCode().getMaterialId());
-            row.createCell(10).setCellValue(activities.get(i).getActivityCode().getDescription());
+            row.createCell(9).setCellValue(activities.get(i).getAcMaterialId());
+            row.createCell(10).setCellValue(activities.get(i).getAcDescription());
             row.createCell(11).setCellValue(activities.get(i).getActivityDetails());
             row.createCell(12).setCellValue(activities.get(i).getQty());
-            row.createCell(13).setCellValue(activities.get(i).getActivityCode().getVendorPrice());
+            row.createCell(13).setCellValue(activities.get(i).getAcVendorPrice());
             row.createCell(14).setCellValue(activities.get(i).getTotalPriceVendor());
             row.createCell(15).setCellValue(activities.get(i).getTotalPriceVendorTaxes());
-            row.createCell(16).setCellValue(activities.get(i).getActivityCode().getSubcontractorPrice());
+            row.createCell(16).setCellValue(activities.get(i).getAcSubcontractorPrice());
             row.createCell(17).setCellValue(activities.get(i).getTotalPriceAsp());
             row.createCell(18).setCellValue(activities.get(i).getTotalUm());
             row.createCell(19).setCellValue(activities.get(i).getTotalUmPercent());

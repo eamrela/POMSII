@@ -70,15 +70,16 @@
                                 <h:form id="dashboardForm">
                                     <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
-                                <POMSII:Dashboard_Figures/>
-                                <POMSII:Dashboard_MasterDetails/>
-                                <POMSII:Dashboard_Figures_Details/>
-                                <POMSII:Dashboard_Committed_Remaining/>
-                                <POMSII:Dashboard_ASPAnalysis/>
-                                <POMSII:Dashboard_DomainAnalysis/>
+                                
+                                <POMSII:Dashboard_Figures id="figures"/>
+                                <POMSII:Dashboard_MasterDetails id="masterDetails"/>
+                                <POMSII:Dashboard_Figures_Details id="figuresDetails"/>
+                                <POMSII:Dashboard_Committed_Remaining id="commitedRemaining"/>
+                                <POMSII:Dashboard_ASPAnalysis id="aspAnalysis"/>
+                                <POMSII:Dashboard_DomainAnalysis id="domainAnalysis"/>
                                 <!--<POMSII:MDNotYetGenerated/>-->
-                                <POMSII:Dashboard_Uncorrelated/>
-                                <POMSII:Dashboard_CustomerSummary/>
+                                <POMSII:Dashboard_Uncorrelated id="uncorrelated"/>
+                                <POMSII:Dashboard_CustomerSummary id="customerSummary"/>
                                 
                                 <p:commandButton title="Click for settings"
                                                  type="button" 
@@ -107,13 +108,16 @@
                                                            itemLabel="#{domain.domainName}" 
                                                            itemValue="#{domain}" />
                                        </p:selectManyMenu>
- 
+                                       <h:outputText value="SEK Conversion rate" />
+                                       <h:inputText value="#{dashboardManager.sekConversionRate}"/>
+                                       <h:outputText value="Currency" />
+                                       <h:inputText value="#{dashboardManager.currency}"/>
+                                        
                                         <h:outputText value="Refresh" />
                                          <p:commandButton 
                                                       value="Refresh"
-                                                      actionListener="#{dashboardManager.refresh}"
-                                                      update=""
-                                                      ajax="false"
+                                                      actionListener="#{dashboardManager.refresh(true)}"
+                                                      ajax="true"
                                                       >
                                         </p:commandButton >
                                     </p:panelGrid>

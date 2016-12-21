@@ -12,6 +12,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -44,6 +47,11 @@ public class Area implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "area_owner")
     private String areaOwner;
+    @JoinTable(name = "users_j_areas", joinColumns = {
+        @JoinColumn(name = "area_name", referencedColumnName = "area_name")}, inverseJoinColumns = {
+        @JoinColumn(name = "username", referencedColumnName = "username")})
+    @ManyToMany
+    private Collection<Users> usersCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "area")
     private Collection<Activity> activityCollection;
 
@@ -79,6 +87,15 @@ public class Area implements Serializable {
         this.activityCollection = activityCollection;
     }
 
+    @XmlTransient
+    public Collection<Users> getUsersCollection() {
+        return usersCollection;
+    }
+
+    public void setUsersCollection(Collection<Users> usersCollection) {
+        this.usersCollection = usersCollection;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

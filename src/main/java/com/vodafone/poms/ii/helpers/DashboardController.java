@@ -16,6 +16,7 @@ import com.vodafone.poms.ii.entities.DomainNames;
 import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.entities.VendorMd;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,12 +25,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTime;
 
 /**
@@ -42,6 +48,8 @@ public class DashboardController implements Serializable{
     
     private Date start;
     private Date end;
+    private Float sekConversionRate = null;
+    private String currency = null;
     private String startStr;
     private String endStr;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -109,17 +117,23 @@ public class DashboardController implements Serializable{
         start = DateTime.now().withDayOfMonth(1).withTimeAtStartOfDay().toDate();
     }
     
-    @PostConstruct
-    public void refresh(){
+//    @PostConstruct
+    public void refresh(boolean redirect){
         calculateDashboardFigues();
         calculateRemainingNotYetInvoiced();
         calculateCommitedCost();
-        
         getAspAnalysis();
         getDomainAnalysis();
-       
         calculateCustomerSummary();
-        
+        getCurrency();
+        if(redirect){
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+        } catch (IOException ex) {
+            Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
     }
 
     private static double round (double value, int precision) {
@@ -201,9 +215,8 @@ public class DashboardController implements Serializable{
         domainAnalysis = null;
         aspAnalysisChartData = null;
         domainAnalysisChartData = null;
-        
         customerSummary = null;
-        refresh();
+        refresh(false);
     }
 
     
@@ -327,7 +340,7 @@ public class DashboardController implements Serializable{
     }
     
     public BigInteger getNS() {
-        return NS;
+        return BigDecimal.valueOf(NS.floatValue()*getSekConversionRate()).toBigInteger();
     }
 
     public void setNS(BigInteger NS) {
@@ -335,7 +348,7 @@ public class DashboardController implements Serializable{
     }
 
     public BigInteger getCOS() {
-        return COS;
+        return BigDecimal.valueOf(COS.floatValue()*getSekConversionRate()).toBigInteger();
     }
 
     public String getStartStr() {
@@ -362,7 +375,7 @@ public class DashboardController implements Serializable{
     }
 
     public BigInteger getUM() {
-        return UM;
+        return BigDecimal.valueOf(UM.floatValue()*getSekConversionRate()).toBigInteger();
     }
 
     public void setUM(BigInteger UM) {
@@ -751,6 +764,31 @@ public class DashboardController implements Serializable{
         }
         return selectedDomainsStr;
     }
+
+    public Float getSekConversionRate() {
+        if(sekConversionRate==null){
+            return 1f;
+        }
+        return sekConversionRate;
+    }
+
+    public void setSekConversionRate(Float sekConversionRate) {
+        this.sekConversionRate = sekConversionRate;
+        
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getCurrency() {
+        if(currency==null){
+            return "EGP";
+        }
+        return this.currency;
+    }
+    
+    
     
     
 }

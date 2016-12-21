@@ -3,14 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.vodafone.poms.ii.entities;
 
+import com.vodafone.poms.ii.entities.Activity;
+import com.vodafone.poms.ii.entities.Area;
+import com.vodafone.poms.ii.entities.AspGrn;
+import com.vodafone.poms.ii.entities.AspPo;
+import com.vodafone.poms.ii.entities.UsersRoles;
+import com.vodafone.poms.ii.entities.VendorInvoice;
+import com.vodafone.poms.ii.entities.VendorMd;
+import com.vodafone.poms.ii.entities.VendorPo;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,16 +46,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Users.findByFirstLastName", query = "SELECT u FROM Users u WHERE u.firstLastName = :firstLastName")})
 public class Users implements Serializable {
 
-    @OneToMany(mappedBy = "creator")
-    private Collection<AspPo> aspPoCollection;
-
-    @OneToMany(mappedBy = "creator")
-    private Collection<VendorPo> vendorPoCollection;
-    @OneToMany(mappedBy = "creator")
-    private Collection<VendorInvoice> vendorInvoiceCollection;
-    @OneToMany(mappedBy = "creator")
-    private Collection<VendorMd> vendorMdCollection;
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -65,8 +65,22 @@ public class Users implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "first_last_name")
     private String firstLastName;
+    @ManyToMany(mappedBy = "usersCollection")
+    private Collection<Area> areaCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<Activity> activityCollection;
     @OneToMany(mappedBy = "username")
     private Collection<UsersRoles> usersRolesCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorPo> vendorPoCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorMd> vendorMdCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<AspPo> aspPoCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<AspGrn> aspGrnCollection;
+    @OneToMany(mappedBy = "creator")
+    private Collection<VendorInvoice> vendorInvoiceCollection;
 
     public Users() {
     }
@@ -116,12 +130,75 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
+    public Collection<Area> getAreaCollection() {
+        return areaCollection;
+    }
+
+    public void setAreaCollection(Collection<Area> areaCollection) {
+        this.areaCollection = areaCollection;
+    }
+
+    @XmlTransient
+    public Collection<Activity> getActivityCollection() {
+        return activityCollection;
+    }
+
+    public void setActivityCollection(Collection<Activity> activityCollection) {
+        this.activityCollection = activityCollection;
+    }
+
+    @XmlTransient
     public Collection<UsersRoles> getUsersRolesCollection() {
         return usersRolesCollection;
     }
 
     public void setUsersRolesCollection(Collection<UsersRoles> usersRolesCollection) {
         this.usersRolesCollection = usersRolesCollection;
+    }
+
+    @XmlTransient
+    public Collection<VendorPo> getVendorPoCollection() {
+        return vendorPoCollection;
+    }
+
+    public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
+        this.vendorPoCollection = vendorPoCollection;
+    }
+
+    @XmlTransient
+    public Collection<VendorMd> getVendorMdCollection() {
+        return vendorMdCollection;
+    }
+
+    public void setVendorMdCollection(Collection<VendorMd> vendorMdCollection) {
+        this.vendorMdCollection = vendorMdCollection;
+    }
+
+    @XmlTransient
+    public Collection<AspPo> getAspPoCollection() {
+        return aspPoCollection;
+    }
+
+    public void setAspPoCollection(Collection<AspPo> aspPoCollection) {
+        this.aspPoCollection = aspPoCollection;
+    }
+
+    @XmlTransient
+    public Collection<AspGrn> getAspGrnCollection() {
+        return aspGrnCollection;
+    }
+
+    public void setAspGrnCollection(Collection<AspGrn> aspGrnCollection) {
+        this.aspGrnCollection = aspGrnCollection;
+    }
+
+    @XmlTransient
+    public Collection<VendorInvoice> getVendorInvoiceCollection() {
+        return vendorInvoiceCollection;
+    }
+
+    public void setVendorInvoiceCollection(Collection<VendorInvoice> vendorInvoiceCollection) {
+        this.vendorInvoiceCollection = vendorInvoiceCollection;
     }
 
     @Override
@@ -146,43 +223,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vodafone.poms.ii.temp.Users[ username=" + username + " ]";
-    }
-
-    @XmlTransient
-    public Collection<VendorPo> getVendorPoCollection() {
-        return vendorPoCollection;
-    }
-
-    public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
-        this.vendorPoCollection = vendorPoCollection;
-    }
-
-    @XmlTransient
-    public Collection<VendorInvoice> getVendorInvoiceCollection() {
-        return vendorInvoiceCollection;
-    }
-
-    public void setVendorInvoiceCollection(Collection<VendorInvoice> vendorInvoiceCollection) {
-        this.vendorInvoiceCollection = vendorInvoiceCollection;
-    }
-
-    @XmlTransient
-    public Collection<VendorMd> getVendorMdCollection() {
-        return vendorMdCollection;
-    }
-
-    public void setVendorMdCollection(Collection<VendorMd> vendorMdCollection) {
-        this.vendorMdCollection = vendorMdCollection;
-    }
-
-    @XmlTransient
-    public Collection<AspPo> getAspPoCollection() {
-        return aspPoCollection;
-    }
-
-    public void setAspPoCollection(Collection<AspPo> aspPoCollection) {
-        this.aspPoCollection = aspPoCollection;
+        return "entities.Users[ username=" + username + " ]";
     }
     
 }

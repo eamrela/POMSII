@@ -38,8 +38,8 @@
                                     <h:outputText value="#{domainAnalysis.name}" />
                                 </p:column>
                                 <p:column headerText="Amount">
-                                    <h:outputText value="#{domainAnalysis.amount}" >
-                                        <f:convertNumber type="currency" currencySymbol="EGP" />
+                                    <h:outputText value="#{domainAnalysis.amount*dashboardManager.sekConversionRate}" >
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" />
                                     </h:outputText>
                                 </p:column>
                             </p:dataTable>

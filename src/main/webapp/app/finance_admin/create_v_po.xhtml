@@ -157,20 +157,12 @@
                                                     </div>
                                                     <div class="col-xs-3">
                                                         <label for="potype">Type</label>
-                                                        <h:selectOneMenu id="potype" 
-                                                                         value="#{vendorPoController.selected.poType}" 
-                                                                         required="true" 
+                                                        <h:inputText id="potype" 
+                                                                     value="#{vendorPoController.selected.poType.typeName}" 
+                                                                          required="true" 
                                                                          requiredMessage="PO Type is required"
-                                                                         converter="PoTypesControllerConverter"
-                                                                         styleClass="form-control">
-                                                            <f:selectItem itemLabel="" 
-                                                                          itemValue="#{null}" noSelectionOption="false" />
-                                                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
-                                                                           var="poTypeItem"
-                                                                           itemValue="#{poTypeItem}"
-                                                                           itemLabel="#{poTypeItem.typeName}"
-                                                                        />
-                                                        </h:selectOneMenu>
+                                                                         styleClass="form-control"
+                                                                         disabled="true"/>
                                                     </div>
                                                     <div class="col-xs-3">
                                                         <label for="podomain">Domain</label>

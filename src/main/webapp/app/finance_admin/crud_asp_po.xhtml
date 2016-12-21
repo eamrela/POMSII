@@ -228,7 +228,7 @@
                                                                                                :ASPPOListForm:selectedASPPOGRN,
                                                                                                :ASPPOListForm:growl,
                                                                                                :ASPPOListForm:datalistASPPO" 
-                                                                                         disabled="#{empty aspPoController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                         disabled="#{empty aspPoController.selectedItems or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                <p:commandButton id="closeButton" icon="ui-icon-closethick"  
                                                                                 value="Close" actionListener="#{aspPoController.closePO}" 
                                                                                          update="editButton,deleteButton, :ASPPOListForm:selectedCorrelation,
@@ -236,7 +236,7 @@
                                                                                                :ASPPOListForm:selectedASPPOGRN,
                                                                                                :ASPPOListForm:growl,
                                                                                                :ASPPOListForm:datalistASPPO" 
-                                                                                         disabled="#{empty aspPoController.selectedItems and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                         disabled="#{empty aspPoController.selectedItems or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                            </f:facet>
                                                        </p:dataTable>
                                                     </div>
@@ -281,13 +281,11 @@
                                                             </p:dataTable>
                                                             </h:panelGroup>
                                                             <h:panelGroup rendered="#{aspPoController.selected.vendorPoCollection.size()==0}">
-                                                             <label >Total PO price with Margin: 
-                                                                 (
+                                                                <label> Total Price: 
                                                                  <h:outputText value="#{aspPoController.totalPOASPPrice}">
                                                                      <f:convertNumber type="currency"  minFractionDigits="0" currencySymbol=""/>
                                                                  </h:outputText>                       
-                                                                 )
-                                                             </label>
+                                                                </label>
                                                              <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
                                                             <p:dataTable 
                                                                 id="vendorDataTable"
@@ -403,7 +401,7 @@
                                                                                                :ASPPOListForm:selectedASPPOGRN,
                                                                                                :ASPPOListForm:growl,
                                                                                                :ASPPOListForm:datalistASPPO" 
-                                                                                               disabled="#{empty aspGrnController.selected and usersController.role != 'ROLE_SYSADMIN' }"/>
+                                                                                               disabled="#{empty aspGrnController.selected or usersController.role != 'ROLE_SYSADMIN' }"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                  </div>
@@ -457,7 +455,7 @@
                                                                         rowKey="#{aspActivity.activityId}"
                                                                         styleClass="fixed-size">
                                                                 
-                                                                <p:ajax event="rowSelect" update="viewButton"/>
+                                                                <p:ajax event="rowSelect" update="viewButton,uncorrelateButton"/>
                                                                 
                                                                 <p:column headerText="Activity#" style="font-size: 9px;">
                                                                     <h:outputText value="#{aspActivity.activityId}" />
@@ -493,6 +491,13 @@
                                                                 </p:column>
                                                                 <f:facet name="footer">
                                                                     <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ActivityViewForm" oncomplete="PF('ActivityViewDialog').show()" disabled="#{empty activityController.selected}"/>
+                                                                    <p:commandButton id="uncorrelateButton"   
+                                                                                     icon="ui-icon-close" 
+                                                                                     value="Uncorrelate" 
+                                                                                     update="associatedActivity" 
+                                                                                     ajax="false"
+                                                                                     actionListener="#{activityController.uncorrelate}"
+                                                                                     disabled="#{(empty activityController.selected) or (aspGrnController.selectedPoItems.size()!=0) or usersController.role != 'ROLE_SYSADMIN'}"/>
                                                                 </f:facet>
                                                                 </p:dataTable> 
                                                                       </div>
@@ -536,7 +541,7 @@
                                         <div class="row">
                                         <div class="col-xs-6">
                                         <h:panelGroup id="display">
-                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null and aspPoWorkDoneController.selected != null}">
+                                            <p:panelGrid columns="2" rendered="#{aspPoController.selected != null or aspPoWorkDoneController.selected != null}">
                                                 <p:outputLabel value="#{bundle.CreateAspPoWorkDoneLabel_workDone}" for="workDone" />
                                                 <p:inputText id="workDone" value="#{aspPoWorkDoneController.selected.workDone}" 
                                                              title="#{bundle.CreateAspPoWorkDoneTitle_workDone}" >

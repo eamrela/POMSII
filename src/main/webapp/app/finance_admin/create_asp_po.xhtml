@@ -150,21 +150,13 @@
                                                     </div>
                                                     <div class="col-xs-3">
                                                         <label for="potype">Type</label>
-                                                        <h:selectOneMenu id="potype" 
+                                                        <h:inputText id="potype" 
                                                                          value="#{aspPoController.selected.poType}" 
                                                                          required="true" 
                                                                          converter="PoTypesControllerConverter"
                                                                          requiredMessage="PO Type is required"
-                                                                         styleClass="form-control">
-                                                            <f:selectItem itemLabel="" 
-                                                                          itemValue="#{null}" noSelectionOption="false" />
-                                                            <f:selectItems value="#{poTypesController.itemsAvailableSelectOne}"
-                                                                           var="poTypeItem"
-                                                                           itemValue="#{poTypeItem}"
-                                                                           itemLabel="#{poTypeItem.typeName}"
-                                                                        />
-                                                            <p:ajax listener="#{aspPoController.adjustMargin}" update="pomargin"/>
-                                                        </h:selectOneMenu>
+                                                                         styleClass="form-control"
+                                                                         disabled="true"/>
                                                     </div>
                                                     <div class="col-xs-3">
                                                         <label for="podomain">Domain</label>

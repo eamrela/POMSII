@@ -19,7 +19,7 @@
                         <div class="tile-body">
                                 <span>
                                 <h:outputText value="#{dashboardManager.NS}">
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                                 </span>
                         </div>
@@ -33,7 +33,7 @@
                         <div class="tile-body ">
                             <span>
                                  <h:outputText value="#{dashboardManager.COS}">
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </span>
                         </div>
@@ -47,7 +47,7 @@
                         <div class="tile-body ">
                             <span>
                                  <h:outputText value="#{dashboardManager.UM}">
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </span>
                         </div>

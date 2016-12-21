@@ -6,6 +6,7 @@
 package com.vodafone.poms.ii.beans;
 
 import com.vodafone.poms.ii.entities.VendorOwner;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,14 @@ public class VendorOwnerFacade extends AbstractFacade<VendorOwner> {
 
     public VendorOwnerFacade() {
         super(VendorOwner.class);
+    }
+
+    public VendorOwner findByName(String cellValue) {
+        List<VendorOwner> owners = em.createNativeQuery("select * from vendor_owner where owner_name like '%"+cellValue+"%'",VendorOwner.class).getResultList();
+        if(owners.size()>0){
+            return owners.get(0);
+        }
+        return null;
     }
     
 }

@@ -41,6 +41,7 @@ com\vodafone\poms\ii\helpers\DashboardController.class
 com\vodafone\poms\ii\controllers\PoStatusController.class
 com\vodafone\poms\ii\entities\PoOwner_.class
 com\vodafone\poms\ii\entities\VendorMd.class
+com\vodafone\poms\ii\helpers\ActivityLoader.class
 com\vodafone\poms\ii\controllers\EricssonPoChaserController.class
 com\vodafone\poms\ii\controllers\util\JsfUtil.class
 com\vodafone\poms\ii\beans\EricssonPoChaserFacade.class

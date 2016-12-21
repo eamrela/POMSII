@@ -24,45 +24,45 @@
                                      value="#{dashboardManager.customerSummary}"
                                      styleClass="fixed-size">
                             <p:column headerText="Total PO Value">
-                                <h:outputText value="#{custSum.totalPoValue}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalPoValue*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="MD Recieved">
-                                <h:outputText value="#{custSum.totalMdRecieved}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalMdRecieved*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="MD Deserved">
-                                <h:outputText value="#{custSum.totalMdDeserved}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalMdDeserved*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Remaining From MD">
-                                <h:outputText value="#{custSum.totalRemainingFromMd}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalRemainingFromMd*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Invoice Value">
-                                <h:outputText value="#{custSum.totalMdValue}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalMdValue*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Remaining Not Yet Invoiced">
-                                <h:outputText value="#{custSum.totalMdNotYetInvoiced}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalMdNotYetInvoiced*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Remaining In Po">
-                                <h:outputText value="#{custSum.totalRemainingInPo}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalRemainingInPo*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Committed Cost">
-                                <h:outputText value="#{custSum.totalCommittedCost}" >
-                                    <f:convertNumber currencySymbol="EGP" type="currency"/>
+                                <h:outputText value="#{custSum.totalCommittedCost*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" type="currency"/>
                                 </h:outputText>
                             </p:column>
                         </p:dataTable> 

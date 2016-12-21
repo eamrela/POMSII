@@ -121,6 +121,10 @@ public class VendorOwnerController implements Serializable {
         return getFacade().findAll();
     }
 
+    public VendorOwner getByName(String cellValue) {
+        return getFacade().findByName(cellValue);
+    }
+
     @FacesConverter("VendorOwnerControllerConverter")
     public static class VendorOwnerControllerConverter implements Converter {
 

@@ -31,18 +31,18 @@
                             </p:column>
 
                             <p:column headerText="PO Value" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.poValue}" >
-                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                <h:outputText value="#{NSRItems.vendorPoId.poValue*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="MD Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.mdDeserved}" >
-                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                <h:outputText value="#{NSRItems.mdDeserved*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Remaining in PO" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.remainingInPo}" />
+                                <h:outputText value="#{NSRItems.vendorPoId.remainingInPo*dashboardManager.sekConversionRate}" />
                             </p:column>
                             <p:column headerText="Type" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.vendorPoId.poType.typeName}" />
@@ -54,8 +54,8 @@
                                 <h:outputText value="#{NSRItems.vendorPoId.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
-                                <h:outputText value="#{dashboardManager.remainingNotyetInvoiced_Value}">
-                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
+                                <h:outputText value="#{dashboardManager.remainingNotyetInvoiced_Value*dashboardManager.sekConversionRate}">
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
                             </f:facet>
                         </p:dataTable>
@@ -80,18 +80,18 @@
                             </p:column>
 
                             <p:column headerText="POValue" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.poValue}" >
-                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                <h:outputText value="#{COSCItems.poValue*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="GRN Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.grnDeserved}" >
-                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                <h:outputText value="#{COSCItems.grnDeserved*dashboardManager.sekConversionRate}" >
+                                    <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Remaining in Po" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.remainingInPo}" />
+                                <h:outputText value="#{COSCItems.remainingInPo*dashboardManager.sekConversionRate}" />
                             </p:column>
                             <p:column headerText="Type" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.poType.typeName}" />
@@ -103,8 +103,8 @@
                                 <h:outputText value="#{COSCItems.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
-                                <h:outputText value="#{dashboardManager.committedCost_Value}">
-                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
+                                <h:outputText value="#{dashboardManager.committedCost_Value*dashboardManager.sekConversionRate}">
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
                             </f:facet>
                         </p:dataTable>

@@ -118,7 +118,7 @@ public class ActivityController implements Serializable {
         if(selectedItems.size()==1){
             selected = selectedItems.get(0);
         }
-        else{
+        else if(selectedItems.size()>0){
             // Check ASP,Type,CorrelateTo
             String domain = selectedItems.get(0).getActivityType().getDomainName();
             String asp = selectedItems.get(0).getAsp().getSubcontractorName();
@@ -191,6 +191,18 @@ public class ActivityController implements Serializable {
         return selected;
     }
 
+    public void createMultiple(List<Activity> activities){
+        for (Activity activitie : activities) {
+            getFacade().create(activitie);
+        }
+        try {
+            //http://localhost:8080/POMS-II/app/business_provider/crud_activity.xhtml
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/business_provider/crud_activity.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void create() {
         System.out.println("Creating Activity");
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ActivityCreated"));
@@ -232,13 +244,13 @@ public class ActivityController implements Serializable {
 
     public List<Activity> getItemsCorrelated() {
         if(itemsCorrelated == null){
-            itemsCorrelated = getFacade().findCorrelatedItems();
+            itemsCorrelated = getFacade().findCorrelatedItems(usersController.getLoggedInUser());
         }
         return itemsCorrelated;
     }
 
     public List<Activity> getItemsUncorrelated() {
-        itemsUncorrelated = getFacade().findUncorrelatedItems();
+        itemsUncorrelated = getFacade().findUncorrelatedItems(usersController.getLoggedInUser());
         itemsUncorrelatedActivityValue = 0f;
         for (Activity itemsUncorrelated1 : itemsUncorrelated) {
             itemsUncorrelatedActivityValue = itemsUncorrelatedActivityValue + itemsUncorrelated1.getTotalPriceAsp();
@@ -298,6 +310,10 @@ public class ActivityController implements Serializable {
 
     public List<Activity> getExportItems(Date fromDate, Date toDate) {
         return getFacade().findExportItems(fromDate,toDate);
+    }
+
+    public List<Activity> getUserItems() {
+        return getFacade().findUserItems(usersController.getLoggedInUser());
     }
 
     @FacesConverter(forClass = Activity.class)
@@ -368,18 +384,14 @@ public class ActivityController implements Serializable {
     }
     
     public void uncorrelate(){
-        if(selected!=null && selectedASPPo!=null){
-            selected.setAspPoCollection(null);
+        if(selected!=null){
+            selected.getAspPoCollection().remove(aspPOController.getSelected());
+            aspPOController.getSelected().getActivityCollection().remove(selected);
+            aspPOController.getSelected().setWorkDone(aspPOController.getSelected().getWorkDone()-
+                    (selected.getTotalPriceAsp()/aspPOController.getSelected().getServiceValue().floatValue()));
             update();
-            selectedASPPo.getActivityCollection().remove(selected);
-//            selectedASPPo.setWorkDone(selectedASPPo.getWorkDone().subtract(BigInteger.ONE));
-            selectedASPPo.setRemainingInPo(
-                    selectedASPPo.getRemainingInPo().add(
-                            BigInteger.valueOf(selected.getTotalPriceAsp().intValue())));
-            aspPOController.setSelected(selectedASPPo);
             aspPOController.update();
-            aspPOController.setSelected(null);
-            JsfUtil.addSuccessMessage("Activity "+selected.getActivityId()+" is now uncorrelated from ASP PO "+selectedASPPo.getPoNumber());
+            selected = null;
         }
     }
     
@@ -402,6 +414,18 @@ public class ActivityController implements Serializable {
             itemsUncorrelated = null;
             selectedItems = null;
             JsfUtil.addSuccessMessage("Activity "+activityIds+" is now correlated to Vendor PO "+selectedVendorPo.getPoNumber());
+        }
+    }
+    
+    public void uncorrelateVendor(){
+        if(selected!=null){
+            selected.getVendorPoCollection().remove(vendorPOController.getSelected());
+            vendorPOController.getSelected().getActivityCollection().remove(selected);
+            vendorPOController.getSelected().setWorkDone(vendorPOController.getSelected().getWorkDone()-
+                    (selected.getTotalPriceVendor()/vendorPOController.getSelected().getServiceValue().floatValue()));
+            update();
+            vendorPOController.update();
+            selected = null;
         }
     }
     

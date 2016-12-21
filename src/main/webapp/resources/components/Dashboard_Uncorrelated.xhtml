@@ -39,16 +39,16 @@
                                     <h:outputText value="#{ucActivity.activityDetails}" />
                                 </p:column>
                                 <p:column headerText="Price ASP" style="font-size: 9px;">
-                                    <h:outputText value="#{ucActivity.totalPriceAsp}" >
-                                        <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                    <h:outputText value="#{ucActivity.totalPriceAsp*dashboardManager.sekConversionRate}" >
+                                        <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                     </h:outputText>
                                 </p:column>
                                 <p:column headerText="Needed PO" style="font-size: 9px;" >
                                     <h:outputText value="#{ucActivity.correlateTo}" />
                                 </p:column>
                                 <f:facet name="footer">
-                                <h:outputText value="#{activityController.itemsUncorrelatedActivityValue}">
-                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
+                                    <h:outputText value="#{activityController.itemsUncorrelatedActivityValue*dashboardManager.sekConversionRate}">
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
                                 </f:facet>
                             </p:dataTable> 
@@ -79,7 +79,7 @@
                                     <h:outputText value="#{ucAspPo.poType.typeName}" />
                                 </p:column>
                                 <p:column headerText="Remaining in Po" style="font-size: 9px;">
-                                    <h:outputText value="#{ucAspPo.remainingInPo}" />
+                                    <h:outputText value="#{ucAspPo.remainingInPo*dashboardManager.sekConversionRate}" />
                                 </p:column>
 
                                 <p:column headerText="ASP" style="font-size: 9px;">
@@ -89,8 +89,8 @@
                                     <h:outputText value="#{ucAspPo.poDescription}" />
                                 </p:column>
                                 <p:column headerText="Po Value" style="font-size: 9px;">
-                                    <h:outputText value="#{ucAspPo.poValue}" >
-                                        <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                    <h:outputText value="#{ucAspPo.poValue*dashboardManager.sekConversionRate}" >
+                                        <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                     </h:outputText>
                                 </p:column>
                                 <p:column headerText="Margin" style="font-size: 9px;">
@@ -99,8 +99,8 @@
                                     </h:outputText>%
                                 </p:column>
                                 <f:facet name="footer">
-                                    <h:outputText value="#{aspPoController.itemsUncorrelatedPoValue}">
-                                        <f:convertNumber type="currency" currencySymbol="" maxFractionDigits="0" />
+                                    <h:outputText value="#{aspPoController.itemsUncorrelatedPoValue*dashboardManager.sekConversionRate}">
+                                        <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
                                 </f:facet>
                             </p:dataTable>
