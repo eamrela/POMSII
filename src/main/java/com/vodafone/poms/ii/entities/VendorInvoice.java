@@ -6,7 +6,7 @@
 package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
@@ -53,12 +53,12 @@ public class VendorInvoice implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "invoice_deserved")
-    private BigInteger invoiceDeserved;
+    private BigDecimal invoiceDeserved;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "invoice_factor")
     private Double invoiceFactor;
     @Column(name = "invoice_value")
-    private BigInteger invoiceValue;
+    private BigDecimal invoiceValue;
     @Column(name = "invoice_date")
     @Temporal(TemporalType.DATE)
     private Date invoiceDate;
@@ -68,7 +68,7 @@ public class VendorInvoice implements Serializable {
     @Column(name = "invoiced")
     private Boolean invoiced;
     @Column(name = "remaining_in_invoice")
-    private BigInteger remainingInInvoice;
+    private BigDecimal remainingInInvoice;
     @Basic(optional = false)
     @NotNull
     @Column(name = "sys_date")
@@ -101,11 +101,11 @@ public class VendorInvoice implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getInvoiceDeserved() {
+    public BigDecimal getInvoiceDeserved() {
         return invoiceDeserved;
     }
 
-    public void setInvoiceDeserved(BigInteger invoiceDeserved) {
+    public void setInvoiceDeserved(BigDecimal invoiceDeserved) {
         this.invoiceDeserved = invoiceDeserved;
     }
 
@@ -117,11 +117,11 @@ public class VendorInvoice implements Serializable {
         this.invoiceFactor = invoiceFactor;
     }
 
-    public BigInteger getInvoiceValue() {
+    public BigDecimal getInvoiceValue() {
         return invoiceValue;
     }
 
-    public void setInvoiceValue(BigInteger invoiceValue) {
+    public void setInvoiceValue(BigDecimal invoiceValue) {
         this.invoiceValue = invoiceValue;
     }
 
@@ -149,11 +149,11 @@ public class VendorInvoice implements Serializable {
         this.invoiced = invoiced;
     }
 
-    public BigInteger getRemainingInInvoice() {
+    public BigDecimal getRemainingInInvoice() {
         return remainingInInvoice;
     }
 
-    public void setRemainingInInvoice(BigInteger remainingInInvoice) {
+    public void setRemainingInInvoice(BigDecimal remainingInInvoice) {
         this.remainingInInvoice = remainingInInvoice;
     }
 

@@ -7,6 +7,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -19,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("usersRolesController")
 @SessionScoped
@@ -28,10 +30,29 @@ public class UsersRolesController implements Serializable {
     private com.vodafone.poms.ii.beans.UsersRolesFacade ejbFacade;
     private List<UsersRoles> items = null;
     private UsersRoles selected;
+    private ArrayList<String> rolesList;
 
+    @Inject
+    UsersController usersController;
+    
     public UsersRolesController() {
+        rolesList= new ArrayList<>();
+        rolesList.add("ROLE_ADMIN");
+        rolesList.add("ROLE_ADMIN");
+        rolesList.add("ROLE_FINANCEADMIN");
+        rolesList.add("ROLE_BUSINESSPROVIDER");
+        rolesList.add("ROLE_SYSADMIN");
     }
 
+    public ArrayList<String> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(ArrayList<String> rolesList) {
+        this.rolesList = rolesList;
+    }
+
+    
     public UsersRoles getSelected() {
         return selected;
     }
@@ -50,23 +71,49 @@ public class UsersRolesController implements Serializable {
         return ejbFacade;
     }
 
+     public void resetSelection(){
+        System.out.println("Resetting UsersRoles Selection");
+        selected=null;
+        usersController.setSelected(null);
+    }
+     
     public UsersRoles prepareCreate() {
         selected = new UsersRoles();
+        usersController.prepareCreate();
+        selected.setUsername(usersController.getSelected());
         initializeEmbeddableKey();
         return selected;
     }
 
     public void create() {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("UsersRolesCreated"));
+        persist(PersistAction.CREATE, "Created");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
     }
 
+     public void createNewUserRole() {
+        usersController.getSelected().setEnabled(Short.valueOf("1"));
+        usersController.create();
+        persist(PersistAction.CREATE, "Created");
+        if (!JsfUtil.isValidationFailed()) {
+            items = null;    // Invalidate list of items to trigger re-query.
+        }
+    }
+    
+
+    public void updateUsersRoles() {
+        usersController.update();
+        persist(PersistAction.UPDATE, "Updated");
+    }
     public void update() {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("UsersRolesUpdated"));
+        persist(PersistAction.UPDATE, "Updated");
     }
 
+    public void prepareEdit(){
+        usersController.setSelected(selected.getUsername());
+    }
+    
     public void destroy() {
         persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("UsersRolesDeleted"));
         if (!JsfUtil.isValidationFailed()) {

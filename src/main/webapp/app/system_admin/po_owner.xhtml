@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:POMSII="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"></meta>
+        <meta name="apple-mobile-web-app-capable" content="yes"></meta>
+        <meta name="apple-touch-fullscreen" content="yes"></meta>
+        <meta name="description" content="POMS"></meta>
+        <meta name="author" content="Amr El Ansary"></meta>
+
+        <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
+
+        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
+        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> 
+
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/form-daterangepicker/daterangepicker-bs3.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/fonts/font-awesome/css/font-awesome.min.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/css/styles.css']}" type="text/css" rel="stylesheet"/>
+        <link href="#{resource['assets/plugins/progress-skylo/skylo.css']}" type="text/css" rel="stylesheet"/>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
+        <h:outputScript library="js" name="jsfcrud.js" target="head" />
+        <title>Settings | PO Owners</title>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+
+
+    </h:head>
+    <h:body class="animated-content infobar-overlay">
+        <POMSII:Header/>
+
+        <div id="wrapper">
+            <div id="layout-static">
+                <div class="static-sidebar-wrapper sidebar-blue">
+                    <div class="static-sidebar">
+                        <div class="sidebar">
+                            <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
+
+                            <div class="widget stay-on-collapse" id="widget-sidebar">
+                                <POMSII:NavigationMenu
+                                    dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="static-content-wrapper">
+                    <div class="static-content">
+                        <div class="page-content">
+                            <POMSII:PageHeadings largeText="Settings" smallText="Edit System and Enviroment Settings"/>
+                            <div class="container-fluid">
+                                <!--Page start content here-->
+                                <div class="row-fluid">
+                                    <h:form id="PoOwnerListForm">
+                                        <p:growl id="growl"/>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                    <h2>PO Owners</h2>
+                                                    <div class="panel-ctrls" >
+                                                        <p:commandButton id="createButton" styleClass="btn btn-default btn-raised" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{poOwnerController.prepareCreate}" update=":PoOwnerCreateForm" oncomplete="PF('PoOwnerCreateDialog').show()"/>
+                                                        <p:commandButton id="editButton"  styleClass="btn btn-default btn-raised" icon="ui-icon-pencil" value="#{bundle.Edit}" update=":PoOwnerEditForm" oncomplete="PF('PoOwnerEditDialog').show()" disabled="#{empty poOwnerController.selected}"/>
+                                                    </div>
+                                            </div>
+                                            <div class="panel-body" style="display: block;">
+                                                    <!-- panel body -->
+                                                <p:dataTable id="datalist" value="#{poOwnerController.items}" var="item"
+                                                             selectionMode="single" selection="#{poOwnerController.selected}"
+                                                             paginator="true"
+                                                             rowKey="#{item.id}"
+                                                             rows="10"
+                                                             rowsPerPageTemplate="10,20,30,40,50"
+                                                             >
+
+                                                    <p:ajax event="rowSelect"   update=":PoOwnerListForm:createButton :PoOwnerListForm:editButton"/>
+                                                    <p:ajax event="rowUnselect" update=":PoOwnerListForm:createButton :PoOwnerListForm:editButton"/>
+
+                                                    <p:column filterBy="#{item.id}" sortBy="#{item.id}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ListPoOwnerTitle_id}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{item.id}"/>
+                                                    </p:column>
+                                                    <p:column filterBy="#{item.ownerName}" sortBy="#{item.ownerName}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ListPoOwnerTitle_ownerName}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{item.ownerName}"/>
+                                                    </p:column>
+                                                    <p:column filterBy="#{item.ownerNumber}" sortBy="#{item.ownerNumber}" filterStyle="width: 99%;  height: 25px;" filterMatchMode="contains">
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ListPoOwnerTitle_ownerNumber}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{item.ownerNumber}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer"> 
+                                                    <br/>
+                                                    "#{poOwnerController.items.size()}" PO Owner items
+                                                    </f:facet>
+                                                </p:dataTable>
+                                                    <!-- panel body end -->
+                                            </div>
+                                            <div class="panel-footer" style="display: block;">
+                                                <div class="row-fluid" id="datalistfooter">
+                                                        <div class="col-lg-6">
+                                                        <!--<span class="text-gray"><em>"{poOwnerController.items.size()}" PO Owner items</em></span>-->
+                                                            
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <h:commandButton value="Export"  class="btn btn-sm btn-raised pull-right">
+                                                                <p:dataExporter type="csv" target="datalist" fileName="PoOwnerExport" encoding="utf-8" />
+                                                            </h:commandButton>
+                                                            <div class="panel-ctrls pull-right">
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </h:form>
+                                    
+                                </div>
+                                
+                                
+                                <!--page content end here--> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <POMSII:Footer/>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script src="#{resource['assets/js/bootstrap.min.js']}"></script>
+        <script src="#{resource['assets/js/enquire.min.js']}"></script>
+        <script src="#{resource['assets/plugins/velocityjs/velocity.min.js']}"></script>
+        <script src="#{resource['assets/plugins/velocityjs/velocity.ui.min.js']}"></script>
+        <script src="#{resource['assets/plugins/progress-skylo/skylo.js']}"></script>
+        <script src="#{resource['assets/plugins/bootstrap-tabdrop/js/bootstrap-tabdrop.js']}"></script>
+        <script src="#{resource['assets/plugins/nanoScroller/js/jquery.nanoscroller.min.js']}"></script>
+        <script src="#{resource['assets/plugins/bootstrap-material-design/js/material.min.js']}"></script>
+        <script src="#{resource['assets/plugins/bootstrap-material-design/js/ripples.min.js']}"></script>
+        <script src="#{resource['assets/js/application.js']}"></script>
+        <script src="#{resource['assets/plugins/form-daterangepicker/moment.min.js']}"></script>
+        <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
+
+    </h:body>
+    <ui:fragment>
+        <ui:include src="modals/CreatePoOwner.xhtml" />
+        <ui:include src="modals/EditPoOwner.xhtml" />
+        
+    </ui:fragment>
+        
+        
+
+</html>
+

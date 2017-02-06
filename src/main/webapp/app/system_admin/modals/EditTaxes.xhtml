@@ -20,8 +20,9 @@
                         <p:outputLabel value="#{bundle.EditTaxesLabel_activationDate}" for="activationDate" />
                         <p:calendar id="activationDate"  value="#{taxesController.selected.activationDate}" title="#{bundle.EditTaxesTitle_activationDate}"  showOn="button"/>
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{taxesController.update}" value="#{bundle.Save}" update="display,:TaxesListForm:datalist,:TaxesListForm:growl" oncomplete="handleSubmit(args, 'TaxesEditDialog');"/>
-                    <p:commandButton  value="#{bundle.Cancel}" >
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{taxesController.update}" value="#{bundle.Save}" update="display,:TaxesListForm:datalist,:TaxesListForm:growl" oncomplete="handleSubmit(args, 'TaxesEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised"  value="#{bundle.Cancel}" >
+                        <p:resetInput target=":TaxesEditForm"/>
                         <p:ajax listener="#{taxesController.resetSelection}" oncomplete="PF('TaxesEditDialog').hide();" update=":TaxesListForm:datalist :TaxesListForm:editButton"/>
                     </p:commandButton>
                 </h:panelGroup>

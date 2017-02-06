@@ -84,7 +84,7 @@ public class Activity implements Serializable {
     @Column(name = "activity_date")
     @Temporal(TemporalType.DATE)
     private Date activityDate;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @NotNull
     @Size(min = 1, max = 2147483647)
     @Column(name = "activity_details")
@@ -122,7 +122,7 @@ public class Activity implements Serializable {
     @ManyToMany
     private Collection<VendorPo> vendorPoCollection;
     @JoinColumn(name = "activity_code", referencedColumnName = "material_id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private ActivityCode activityCode;
     @JoinColumn(name = "approval_status", referencedColumnName = "status_name")
     @ManyToOne

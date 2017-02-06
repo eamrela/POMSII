@@ -5,6 +5,7 @@
  */
 package com.vodafone.poms.ii.helpers;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -13,109 +14,109 @@ import java.math.BigInteger;
  */
 public class CustomerSummary {
  
-    private BigInteger totalPoValue;
-    private BigInteger totalMdRecieved;
-    private BigInteger totalMdDeserved;
-    private BigInteger totalRemainingFromMd;
-    private BigInteger totalMdValue;
-    private BigInteger totalMdNotYetInvoiced;
-    private BigInteger totalRemainingInPo;
-    private BigInteger totalCommittedCost;
+    private BigDecimal totalPoValue;
+    private BigDecimal totalMdRecieved;
+    private BigDecimal totalMdDeserved;
+    private BigDecimal totalRemainingFromMd;
+    private BigDecimal totalMdValue;
+    private BigDecimal totalMdNotYetInvoiced;
+    private BigDecimal totalRemainingInPo;
+    private BigDecimal totalCommittedCost;
 
-    public BigInteger getTotalPoValue() {
+    public BigDecimal getTotalPoValue() {
         return totalPoValue;
     }
 
-    public void setTotalPoValue(BigInteger totalPoValue) {
+    public void setTotalPoValue(BigDecimal totalPoValue) {
         if(this.totalPoValue == null){
-            this.totalPoValue = BigInteger.ZERO;
+            this.totalPoValue = BigDecimal.ZERO;
             this.totalPoValue = this.totalPoValue.add(totalPoValue);
         }else{
             this.totalPoValue = this.totalPoValue.add(totalPoValue);
         }
     }
 
-    public BigInteger getTotalMdRecieved() {
+    public BigDecimal getTotalMdRecieved() {
         return totalMdRecieved;
     }
 
-    public void setTotalMdRecieved(BigInteger totalMdRecieved) {
+    public void setTotalMdRecieved(BigDecimal totalMdRecieved) {
         if(this.totalMdRecieved == null){
-            this.totalMdRecieved = BigInteger.ZERO;
+            this.totalMdRecieved = BigDecimal.ZERO;
             this.totalMdRecieved = this.totalMdRecieved.add(totalMdRecieved);
         }else{
             this.totalMdRecieved = this.totalMdRecieved.add(totalMdRecieved);
         }
     }
 
-    public BigInteger getTotalMdDeserved() {
+    public BigDecimal getTotalMdDeserved() {
         return totalMdDeserved;
     }
 
-    public void setTotalMdDeserved(BigInteger totalMdDeserved) {
+    public void setTotalMdDeserved(BigDecimal totalMdDeserved) {
         if(this.totalMdDeserved == null){
-            this.totalMdDeserved = BigInteger.ZERO;
+            this.totalMdDeserved = BigDecimal.ZERO;
             this.totalMdDeserved = this.totalMdDeserved.add(totalMdDeserved);
         }else{
             this.totalMdDeserved = this.totalMdDeserved.add(totalMdDeserved);
         }
     }
 
-    public BigInteger getTotalRemainingFromMd() {
+    public BigDecimal getTotalRemainingFromMd() {
         return totalRemainingFromMd;
     }
 
-    public void setTotalRemainingFromMd(BigInteger totalRemainingFromMd) {
+    public void setTotalRemainingFromMd(BigDecimal totalRemainingFromMd) {
         if(this.totalRemainingFromMd == null){
-            this.totalRemainingFromMd = BigInteger.ZERO;
+            this.totalRemainingFromMd = BigDecimal.ZERO;
             this.totalRemainingFromMd = this.totalRemainingFromMd.add(totalRemainingFromMd);
         }else{
             this.totalRemainingFromMd = this.totalRemainingFromMd.add(totalRemainingFromMd);
         }
     }
 
-    public BigInteger getTotalMdValue() {
+    public BigDecimal getTotalMdValue() {
         return totalMdValue;
     }
 
-    public void setTotalMdValue(BigInteger totalMdValue) {
+    public void setTotalMdValue(BigDecimal totalMdValue) {
         if(this.totalMdValue == null){
-            this.totalMdValue = BigInteger.ZERO;
+            this.totalMdValue = BigDecimal.ZERO;
             this.totalMdValue = this.totalMdValue.add(totalMdValue);
         }else{
             this.totalMdValue = this.totalMdValue.add(totalMdValue);
         }
     }
 
-    public BigInteger getTotalMdNotYetInvoiced() {
+    public BigDecimal getTotalMdNotYetInvoiced() {
         if(totalMdRecieved!=null && totalMdValue!=null){
         totalMdNotYetInvoiced = totalMdRecieved.subtract(totalMdValue);
         }
         return totalMdNotYetInvoiced;
     }
 
-    public void setTotalMdNotYetInvoiced(BigInteger totalMdNotYetInvoiced) {
+    public void setTotalMdNotYetInvoiced(BigDecimal totalMdNotYetInvoiced) {
         this.totalMdNotYetInvoiced = totalMdNotYetInvoiced;
     }
 
-    public BigInteger getTotalRemainingInPo() {
+    public BigDecimal getTotalRemainingInPo() {
         return totalRemainingInPo;
     }
 
-    public void setTotalRemainingInPo(BigInteger totalRemainingInPo) {
+    public void setTotalRemainingInPo(BigDecimal totalRemainingInPo) {
          if(this.totalRemainingInPo == null){
-            this.totalRemainingInPo = BigInteger.ZERO;
+            this.totalRemainingInPo = BigDecimal.ZERO;
             this.totalRemainingInPo = this.totalRemainingInPo.add(totalRemainingInPo);
         }else{
             this.totalRemainingInPo = this.totalRemainingInPo.add(totalRemainingInPo);
         }
     }
 
-    public BigInteger getTotalCommittedCost() {
+    public BigDecimal getTotalCommittedCost() {
         return totalCommittedCost;
     }
 
-    public void setTotalCommittedCost(BigInteger totalCommittedCost) {
+    public void setTotalCommittedCost(BigDecimal totalCommittedCost) {
         this.totalCommittedCost = totalCommittedCost;
     }
     

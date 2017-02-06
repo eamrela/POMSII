@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.EditPhasesLabel_description}" for="description" />
                         <p:inputText id="description" value="#{phasesController.selected.description}" title="#{bundle.EditPhasesTitle_description}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{phasesController.update}" value="#{bundle.Save}" update="display,:PhasesListForm:datalist,:PhasesListForm:growl" oncomplete="handleSubmit(args, 'PhasesEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{phasesController.update}" value="#{bundle.Save}" update="display,:PhasesListForm:datalist,:PhasesListForm:growl" oncomplete="handleSubmit(args, 'PhasesEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":PhasesEditForm"/>
                         <p:ajax listener="#{phasesController.resetSelection}" oncomplete="PF('PhasesEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
                     </p:commandButton>
                 </h:panelGroup>

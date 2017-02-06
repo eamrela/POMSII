@@ -6,15 +6,15 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
-<!--		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="url" value="jdbc:postgresql://localhost:5432/POMSII" />
 		<property name="username" value="postgres" />
-		<property name="password" value="Reverse*321" />-->
+		<property name="password" value="Reverse*321" />
                 
-                <property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://node18280-pomsii.njs.jelastic.vps-host.net:5432/POMSII" />
+<!--                <property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://node18434-pomsiii.njs.jelastic.vps-host.net:5432/POMSII" />
                 <property name="username" value="postgres"/>
-                <property name="password" value="Reverse*321"/>
+                <property name="password" value="Reverse*321"/>-->
 	</bean>
 
 </beans>

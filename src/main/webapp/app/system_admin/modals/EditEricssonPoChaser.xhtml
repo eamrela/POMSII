@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="EricssonPoChaserEditDlg" widgetVar="EricssonPoChaserEditDialog" modal="true" resizable="false" appendTo="@(body)" header="edit PO chaser"
+                  closable="false" closeOnEscape="false">
+            <h:form id="EricssonPoChaserEditForm">
+                <h:panelGroup id="display" style="width: 95%">
+                    <p:panelGrid columns="2" rendered="#{ericssonPoChaserController.selected != null}" style="width: 90%">
+                        <p:outputLabel value="#{bundle.EditEricssonPoChaserLabel_chaserName}" for="chaserName" />
+                        <p:inputText id="chaserName" value="#{ericssonPoChaserController.selected.chaserName}" title="#{bundle.EditEricssonPoChaserTitle_chaserName}" />
+                        <p:outputLabel value="#{bundle.EditEricssonPoChaserLabel_chaserNumber}" for="chaserNumber" />
+                        <p:inputText id="chaserNumber" value="#{ericssonPoChaserController.selected.chaserNumber}" title="#{bundle.EditEricssonPoChaserTitle_chaserNumber}" />
+                    </p:panelGrid>
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{ericssonPoChaserController.update}" value="#{bundle.Save}" update="display,:EricssonPoChaserListForm:datalist,:EricssonPoChaserListForm:growl :EricssonPoChaserListForm:editButton" oncomplete="handleSubmit(args, 'EricssonPoChaserEditDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":EricssonPoChaserEditForm"/>
+                        <p:ajax oncomplete="PF('EricssonPoChaserEditDialog').hide();" listener="#{ericssonPoChaserController.resetSelection}" update=":EricssonPoChaserListForm:datalist,:EricssonPoChaserListForm:editButton,:EricssonPoChaserListForm:createButton" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

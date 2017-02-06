@@ -13,7 +13,8 @@
 
         <link rel="shortcut icon" href="#{resource['assets/img/logo-icon-dark.png']}"/>
 
-        
+        <link type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500' rel='stylesheet'/>
+        <link type='text/css'  href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet"/> 
 
         <link href="#{resource['fortawesome.github.io/Font-Awesome/fontAwesome.css']}" type="text/css" rel="stylesheet"/>
         <link href="#{resource['fortawesome.github.io/Font-Awesome/materialIcons.css']}" type="text/css" rel="stylesheet"/>
@@ -27,15 +28,7 @@
         <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <title>POMS-II</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-        <style>
-            .ui-growl{
-    top:100px;
-}
-.fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-        </style>
+
 
     </h:head>
     <h:body class="animated-content infobar-overlay">
@@ -49,7 +42,13 @@
                             <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu
+                                    dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>

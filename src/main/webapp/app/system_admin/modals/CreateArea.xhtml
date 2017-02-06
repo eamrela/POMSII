@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.CreateAreaLabel_areaOwner}" for="areaOwner" />
                         <p:inputText id="areaOwner" value="#{areaController.selected.areaOwner}" title="#{bundle.CreateAreaTitle_areaOwner}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{areaController.create}" value="#{bundle.Save}" update="display,:AreaListForm:datalist,:AreaListForm:growl" oncomplete="handleSubmit(args,'AreaCreateDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{areaController.create}" value="#{bundle.Save}" update="display,:AreaListForm:datalist,:AreaListForm:growl" oncomplete="handleSubmit(args,'AreaCreateDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":AreaCreateForm"/>
                         <p:ajax listener="#{areaController.resetSelection}" oncomplete="PF('AreaCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>

@@ -60,12 +60,12 @@ public class VendorMd implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "md_deserved")
-    private BigInteger mdDeserved;
+    private BigDecimal mdDeserved;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "md_factor")
     private Double mdFactor;
     @Column(name = "md_value")
-    private BigInteger mdValue;
+    private BigDecimal mdValue;
     @Column(name = "md_date")
     @Temporal(TemporalType.DATE)
     private Date mdDate;
@@ -75,7 +75,7 @@ public class VendorMd implements Serializable {
     @Column(name = "invoiced")
     private Boolean invoiced;
     @Column(name = "remaining_in_md")
-    private BigInteger remainingInMd;
+    private BigDecimal remainingInMd;
     @Basic(optional = false)
     @NotNull
     @Column(name = "sys_date")
@@ -108,11 +108,11 @@ public class VendorMd implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getMdDeserved() {
+    public BigDecimal getMdDeserved() {
         return mdDeserved;
     }
 
-    public void setMdDeserved(BigInteger mdDeserved) {
+    public void setMdDeserved(BigDecimal mdDeserved) {
         this.mdDeserved = mdDeserved;
     }
 
@@ -126,11 +126,11 @@ public class VendorMd implements Serializable {
         calculateRemaining();
     }
 
-    public BigInteger getMdValue() {
+    public BigDecimal getMdValue() {
         return mdValue;
     }
 
-    public void setMdValue(BigInteger mdValue) {
+    public void setMdValue(BigDecimal mdValue) {
         this.mdValue = mdValue;
         calculateFactor();
         calculateRemaining();
@@ -160,11 +160,11 @@ public class VendorMd implements Serializable {
         this.invoiced = invoiced;
     }
 
-    public BigInteger getRemainingInMd() {
+    public BigDecimal getRemainingInMd() {
         return remainingInMd;
     }
 
-    public void setRemainingInMd(BigInteger remainingInMd) {
+    public void setRemainingInMd(BigDecimal remainingInMd) {
         this.remainingInMd = remainingInMd;
     }
 
@@ -219,7 +219,7 @@ public class VendorMd implements Serializable {
     
      private void calculateValue() {
         if(mdFactor!=null)
-        mdValue = BigInteger.valueOf(BigDecimal.valueOf(mdFactor).multiply(BigDecimal.valueOf(mdDeserved.intValue())).intValue());
+        mdValue = BigDecimal.valueOf(BigDecimal.valueOf(mdFactor).multiply(BigDecimal.valueOf(mdDeserved.intValue())).intValue());
     }
     
     private void calculateFactor() {

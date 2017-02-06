@@ -56,7 +56,13 @@
                         <div class="sidebar">
                             <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu
+                                    dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>
@@ -64,6 +70,7 @@
 
                 <div class="static-content-wrapper">
                     <div class="static-content">
+                        <h:panelGroup rendered="#{usersController.dashboard}">
                         <div class="page-content">
                             <POMSII:PageHeadings largeText="Dashboard" smallText="From: #{dashboardManager.startStr} , To: #{dashboardManager.endStr} Domain(s): #{dashboardManager.selectedDomainsStr}"/>
                             <div class="container-fluid">
@@ -126,6 +133,7 @@
                                 </h:form>
                             </div>
                         </div>
+                        </h:panelGroup>
                     </div>
 
                     <POMSII:Footer/>

@@ -32,7 +32,7 @@ import org.joda.time.DateTime;
 @SessionScoped
 public class VendorPoController implements Serializable {
     
-    private BigInteger selectedMdDeserved;
+    private BigDecimal selectedMdDeserved;
     private Date startMonth;
     private Integer numberOfMonths;
     
@@ -153,6 +153,7 @@ public class VendorPoController implements Serializable {
         if(selected!=null){
             selected.setPoStatus(poStatusController.getFinalStatus());
             update();
+            items = null;
         }
     }
     
@@ -272,7 +273,7 @@ public class VendorPoController implements Serializable {
 
     public void createMd(){
         if(selected!=null){
-            if(selected.getMdDeserved().compareTo(BigInteger.ZERO)==1){
+            if(selected.getMdDeserved().compareTo(BigDecimal.ZERO)==1){
                 vendorMdController.prepareCreate();
                 vendorMdController.getSelected().setVendorPoId(selected);
                 vendorMdController.getSelected().setCreator(usersController.getLoggedInUser());
@@ -299,15 +300,15 @@ public class VendorPoController implements Serializable {
         return suggestedPOs;
     }
 
-    public BigInteger getSelectedMdDeserved() {
-        selectedMdDeserved = BigInteger.ZERO;
+    public BigDecimal getSelectedMdDeserved() {
+        selectedMdDeserved = BigDecimal.ZERO;
         if(selected!=null){
-            BigInteger totalMdValue = BigInteger.ZERO;
-            BigInteger totalMdDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone()).toBigInteger();
+            BigDecimal totalMdValue = BigDecimal.ZERO;
+            BigDecimal totalMdDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone());
             List<VendorMd> mds = vendorMdController.getSelectedPoItems();
         for (int i = 0; i < mds.size(); i++) {
             totalMdValue  = totalMdValue.add(mds.get(i).getMdValue()!=null?
-                                    mds.get(i).getMdValue():BigInteger.ZERO);
+                                    mds.get(i).getMdValue():BigDecimal.ZERO);
         }
             selected.setMdDeserved(totalMdDeserved.subtract(totalMdValue));
             selectedMdDeserved = selected.getMdDeserved();
@@ -315,7 +316,7 @@ public class VendorPoController implements Serializable {
         return selectedMdDeserved;
     }
 
-    public void setSelectedMdDeserved(BigInteger selectedMdDeserved) {
+    public void setSelectedMdDeserved(BigDecimal selectedMdDeserved) {
         this.selectedMdDeserved = selectedMdDeserved;
     }
     

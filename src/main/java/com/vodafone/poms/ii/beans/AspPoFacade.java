@@ -58,7 +58,7 @@ public class AspPoFacade extends AbstractFacade<AspPo> {
         return em.createNativeQuery(" select * " +
                                     " from asp_po asppo " +
                                     " where po_status != 'COMPLETED' and (work_done*service_value) > " +
-                                    " (select sum(grn_value) from asp_grn where asp_po_id = asppo.po_number)"
+                                    " (select COALESCE( sum(grn_value), 0 ) from asp_grn where asp_po_id = asppo.po_number)"
                                     +(!domains.contains("*")?" and domain_name in ("+domains+") ":""), AspPo.class).getResultList();
     }
 

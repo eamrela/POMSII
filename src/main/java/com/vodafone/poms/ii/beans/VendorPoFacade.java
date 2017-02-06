@@ -67,17 +67,28 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
             {
                 String poType = selected.get(0).getPoType().getTypeName();
                 String domain = selected.get(0).getDomainName().getDomainName();
-                BigInteger totalPOASPPrice = BigInteger.ZERO;
+                BigDecimal totalPOASPPrice = BigDecimal.ZERO;
                 int MonthNumber = new DateTime(selected.get(0).getPoDate()).getMonthOfYear();
                     for (int i = 0; i < selected.size(); i++) {
                         totalPOASPPrice = 
                                 totalPOASPPrice.add(selected.get(i).getPoValue());
                     }
-            return em.createNativeQuery("select * from vendor_po " +
-                                    "where po_status != 'COMPLETED' and po_type = '"+poType+"' " +
-                                    "and domain_name = '"+domain+"' " +
-                                    "and remaining_in_po >= "+ totalPOASPPrice+" "
-                                            + "and extract(month from po_date) = "+MonthNumber,VendorPo.class).getResultList();
+//            return em.createNativeQuery("select * from vendor_po " +
+//                                    "where po_status != 'COMPLETED' and po_type = '"+poType+"' " +
+//                                    "and domain_name = '"+domain+"' " +
+//                                    "and remaining_in_po >= "+ totalPOASPPrice+" "
+//                                            + "and extract(month from po_date) = "+MonthNumber,VendorPo.class).getResultList();
+              return em.createNativeQuery(" select * " +
+                                        " from vendor_po " +
+                                        " where po_status != 'COMPLETED' and po_type = '"+poType+"' " +
+                                        " and extract(month from po_date) = "+MonthNumber+" " +
+                                        " and remaining_in_po > 0 " +
+                                        " and 	(select sum(remaining_in_po)  " +
+                                        "	from vendor_po  " +
+                                        "	where po_status != 'COMPLETED'  " +
+                                        "	and po_type = '"+domain+"'   " +
+                                        "	and extract(month from po_date) ="+MonthNumber+" " +
+                                        "	) >= "+ totalPOASPPrice, VendorPo.class).getResultList();
             }
         }
         return null;

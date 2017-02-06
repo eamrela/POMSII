@@ -12,16 +12,15 @@
             <h:form id="VendorOwnerCreateForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{vendorOwnerController.selected != null}">
-                        <p:outputLabel value="#{bundle.CreateVendorOwnerLabel_id}" for="id" />
-                        <p:inputText id="id" value="#{vendorOwnerController.selected.id}" title="#{bundle.CreateVendorOwnerTitle_id}" required="true" requiredMessage="#{bundle.CreateVendorOwnerRequiredMessage_id}"/>
                         <p:outputLabel value="#{bundle.CreateVendorOwnerLabel_ownerName}" for="ownerName" />
                         <p:inputText id="ownerName" value="#{vendorOwnerController.selected.ownerName}" title="#{bundle.CreateVendorOwnerTitle_ownerName}" />
                         <p:outputLabel value="#{bundle.CreateVendorOwnerLabel_ownerNumber}" for="ownerNumber" />
                         <p:inputText id="ownerNumber" value="#{vendorOwnerController.selected.ownerNumber}" title="#{bundle.CreateVendorOwnerTitle_ownerNumber}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{vendorOwnerController.create}" value="#{bundle.Save}" update="display,:VendorOwnerListForm:datalist,:VendorOwnerListForm:growl" oncomplete="handleSubmit(args,'VendorOwnerCreateDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
-                        <p:ajax oncomplete="PF('VendorOwnerCreateDialog').hide;" listener="#{vendorOwnerController.resetSelection}" update=":VendorOwnerListForm:datalist,:VendorOwnerListForm:editButton,:VendorOwnerListForm:createButton @([id$=datalistfooter])" />
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{vendorOwnerController.create}" value="#{bundle.Save}" update="display,:VendorOwnerListForm:datalist,:VendorOwnerListForm:growl" oncomplete="handleSubmit(args,'VendorOwnerCreateDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":VendorOwnerCreateForm"/>
+                        <p:ajax oncomplete="PF('VendorOwnerCreateDialog').hide();" listener="#{vendorOwnerController.resetSelection}" update=":VendorOwnerListForm:datalist,:VendorOwnerListForm:editButton,:VendorOwnerListForm:createButton @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>
             </h:form>

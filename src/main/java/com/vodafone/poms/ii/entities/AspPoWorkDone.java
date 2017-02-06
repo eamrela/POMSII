@@ -8,7 +8,6 @@ package com.vodafone.poms.ii.entities;
 import com.vodafone.poms.ii.entities.AspPo;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -50,7 +49,7 @@ public class AspPoWorkDone implements Serializable {
     @Column(name = "work_done")
     private Double workDone;
     @Column(name = "work_value")
-    private BigInteger workValue;
+    private BigDecimal workValue;
     @Column(name = "insertion_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date insertionDate;
@@ -80,14 +79,14 @@ public class AspPoWorkDone implements Serializable {
     public void setWorkDone(Double workDone) {
         this.workDone = workDone;
         if(this.workDone!=null && this.aspPoId!=null)
-        this.workValue = BigDecimal.valueOf(aspPoId.getServiceValue().floatValue()*workDone).toBigInteger();
+        this.workValue = BigDecimal.valueOf(aspPoId.getServiceValue().floatValue()*workDone);
     }
 
-    public BigInteger getWorkValue() {
+    public BigDecimal getWorkValue() {
         return workValue;
     }
 
-    public void setWorkValue(BigInteger workValue) {
+    public void setWorkValue(BigDecimal workValue) {
         this.workValue = workValue;
         if(this.workValue!=null && this.aspPoId!=null)
         this.workDone = Double.valueOf(this.workValue.floatValue()/aspPoId.getServiceValue().floatValue());

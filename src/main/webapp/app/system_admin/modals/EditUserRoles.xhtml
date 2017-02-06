@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsersRolesEditDlg" widgetVar="UsersRolesEditDialog" modal="true" resizable="false" appendTo="@(body)" header="Edit User Role"
+                  closable="false" closeOnEscape="false" onHide="#{usersRolesController.resetSelection()}">
+            <h:form id="UsersRolesEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usersRolesController.selected != null}">
+                        <p:outputLabel value="User Name" for="username" />
+                        <h:outputText id="username" value="#{usersRolesController.selected.username.username}" title="#{bundle.CreateUsersTitle_username}" />
+                        <p:outputLabel value="Password" for="password" />
+                        <p:inputText type="password" id="password" value="#{usersController.selected.password}" title="#{bundle.CreateUsersTitle_password}"  required="true" style="color: black;"/>
+                        <p:outputLabel value="Email" for="email" />
+                        <p:inputText id="email" value="#{usersController.selected.email}" title="#{bundle.CreateUsersTitle_email}" />
+                        <p:outputLabel value="Full Name" for="firstLastName" />
+                        <p:inputText id="firstLastName" value="#{usersController.selected.firstLastName}" title="#{bundle.CreateUsersTitle_firstLastName}" />
+                        <p:outputLabel value="Role" for="role" />
+                        <p:selectOneMenu id="role" value="#{usersRolesController.selected.role}" title="#{bundle.EditUsersRolesTitle_role}" style="color: black;">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersRolesController.rolesList}"
+                                           var="roleItem"
+                                           itemValue="#{roleItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Enabled" for="enabled" />
+                        <p:selectOneMenu id="enabled" value="#{usersRolesController.selected.username.enabled}" 
+                                         title="Enabled" style="color: black;">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="0" itemValue="0"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{usersRolesController.updateUsersRoles}" value="#{bundle.Save}" update="display,:UsersRolesListForm:datalist,:UsersRolesListForm:editButton, :UsersRolesListForm:growl" oncomplete="handleSubmit(args, 'UsersRolesEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":UsersRolesEditForm"/>
+                        <p:ajax oncomplete="PF('UsersRolesEditDialog').hide();" listener="#{usersRolesController.resetSelection}" update=":UsersRolesListForm:datalist,:UsersRolesListForm:editButton,:UsersRolesListForm:createButton" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

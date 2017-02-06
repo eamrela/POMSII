@@ -44,6 +44,7 @@ public class ActivityCodeController implements Serializable {
     }
     
     public void resetSelection(){
+        System.out.println("Resetting Activity Code selection");
         selected= null;
     }
     

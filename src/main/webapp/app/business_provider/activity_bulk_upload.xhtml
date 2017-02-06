@@ -52,7 +52,12 @@
                             <POMSII:ProfileInfo username="AmrElAnsary" email="amr.el-ansary@hotmail.com"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>
@@ -75,12 +80,18 @@
                                                 <div class="panel-body" style="display: block;">
                             <p:fileUpload label="Browse" allowTypes="/(\.|\/)(xlsx)$/" 
                                           fileUploadListener="#{activityUploader.readFile}"
-                                          
+                                          update=":ActivityCodeListForm:errors"
                                           skinSimple="true"
                                       />  
+                            <h:selectBooleanCheckbox value="#{activityUploader.testFile}" immediate="true">
+                                    Test File ?
+                                    <p:ajax/>
+                            </h:selectBooleanCheckbox>
                                                 </div>
                                                 
                                             </div>
+                            <h:inputTextarea value="#{activityUploader.errors}" disabled="true" id="errors"
+                                             rows="20" cols="200"/>
                                         </h:form>
                                     </div>
                                     

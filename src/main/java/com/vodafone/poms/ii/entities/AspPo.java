@@ -7,11 +7,11 @@ package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -78,17 +78,17 @@ public class AspPo implements Serializable {
     @Column(name = "factor")
     private Double factor;
     @Column(name = "service_value")
-    private BigInteger serviceValue;
+    private BigDecimal serviceValue;
     @Column(name = "po_value")
-    private BigInteger poValue;
+    private BigDecimal poValue;
     @Column(name = "grn_deserved")
-    private BigInteger grnDeserved;
+    private BigDecimal grnDeserved;
     @Column(name = "po_value_taxes")
-    private BigInteger poValueTaxes;
+    private BigDecimal poValueTaxes;
     @Column(name = "work_done")
     private Double workDone = 0.0;
     @Column(name = "remaining_in_po")
-    private BigInteger remainingInPo;
+    private BigDecimal remainingInPo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "sys_date")
@@ -124,6 +124,8 @@ public class AspPo implements Serializable {
     private Users creator;
     @OneToMany(mappedBy = "aspPoId")
     private Collection<AspGrn> aspGrnCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspPo")
+    private Collection<VendorPoJAspPoValue> vendorPoJAspPoValueCollection;
 
     public AspPo() {
     }
@@ -178,43 +180,43 @@ public class AspPo implements Serializable {
         this.factor = factor;
     }
 
-    public BigInteger getServiceValue() {
+    public BigDecimal getServiceValue() {
         return serviceValue;
     }
 
-    public void setServiceValue(BigInteger serviceValue) {
+    public void setServiceValue(BigDecimal serviceValue) {
         this.serviceValue = serviceValue;
     }
 
-    public BigInteger getPoValue() {
+    public BigDecimal getPoValue() {
         if(factor!=null && serviceValue!=null){
 //            poValue = serviceValue.multiply(BigInteger.valueOf(factor.intValue()));
-            poValue = BigDecimal.valueOf(serviceValue.floatValue()*factor.floatValue()).toBigInteger();
+            poValue = BigDecimal.valueOf(serviceValue.floatValue()*factor.floatValue());
         }
         return poValue;
     }
 
-    public BigInteger getGrnDeserved() {
+    public BigDecimal getGrnDeserved() {
         
         return grnDeserved;
     }
 
-    public void setGrnDeserved(BigInteger grnDeserved) {
+    public void setGrnDeserved(BigDecimal grnDeserved) {
         this.grnDeserved = grnDeserved;
     }
     
-    public void setPoValue(BigInteger poValue) {
+    public void setPoValue(BigDecimal poValue) {
         this.poValue = poValue;
     }
 
-    public BigInteger getPoValueTaxes() {
+    public BigDecimal getPoValueTaxes() {
         if(taxes!=null && poValue!=null){
-            poValueTaxes = poValue.add(BigDecimal.valueOf(poValue.intValue()*taxes/100).toBigInteger());
+            poValueTaxes = poValue.add(BigDecimal.valueOf(poValue.intValue()*taxes/100));
         }
         return poValueTaxes;
     }
 
-    public void setPoValueTaxes(BigInteger poValueTaxes) {
+    public void setPoValueTaxes(BigDecimal poValueTaxes) {
         this.poValueTaxes = poValueTaxes;
     }
 
@@ -227,11 +229,11 @@ public class AspPo implements Serializable {
         calculateGRNDeserved();
     }
 
-    public BigInteger getRemainingInPo() {
+    public BigDecimal getRemainingInPo() {
         return remainingInPo;
     }
 
-    public void setRemainingInPo(BigInteger remainingInPo) {
+    public void setRemainingInPo(BigDecimal remainingInPo) {
         this.remainingInPo = remainingInPo;
     }
 
@@ -280,7 +282,6 @@ public class AspPo implements Serializable {
     public void setActivityCollection(Collection<Activity> activityCollection) {
         this.activityCollection = activityCollection;
     }
-
     @XmlTransient
     public Collection<VendorPo> getVendorPoCollection() {
         return vendorPoCollection;
@@ -289,6 +290,8 @@ public class AspPo implements Serializable {
     public void setVendorPoCollection(Collection<VendorPo> vendorPoCollection) {
         this.vendorPoCollection = vendorPoCollection;
     }
+
+   
 
     public DomainNames getDomainName() {
         return domainName;
@@ -332,8 +335,8 @@ public class AspPo implements Serializable {
     }
 
     public void calculateGRNDeserved(){
-        BigInteger deserved = BigDecimal.valueOf((serviceValue.floatValue()*workDone)).toBigInteger();
-        BigInteger deservedI = BigDecimal.valueOf((serviceValue.floatValue()*workDone)).toBigInteger();
+        BigDecimal deserved = BigDecimal.valueOf((serviceValue.floatValue()*workDone));
+        BigDecimal deservedI = BigDecimal.valueOf((serviceValue.floatValue()*workDone));
         Object[] grns = getAspGrnCollection().toArray();
         for (Object grn : grns) {
             deserved = deserved.subtract(((AspGrn) grn).getGrnDeserved());
@@ -385,4 +388,12 @@ public class AspPo implements Serializable {
         this.aspPoWorkDoneCollection = aspPoWorkDoneCollection;
     }
     
+    @XmlTransient
+    public Collection<VendorPoJAspPoValue> getVendorPoJAspPoValueCollection() {
+        return vendorPoJAspPoValueCollection;
+    }
+
+    public void setVendorPoJAspPoValueCollection(Collection<VendorPoJAspPoValue> vendorPoJAspPoValueCollection) {
+        this.vendorPoJAspPoValueCollection = vendorPoJAspPoValueCollection;
+    }
 }

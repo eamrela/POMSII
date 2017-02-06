@@ -10,7 +10,6 @@ import com.vodafone.poms.ii.entities.VendorPo;
 import java.io.IOException;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +25,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 import org.primefaces.event.SelectEvent;
 
 @Named("activityController")
@@ -193,14 +193,14 @@ public class ActivityController implements Serializable {
 
     public void createMultiple(List<Activity> activities){
         for (Activity activitie : activities) {
+            try{
             getFacade().create(activitie);
+            }catch(Exception e){
+                System.out.println(activitie.getSite().getSitePhysical());
+                
+            }
         }
-        try {
-            //http://localhost:8080/POMS-II/app/business_provider/crud_activity.xhtml
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/POMS-II/app/business_provider/crud_activity.xhtml");
-        } catch (IOException ex) {
-            Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     
     public void create() {

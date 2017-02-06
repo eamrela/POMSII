@@ -3,6 +3,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\PhasesFacade.j
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\PoStatusController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\AspPo.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\DashboardController.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\VendorPoJAspPoValueController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\SitesController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Users.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Area.java
@@ -41,6 +42,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\DomainNamesFac
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\PoTypesController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\TargetsFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\AbstractFacade.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\VendorPoJAspPoValue.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\ActivityCodeFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Taxes.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\DomainAnalysis.java
@@ -60,6 +62,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\Subcontract
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\PoOwnerFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\EricssonPoChaserFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\ActivityController.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\VendorPoJAspPoValuePK.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\PoStatus.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\AreaFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\ActivityCodeLoader.java
@@ -73,6 +76,7 @@ D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\PoTypesFacade.
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\VendorPoWorkDoneController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\VendorPoFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\helpers\ASPAnalysis.java
+D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\beans\VendorPoJAspPoValueFacade.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\controllers\TargetsController.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\AspPoWorkDone.java
 D:\Work\Netbeans\POMS-II\src\main\java\com\vodafone\poms\ii\entities\ApprovalStatus.java

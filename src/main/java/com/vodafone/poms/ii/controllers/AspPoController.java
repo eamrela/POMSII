@@ -6,11 +6,12 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.AspPoFacade;
 import com.vodafone.poms.ii.entities.AspGrn;
 import com.vodafone.poms.ii.entities.VendorPo;
+import com.vodafone.poms.ii.entities.VendorPoJAspPoValue;
+import com.vodafone.poms.ii.entities.VendorPoJAspPoValuePK;
 import java.io.IOException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,11 +34,16 @@ import org.joda.time.DateTime;
 public class AspPoController implements Serializable {
 
     
-    private VendorPo selectedVendorPo;
+
+    private List<VendorPo> selectedVendorPoList;
+    private List<VendorPoJAspPoValue> selectedItemsToBeCorrelated;
+    private VendorPo selectVendorPo = null;
+    private VendorPoJAspPoValue itemToCorrelate;
+    private BigDecimal valueToBeTaken;
     private String poIds;
-    private BigInteger totalPOASPPrice;
-    private BigInteger itemsUncorrelatedPoValue;
-    private BigInteger selectedGrnDeserved;
+    private BigDecimal totalPOASPPrice;
+    private BigDecimal itemsUncorrelatedPoValue;
+    private BigDecimal selectedGrnDeserved;
     private boolean disabled = false;
     private Date startMonth;
     private Integer numberOfMonths;
@@ -63,6 +69,8 @@ public class AspPoController implements Serializable {
     private VendorPoController vendorPoController;
     @Inject 
     private PoTypesController poTypesController;
+    @Inject
+    private VendorPoJAspPoValueController vendorPoAspPoValueController;
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
@@ -81,7 +89,17 @@ public class AspPoController implements Serializable {
         return disabled;
     }
 
-    
+    public VendorPoJAspPoValue getItemToCorrelate() {
+        return itemToCorrelate;
+    }
+
+    public void setItemToCorrelate(VendorPoJAspPoValue itemToCorrelate) {
+        this.itemToCorrelate = itemToCorrelate;
+    }
+
+    public void updateSelectedItem(VendorPoJAspPoValue po){
+        itemToCorrelate = po;
+    }
     
     public AspPoController() {
     }
@@ -195,6 +213,7 @@ public class AspPoController implements Serializable {
         if(selected!=null){
             selected.setPoStatus(poStatusController.getFinalStatus());
             update();
+            items = null;
         }
     }
 
@@ -208,11 +227,11 @@ public class AspPoController implements Serializable {
 
     public List<AspPo> getItemsUncorrelated() {
         itemsUncorrelated=getFacade().findUncorrelatedItems();
-        itemsUncorrelatedPoValue = BigInteger.ZERO;
+        itemsUncorrelatedPoValue = BigDecimal.ZERO;
         for (AspPo itemsUncorrelated1 : itemsUncorrelated) {
             itemsUncorrelatedPoValue = itemsUncorrelatedPoValue.add(BigDecimal.valueOf(
                                         itemsUncorrelated1.getPoValue().doubleValue()*(1+(itemsUncorrelated1.getPoMargin()/100.0))
-                                ).toBigInteger());
+                                ));
         }
         return itemsUncorrelated;
     }
@@ -224,7 +243,8 @@ public class AspPoController implements Serializable {
 
     public void setSelectedItems(List<AspPo> selectedItems) {
         this.selectedItems = selectedItems;
-        selectedVendorPo = null;
+        selectedVendorPoList = null;
+        valueToBeTaken = BigDecimal.ZERO;
         if(selectedItems.size()==1){
             selected = selectedItems.get(0);
         }
@@ -249,7 +269,7 @@ public class AspPoController implements Serializable {
         this.poIds = poIds;
     }
 
-    public void setTotalPOASPPrice(BigInteger totalPOASPPrice) {
+    public void setTotalPOASPPrice(BigDecimal totalPOASPPrice) {
         this.totalPOASPPrice = totalPOASPPrice;
     }
 
@@ -263,20 +283,22 @@ public class AspPoController implements Serializable {
         return poIds;
     }
 
-    public BigInteger getTotalPOASPPrice() {
+    public BigDecimal getTotalPOASPPrice() {
+        BigDecimal totalCorrelatedPrice = BigDecimal.ZERO;
+        totalPOASPPrice = BigDecimal.ZERO;
         if(selectedItems!=null){
-            totalPOASPPrice = BigInteger.ZERO;
             for (int i = 0; i < selectedItems.size(); i++) {
                 totalPOASPPrice = 
                         totalPOASPPrice.add(
                                 BigDecimal.valueOf(
                                         selectedItems.get(i).getPoValue().doubleValue()*(1+(selectedItems.get(i).getPoMargin()/100.0))
-                                ).toBigInteger());
+                                ));
+                totalCorrelatedPrice = totalCorrelatedPrice.add(vendorPoAspPoValueController.getValue(selectedItems.get(i)));
             }
         }
+        totalPOASPPrice = totalPOASPPrice.subtract(totalCorrelatedPrice);
         return totalPOASPPrice;
     }
-
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -383,7 +405,7 @@ public class AspPoController implements Serializable {
 
    public void createGRN(){
         if(selected!=null){
-            if(selected.getGrnDeserved().compareTo(BigInteger.ZERO)==1){
+            if(selected.getGrnDeserved().compareTo(BigDecimal.ZERO)==1){
                 aspGrnController.prepareCreate();
                 aspGrnController.getSelected().setAspPoId(selected);
                 aspGrnController.getSelected().setCreator(usersController.getLoggedInUser());
@@ -396,88 +418,182 @@ public class AspPoController implements Serializable {
         }
     }
 
-    public VendorPo getSelectedVendorPo() {
-        return selectedVendorPo;
+   
+
+    public List<VendorPo> getSelectedVendorPoList() {
+        return selectedVendorPoList;
     }
 
-    public void setSelectedVendorPo(VendorPo selectedVendorPo) {
-        this.selectedVendorPo = selectedVendorPo;
+    public void setSelectedVendorPoList(List<VendorPo> selectedVendorPoList) {
+        this.selectedVendorPoList = selectedVendorPoList;
     }
     
-    public void correlate(){
-        if(selectedVendorPo!=null && selectedItems!=null){
-           disabled=true;
-           BigInteger totalPrice = BigInteger.ZERO;
-            for (int i = 0; i < selectedItems.size(); i++) {
-            selectedItems.get(i).setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectedVendorPo);}});
-            totalPrice = 
-                        totalPrice.add(
-                                BigDecimal.valueOf(
-                                        selectedItems.get(i).getPoValue().doubleValue()*(1+(selectedItems.get(i).getPoMargin()/100.0))
-                                ).toBigInteger());
-            selected = selectedItems.get(i);
-            update(); 
-            selected = null;
+    
+
+    public BigDecimal getValueToBeTaken() {
+        return valueToBeTaken;
+    }
+
+    public void setValueToBeTaken(BigDecimal valueToBeTaken) {
+        this.valueToBeTaken = valueToBeTaken;
+    }
+    
+    public void prepareCorrelate(){
+        selectedItemsToBeCorrelated = new ArrayList<>();
+        for (int i = 0; i < selectedVendorPoList.size(); i++) {
+            List<VendorPoJAspPoValue> correlatedItems = vendorPoAspPoValueController.getSelectedItems(selectedVendorPoList.get(i));
+            if(correlatedItems.isEmpty()){
+            VendorPoJAspPoValue item = new VendorPoJAspPoValue();
+            item.setAspPo(selected);
+            item.setValueToTake(BigDecimal.ZERO);
+            item.setVendorPo(selectedVendorPoList.get(i));
+            VendorPoJAspPoValuePK pk = new VendorPoJAspPoValuePK();
+            pk.setAspPoId(item.getAspPo().getPoNumber());
+            pk.setVendorPoId(item.getVendorPo().getPoNumber());
+            item.setVendorPoJAspPoValuePK(pk);
+            selectedItemsToBeCorrelated.add(item);
+            }else{
+                selectedItemsToBeCorrelated.addAll(correlatedItems);
             }
-            selectedVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{addAll(selectedItems);}});
-            selectedVendorPo.setWorkDone(selectedVendorPo.getWorkDone()+
-                (totalPrice.floatValue()/selectedVendorPo.getServiceValue().floatValue())
+        }
+    }
+
+    public List<VendorPoJAspPoValue> getSelectedItemsToBeCorrelated() {
+        return selectedItemsToBeCorrelated;
+    }
+
+    public void setSelectedItemsToBeCorrelated(List<VendorPoJAspPoValue> selectedItemsToBeCorrelated) {
+        this.selectedItemsToBeCorrelated = selectedItemsToBeCorrelated;
+    }
+    
+    public void correlateItem(){
+        if(itemToCorrelate!=null){
+            selectVendorPo = itemToCorrelate.getVendorPo();
+            
+            vendorPoAspPoValueController.setSelected(itemToCorrelate);
+            vendorPoAspPoValueController.createOrIncrease();
+            
+            selected.setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectVendorPo);}});
+            update();
+            selectVendorPo.getAspPoCollection().add(selected);
+            selectVendorPo.setWorkDone(selectVendorPo.getWorkDone()+
+                (itemToCorrelate.getValueToTake().floatValue()/selectVendorPo.getServiceValue().floatValue())
             );
-            vendorPoController.setSelected(selectedVendorPo);
+            vendorPoController.setSelected(selectVendorPo);
+            vendorPoController.update();
+            vendorPoController.setSelected(null);
+            items = null;
+            //selectedItems = null;
+            JsfUtil.addSuccessMessage("ASP PO "+poIds+" is now correlated to Customer PO "+selectVendorPo.getPoNumber());
+            selectVendorPo=null;
+            selectedItemsToBeCorrelated.remove(itemToCorrelate);
+            if(selectedItemsToBeCorrelated.size()==1){
+                selectedItemsToBeCorrelated.clear();
+            }
+        }else{
+            // report error
+            JsfUtil.addSuccessMessage("You need to select and item");
+        }
+    }
+    
+    public void correlateSingle(){
+        // if it exists incease the value
+        if(selectedVendorPoList.size()==1){
+            selectVendorPo = selectedVendorPoList.get(0);
+            VendorPoJAspPoValue correlationValue = new VendorPoJAspPoValue();
+            correlationValue.setAspPo(selected);
+            correlationValue.setVendorPo(selectVendorPo);
+            correlationValue.setValueToTake(totalPOASPPrice);
+            VendorPoJAspPoValuePK pk = new VendorPoJAspPoValuePK();
+            pk.setAspPoId(correlationValue.getAspPo().getPoNumber());
+            pk.setVendorPoId(correlationValue.getVendorPo().getPoNumber());
+            correlationValue.setVendorPoJAspPoValuePK(pk);
+            vendorPoAspPoValueController.setSelected(correlationValue);
+            vendorPoAspPoValueController.createOrIncrease();
+            selected.setVendorPoCollection(new ArrayList<VendorPo>(){{add(selectVendorPo);}});
+            update();
+            selectVendorPo.setAspPoCollection(new ArrayList<AspPo>(){{add(selected);}});
+            selectVendorPo.setWorkDone(selectVendorPo.getWorkDone()+
+                (totalPOASPPrice.floatValue()/selectVendorPo.getServiceValue().floatValue())
+            );
+            vendorPoController.setSelected(selectVendorPo);
             vendorPoController.update();
             vendorPoController.setSelected(null);
             items = null;
             selectedItems = null;
-            JsfUtil.addSuccessMessage("ASP PO "+poIds+" is now correlated to Customer PO "+selectedVendorPo.getPoNumber());
-            selectedVendorPo=null;
+            JsfUtil.addSuccessMessage("ASP PO "+poIds+" is now correlated to Customer PO "+selectVendorPo.getPoNumber());
+            selectVendorPo=null;
+        }else{
+            // report error
+            JsfUtil.addSuccessMessage("You can't correlate Single for multiple POs");
         }
     }
-
+    
+    // needs to be modified
     public void uncorrelate(){
         if(selected!=null){
+            VendorPoJAspPoValue valueTaken = vendorPoAspPoValueController.findById(vendorPoController.getSelected().getPoNumber(),selected.getPoNumber());
+            if(valueTaken!=null){
             selected.getVendorPoCollection().remove(vendorPoController.getSelected());
             vendorPoController.getSelected().getAspPoCollection().remove(selected);
             vendorPoController.getSelected().setWorkDone(vendorPoController.getSelected().getWorkDone()-
-                    (BigDecimal.valueOf(
-                                        selected.getPoValue().doubleValue()*(1+(selected.getPoMargin()/100.0))
-                                ).floatValue()/vendorPoController.getSelected().getServiceValue().floatValue()));
+                    (itemToCorrelate.getValueToTake().floatValue()/vendorPoController.getSelected().getServiceValue().floatValue()));
             update();
             vendorPoController.update();
             selected = null;
+            vendorPoAspPoValueController.setSelected(valueTaken);
+            vendorPoAspPoValueController.destroy();
+            }else{
+               JsfUtil.addSuccessMessage("Something went wrong, please contact system admin"); 
+            }
         }
     }
-    public BigInteger getSelectedGrnDeserved() {
+    
+    public BigDecimal getSelectedGrnDeserved() {
         if(selected!=null){
-        BigInteger totalGrnValue = BigInteger.ZERO;
-        BigInteger totalGrnDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone()).toBigInteger();
+        BigDecimal totalGrnValue = BigDecimal.ZERO;
+        BigDecimal totalGrnDeserved = BigDecimal.valueOf(selected.getServiceValue().floatValue()*selected.getWorkDone());
         List<AspGrn> grns = aspGrnController.getSelectedPoItems();
         for (int i = 0; i < grns.size(); i++) {
             totalGrnValue  = totalGrnValue.add(grns.get(i).getGrnValue()!=null?
-                                    grns.get(i).getGrnValue():BigInteger.ZERO);
+                                    grns.get(i).getGrnValue():BigDecimal.ZERO);
         }
         selected.setGrnDeserved(totalGrnDeserved.subtract(totalGrnValue));
         selectedGrnDeserved = selected.getGrnDeserved();
         return selectedGrnDeserved;
         
         }
-        selectedGrnDeserved = BigInteger.ZERO;
+        selectedGrnDeserved = BigDecimal.ZERO;
         return selectedGrnDeserved;
     }
     
-    
+    public boolean correlationStatus(AspPo po){
+        if(po!=null){
+            
+            BigDecimal selectedCorrelationValue = vendorPoAspPoValueController.getValue(po);
+            if(po.getPoValue().equals(selectedCorrelationValue) || po.getPoValue().compareTo(selectedCorrelationValue)==-1){
+                return true;
+            }
+        }
+        return false;
+    }
     
     public void clearSelected(){
         selected=null;
         items = null;
         selectedGrnDeserved = null;
         itemsUncorrelated = null;
+        selectedVendorPoList = null;
+        selectedItems=null;
+        selectedItemsToBeCorrelated = null;
+        itemToCorrelate = null;
     }
 
-    public BigInteger getItemsUncorrelatedPoValue() {
+    public BigDecimal getItemsUncorrelatedPoValue() {
         return itemsUncorrelatedPoValue;
     }
 
-    public void setItemsUncorrelatedPoValue(BigInteger itemsUncorrelatedPoValue) {
+    public void setItemsUncorrelatedPoValue(BigDecimal itemsUncorrelatedPoValue) {
         this.itemsUncorrelatedPoValue = itemsUncorrelatedPoValue;
     }
     

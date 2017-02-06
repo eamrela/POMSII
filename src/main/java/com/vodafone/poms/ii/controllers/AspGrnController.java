@@ -28,11 +28,11 @@ import javax.inject.Inject;
 public class AspGrnController implements Serializable {
 
     private Double editGrnFactor;
-    private BigInteger editGrnValue;
-    private BigInteger editGrnDeserved;
+    private BigDecimal editGrnValue;
+    private BigDecimal editGrnDeserved;
     private Date editGrnDate;
     private String editGrnNumber;
-    private BigInteger editRemainingInGrn;
+    private BigDecimal editRemainingInGrn;
     private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.AspGrnFacade ejbFacade;
@@ -232,7 +232,7 @@ public class AspGrnController implements Serializable {
         return editGrnNumber;
     }
 
-    public BigInteger getEditGrnValue() {
+    public BigDecimal getEditGrnValue() {
         return editGrnValue;
     }
 
@@ -254,7 +254,7 @@ public class AspGrnController implements Serializable {
         this.editGrnNumber = editGrnNumber;
     }
 
-    public void setEditGrnValue(BigInteger editGrnValue) {
+    public void setEditGrnValue(BigDecimal editGrnValue) {
         this.editGrnValue = editGrnValue;
         calculateFactor();
         calculateRemaining();
@@ -264,11 +264,11 @@ public class AspGrnController implements Serializable {
         this.editInvoiced = editInvoiced;
     }
 
-    public BigInteger getEditRemainingInGrn() {
+    public BigDecimal getEditRemainingInGrn() {
         return editRemainingInGrn;
     }
 
-    public void setEditRemainingInGrn(BigInteger editRemainingInGrn) {
+    public void setEditRemainingInGrn(BigDecimal editRemainingInGrn) {
         this.editRemainingInGrn = editRemainingInGrn;
     }
 
@@ -276,7 +276,7 @@ public class AspGrnController implements Serializable {
 
     private void calculateValue() {
         if(editGrnFactor!=null)
-        editGrnValue = BigInteger.valueOf(BigDecimal.valueOf(editGrnFactor).multiply(BigDecimal.valueOf(editGrnDeserved.intValue())).intValue());
+        editGrnValue = BigDecimal.valueOf(BigDecimal.valueOf(editGrnFactor).multiply(BigDecimal.valueOf(editGrnDeserved.intValue())).intValue());
     }
     
     private void calculateFactor() {

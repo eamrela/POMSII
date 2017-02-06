@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.CreateSitesLabel_gfRt}" for="gfRt" />
                         <p:inputText id="gfRt" value="#{sitesController.selected.gfRt}" title="#{bundle.CreateSitesTitle_gfRt}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{sitesController.create}" value="#{bundle.Save}" update="display,:SitesListForm:datalist,:SitesListForm:growl" oncomplete="handleSubmit(args,'SitesCreateDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{sitesController.create}" value="#{bundle.Save}" update="display,:SitesListForm:datalist,:SitesListForm:growl" oncomplete="handleSubmit(args,'SitesCreateDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":SitesCreateForm"/>
                         <p:ajax listener="#{sitesController.resetSelection}" oncomplete="PF('SitesCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>

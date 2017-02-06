@@ -50,7 +50,7 @@ public class VendorPoWorkDone implements Serializable {
     @Column(name = "work_done")
     private Double workDone;
     @Column(name = "work_value")
-    private BigInteger workValue;
+    private BigDecimal workValue;
     @Column(name = "insertion_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date insertionDate;
@@ -80,14 +80,14 @@ public class VendorPoWorkDone implements Serializable {
     public void setWorkDone(Double workDone) {
         this.workDone = workDone;
         if(this.workDone!=null && this.vPoId!=null)
-        this.workValue = BigDecimal.valueOf(this.vPoId.getServiceValue().floatValue()*this.workDone).toBigInteger();
+        this.workValue = BigDecimal.valueOf(this.vPoId.getServiceValue().floatValue()*this.workDone);
     }
 
-    public BigInteger getWorkValue() {
+    public BigDecimal getWorkValue() {
         return workValue;
     }
 
-    public void setWorkValue(BigInteger workValue) {
+    public void setWorkValue(BigDecimal workValue) {
         this.workValue = workValue;
         if(this.workValue!=null && this.vPoId!=null)
         this.workDone = Double.valueOf(this.workValue.floatValue()/this.vPoId.getServiceValue().floatValue());

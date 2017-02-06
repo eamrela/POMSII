@@ -1,10 +1,18 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <!-- INTERFACE -->
     <cc:interface>
+        <cc:attribute name="dashboard" required="true"/>
+        <cc:attribute name="settings" required="true"/>
+        <cc:attribute name="activities" required="true"/>
+        <cc:attribute name="customer" required="true"/>
+        <cc:attribute name="subcontractor" required="true"/>
+        <cc:attribute name="export" required="true"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -14,6 +22,7 @@
                 <li class="nav-separator">
                     <span>Navigation</span>
                 </li>
+                <h:panelGroup rendered="#{cc.attrs.dashboard}">
                 <li>
                     <a  class="withripple" href="#{request.contextPath}/app/common/index.xhtml">
                         <span class="icon">
@@ -23,6 +32,8 @@
                         <!--<span class="badge badge-teal">2</span>-->
                     </a>
                 </li>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.settings}">
                 <li>
                     <a  class="withripple" href="javascript:;">
                         <span class="icon">
@@ -40,11 +51,16 @@
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/sites.xhtml">Sites</a></li>
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/area.xhtml">Areas</a></li>
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/domains.xhtml">Domains</a></li>
-                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/vendor_owner.xhtml">Customer Owner</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/vendor_owner.xhtml">Vendor Owner</a></li>
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/taxes.xhtml">Taxes</a></li>
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/targets.xhtml">Targets</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/po_owner.xhtml">PO Owners</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/ericsson_po_chaser.xhtml">PO Chaser</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/user_roles.xhtml">Users</a></li>
                     </ul>
                 </li>
+                 </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.activities}">
                 <li>
                     <a  class="withripple" href="javascript:;">
                         <span class="icon">
@@ -55,9 +71,11 @@
                     <ul class="acc-menu">
                         <li><a  class="withripple" href="#{request.contextPath}/app/business_provider/create_activity.xhtml">Create Activity</a></li>
                         <li><a  class="withripple" href="#{request.contextPath}/app/business_provider/crud_activity.xhtml">View/Edit Activity</a></li>
-                        <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/extra/activity_bulk_upload.xhtml">Upload Activities</a></li>
+                        <li><a  class="withripple" href="#{request.contextPath}/app/business_provider/activity_bulk_upload.xhtml">Upload Activities</a></li>
                     </ul>
                 </li>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.customer}">
                 <li>
                     <a  class="withripple" href="javascript:;">
                         <span class="icon">
@@ -67,10 +85,14 @@
                     </a>
                     <ul class="acc-menu">
                         <li><a  class="withripple" href="#{request.contextPath}/app/finance_admin/create_v_po.xhtml">Create PO (Extra Work)</a></li>
+                        <h:panelGroup rendered="#{cc.attrs.settings}">
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/extra/create_v_service_po.xhtml">Create PO (Service)</a></li>
+                        </h:panelGroup>
                         <li><a  class="withripple" href="#{request.contextPath}/app/finance_admin/crud_v_po.xhtml">View/Edit PO</a></li>
                     </ul>
                 </li>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.subcontractor}">
                 <li>
                     <a  class="withripple" href="javascript:;">
                         <span class="icon">
@@ -80,10 +102,14 @@
                     </a>
                     <ul class="acc-menu">
                         <li><a  class="withripple" href="#{request.contextPath}/app/finance_admin/create_asp_po.xhtml">Create PO (Extra Work)</a></li>
+                        <h:panelGroup rendered="#{cc.attrs.settings}">
                         <li><a  class="withripple" href="#{request.contextPath}/app/system_admin/extra/create_asp_service_po.xhtml">Create PO (Service)</a></li>
+                        </h:panelGroup>
                         <li><a  class="withripple" href="#{request.contextPath}/app/finance_admin/crud_asp_po.xhtml">View/Edit PO</a></li>
                     </ul>
                 </li>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.export}">
                 <li>
                     <a  class="withripple" href="#{request.contextPath}/app/exporter/export.xhtml">
                         <span class="icon">
@@ -93,6 +119,7 @@
                         <!--<span class="badge badge-teal">2</span>-->
                     </a>
                 </li>
+                </h:panelGroup>
 
 
 

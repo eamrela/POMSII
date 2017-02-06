@@ -44,7 +44,12 @@
                         <div class="sidebar">
                             <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>

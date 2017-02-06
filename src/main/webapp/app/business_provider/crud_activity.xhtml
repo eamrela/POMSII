@@ -36,8 +36,9 @@
         }
 .fixed-size {
     table-layout: auto;
-    white-space: normal;
+    white-space: nowrap;
     word-wrap: normal;
+    overflow: hidden;
     font-size: 0.7vw;
     text-align: left;
     float: left;
@@ -56,7 +57,12 @@
                             <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>
@@ -106,134 +112,154 @@
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Id"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.activityId}"/>
+                                                                        <h:outputText id="activityId" value="#{item.activityId}"/>
+                                                                        <p:tooltip value="#{item.activityId}" for="activityId"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.activityDate}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Date"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.activityDate}">
+                                                                        <h:outputText id="activityDate" value="#{item.activityDate}">
                                                                             <f:convertDateTime pattern="MM/dd/yyyy" />
                                                                         </h:outputText>
+                                                                        <p:tooltip value="#{item.activityDate}" for="activityDate"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.activityDetails}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Details"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.activityDetails}"/>
+                                                                        <h:outputText id="activityDetails" value="#{item.activityDetails}"/>
+                                                                        <p:tooltip value="#{item.activityDetails}" for="activityDetails"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Qty"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.qty}"/>
+                                                                        <h:outputText id="qty" value="#{item.qty}"/>
+                                                                        <p:tooltip value="#{item.qty}" for="qty"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendor}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Price Customer"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalPriceVendor}">
+                                                                        <h:outputText id="totalPriceVendor" value="#{item.totalPriceVendor}">
                                                                             <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
+                                                                        <p:tooltip value="#{item.totalPriceVendor}" for="totalPriceVendor"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceVendorTaxes}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Price With Taxes"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalPriceVendorTaxes}">
+                                                                        <h:outputText id="totalPriceVendorTaxes" value="#{item.totalPriceVendorTaxes}">
                                                                             <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
+                                                                        <p:tooltip value="#{item.totalPriceVendorTaxes}" for="totalPriceVendorTaxes"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalPriceAsp}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="ASP Price"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalPriceAsp}">
+                                                                        <h:outputText id="totalPriceAsp" value="#{item.totalPriceAsp}">
                                                                             <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
+                                                                        <p:tooltip value="#{item.totalPriceAsp}" for="totalPriceAsp"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalUm}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Total UM"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalUm}">
+                                                                        <h:outputText id="totalUm" value="#{item.totalUm}">
                                                                             <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                         </h:outputText>
+                                                                        <p:tooltip value="#{item.totalUm}" for="totalUm"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" sortBy="#{item.totalUmPercent}">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="UM%"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.totalUmPercent*100.0}">
+                                                                        <h:outputText id="totalUmPercent" value="#{item.totalUmPercent*100.0}">
                                                                             <f:convertNumber groupingUsed="false" minFractionDigits="1" />
                                                                         </h:outputText>%
+                                                                        <p:tooltip value="#{item.totalUmPercent}" for="totalUmPercent"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.activityComment}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Comment"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.activityComment}"/>
+                                                                        <h:outputText id="activityComment" value="#{item.activityComment}"/>
+                                                                        <p:tooltip value="#{item.activityComment}" for="activityComment"/>
                                                                     </p:column>
                                                                    
                                                                     <p:column style="font-size: 9px;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Taxes"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.taxes}%"/>
+                                                                        <h:outputText id="taxes" value="#{item.taxes}%"/>
+                                                                        <p:tooltip value="#{item.taxes}" for="taxes"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.approvalStatus.statusName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Approval"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.approvalStatus.statusName}"/>
+                                                                        <h:outputText id="statusName" value="#{item.approvalStatus.statusName}"/>
+                                                                        <p:tooltip value="#{item.approvalStatus.statusName}" for="statusName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.area.areaName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Area"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.area.areaName}"/>
+                                                                        <h:outputText id="areaName" value="#{item.area.areaName}"/>
+                                                                        <p:tooltip value="#{item.area.areaName}" for="areaName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.claimStatus.claimName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Claim"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.claimStatus.claimName}"/>
+                                                                        <h:outputText id="claimName" value="#{item.claimStatus.claimName}"/>
+                                                                        <p:tooltip value="#{item.claimStatus.claimName}" for="claimName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.activityType.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Type"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.activityType.domainName}"/>
+                                                                        <h:outputText id="domainName" value="#{item.activityType.domainName}"/>
+                                                                        <p:tooltip value="#{item.activityType.domainName}" for="domainName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.phase.phaseName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Phase"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.phase.phaseName}"/>
+                                                                        <h:outputText id="phaseName" value="#{item.phase.phaseName}"/>
+                                                                        <p:tooltip value="#{item.phase.phaseName}" for="phaseName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.site.sitePhysical}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Site"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.site.sitePhysical}"/>
+                                                                        <h:outputText id="sitePhysical" value="#{item.site.sitePhysical}"/>
+                                                                        <p:tooltip value="#{item.site.sitePhysical}" for="sitePhysical"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.asp.subcontractorName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="ASP"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.asp.subcontractorName}"/>
+                                                                        <h:outputText id="subcontractorName" value="#{item.asp.subcontractorName}"/>
+                                                                        <p:tooltip value="#{item.asp.subcontractorName}" for="subcontractorName"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Creator"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.creator.email}"/>
+                                                                        <h:outputText id="email" value="#{item.creator.email}"/>
+                                                                        <p:tooltip value="#{item.creator.email}" for="email"/>
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.vendorOwner.ownerName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
                                                                             <h:outputText value="Owner"/>
                                                                         </f:facet>
-                                                                        <h:outputText value="#{item.vendorOwner.ownerName}"/>
+                                                                        <h:outputText id="ownerName" value="#{item.vendorOwner.ownerName}"/>
+                                                                        <p:tooltip value="#{item.vendorOwner.ownerName}" for="ownerName"/>
                                                                     </p:column>
                                                                     <f:facet name="footer">
                                                                         <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ActivityEditForm" oncomplete="PF('ActivityEditDialog').show()" disabled="#{empty activityController.selectedItems}"/>
@@ -319,6 +345,7 @@
                                                 </div>
                                         </div>
                                         </div>
+                                    <h:panelGroup rendered="#{usersController.customer}">
                                         <div class="col-md-6">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
@@ -439,7 +466,8 @@
                                                 </div>
                                         </div>
                                         </div>
-                                        </div>
+                                    </h:panelGroup>    
+                                    </div>
                                         
                                 <!--page content end here--> 
                                 </h:form>

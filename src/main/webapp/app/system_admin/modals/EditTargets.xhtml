@@ -22,8 +22,9 @@
                         <p:outputLabel value="#{bundle.EditTargetsLabel_umT}" for="umT" />
                         <p:inputText id="umT" value="#{targetsController.selected.umT}" title="#{bundle.EditTargetsTitle_umT}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{targetsController.update}" value="#{bundle.Save}" update="display,:TargetsListForm:datalist,:TargetsListForm:growl" oncomplete="handleSubmit(args, 'TargetsEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}" >
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{targetsController.update}" value="#{bundle.Save}" update="display,:TargetsListForm:datalist,:TargetsListForm:growl" oncomplete="handleSubmit(args, 'TargetsEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":TargetsEditForm"/>
                         <p:ajax listener="#{targetsController.resetSelection}" oncomplete="PF('TargetsEditDialog').hide();" update="@([id$=datalist]) @([id$=editButton])" />
                     </p:commandButton>
                 </h:panelGroup>

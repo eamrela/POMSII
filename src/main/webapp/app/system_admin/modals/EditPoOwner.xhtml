@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="PoOwnerEditDlg" widgetVar="PoOwnerEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditPoOwnerTitle}"
+                  closable="false" closeOnEscape="false">
+            <h:form id="PoOwnerEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{poOwnerController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditPoOwnerLabel_ownerName}" for="ownerName" />
+                        <p:inputText id="ownerName" value="#{poOwnerController.selected.ownerName}" title="#{bundle.EditPoOwnerTitle_ownerName}" />
+                        <p:outputLabel value="#{bundle.EditPoOwnerLabel_ownerNumber}" for="ownerNumber" />
+                        <p:inputText id="ownerNumber" value="#{poOwnerController.selected.ownerNumber}" title="#{bundle.EditPoOwnerTitle_ownerNumber}" />
+                    </p:panelGrid>
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{poOwnerController.update}" value="#{bundle.Save}" update="display,:PoOwnerListForm:datalist,:PoOwnerListForm:growl" oncomplete="handleSubmit(args, 'PoOwnerEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":PoOwnerEditForm"/>
+                        <p:ajax oncomplete="PF('PoOwnerEditDialog').hide();" listener="#{poOwnerController.resetSelection}" update=":PoOwnerListForm:datalist,:PoOwnerListForm:editButton,:PoOwnerListForm:createButton" />
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

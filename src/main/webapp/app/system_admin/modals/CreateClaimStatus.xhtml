@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.CreateClaimStatusLabel_description}" for="description" />
                         <p:inputText id="description" value="#{claimStatusController.selected.description}" title="#{bundle.CreateClaimStatusTitle_description}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{claimStatusController.create}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args,'ClaimStatusCreateDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}" >
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{claimStatusController.create}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args,'ClaimStatusCreateDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":ClaimStatusCreateForm"/>
                         <p:ajax listener="#{claimStatusController.resetSelection}" oncomplete="PF('ClaimStatusCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>

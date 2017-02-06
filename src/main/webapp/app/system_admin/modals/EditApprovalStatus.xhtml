@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.EditApprovalStatusLabel_description}" for="description" />
                         <p:inputText id="description" value="#{approvalStatusController.selected.description}" title="#{bundle.EditApprovalStatusTitle_description}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{approvalStatusController.update}" value="#{bundle.Save}" update="display,@([id$=datalist]),@([id$=growl])" oncomplete="handleSubmit(args, 'ApprovalStatusEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{approvalStatusController.update}" value="#{bundle.Save}" update="display,@([id$=datalist]),@([id$=growl])" oncomplete="handleSubmit(args, 'ApprovalStatusEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":ApprovalStatusEditForm"/>
                         <p:ajax listener="#{approvalStatusController.resetSelection}" oncomplete="PF('ApprovalStatusEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
                     </p:commandButton>
                 </h:panelGroup>

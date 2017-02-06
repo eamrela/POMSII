@@ -36,8 +36,9 @@
 }
 .fixed-size {
     table-layout: auto;
-    white-space: normal;
+    white-space: nowrap;
     word-wrap: normal;
+    overflow: hidden;
     font-size: 0.7vw;
     text-align: left;
     float: left;
@@ -56,7 +57,13 @@
                             <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu
+                                    dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>
@@ -110,99 +117,92 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="PO#"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poNumber}"/>
+                                                               <h:outputText id="poNumber" value="#{item.poNumber}"/>
+                                                               <p:tooltip value="#{item.poNumber}" for="poNumber"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poDate}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Date"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poDate}">
+                                                               <h:outputText id="poDate" value="#{item.poDate}">
                                                                    <f:convertDateTime pattern="MM/dd/yyyy" />
                                                                </h:outputText>
+                                                               <p:tooltip value="#{item.poDate}" for="poDate"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" filterBy="#{item.poDescription}" 
                                                                      filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Description"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poDescription}"/>
+                                                               <h:outputText id="poDescription" value="#{item.poDescription}"/>
+                                                               <p:tooltip value="#{item.poDescription}" for="poDescription"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.factor}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Factor"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.factor}"/>
+                                                               <h:outputText id="factor" value="#{item.factor}"/>
+                                                               <p:tooltip value="#{item.factor}" for="factor"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Service Value"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.serviceValue}">
+                                                               <h:outputText id="serviceValue" value="#{item.serviceValue}">
                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.serviceValue}" for="serviceValue"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="PO Value"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValue}">
+                                                               <h:outputText id="poValue" value="#{item.poValue}">
                                                                     <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.poValue}" for="poValue"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="PO Value Taxes"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.poValueTaxes}">
-                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
-                                                                </h:outputText>
-                                                           </p:column>
+                                                           
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Work Done"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.workDone}"/>
+                                                               <h:outputText id="workDone" value="#{item.workDone}"/>
+                                                               <p:tooltip value="#{item.workDone}" for="workDone"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.remainingInPo}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.remainingInPo}">
+                                                               <h:outputText id="remainingInPo" value="#{item.remainingInPo}">
                                                                     <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.remainingInPo}" for="remainingInPo"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="Taxes"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.taxes}%"/>
-                                                           </p:column>
+                                                          
                                                            <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Domain"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.domainName.domainName}"/>
+                                                               <h:outputText id="domainName" value="#{item.domainName.domainName}"/>
+                                                               <p:tooltip value="#{item.domainName.domainName}" for="domainName"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poOwner.ownerName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Owner"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poOwner.ownerName}"/>
+                                                               <h:outputText id="ownerName" value="#{item.poOwner.ownerName}"/>
+                                                               <p:tooltip value="#{item.poOwner.ownerName}" for="ownerName"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;"
-                                                                     filterBy="#{item.poChaser.chaserName}" filterMatchMode="contains" filterStyle="width: 70%;">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="Chaser"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.poChaser.chaserName}"/>
-                                                           </p:column>
+                                                           
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poType.typeName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Type"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poType.typeName}"/>
+                                                               <h:outputText id="typeName" value="#{item.poType.typeName}"/>
+                                                               <p:tooltip value="#{item.poType.typeName}" for="typeName"/>
                                                            </p:column>
                                                            
                                                            <f:facet name="footer">
@@ -706,6 +706,17 @@
                                                                            itemLabel="#{domainItem.domainName}"
                                                                         />
                                                         </h:selectOneMenu>
+                                                        
+                                                        <p:outputLabel for="poValueTaxes" value="PO Value with Taxes" />
+                                                        <h:outputText id="poValueTaxes" value="#{vendorPoController.selected.poValueTaxes}">
+                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                                        </h:outputText>
+                                                        <p:outputLabel for="poChaser" value="PO Chaser" />
+                                                        <h:outputText id="poChaser" value="#{vendorPoController.selected.poChaser.chaserName}"/>
+                                                        
+                                                        <p:outputLabel for="taxes" value="Taxes" />
+                                                        <h:outputText id="taxes" value="#{vendorPoController.selected.taxes}"/>
+                                                        
                                                     </p:panelGrid>
                                                     
                                                     <p:commandButton actionListener="#{vendorPoController.update}" value="Update" 

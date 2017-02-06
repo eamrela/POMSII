@@ -57,18 +57,18 @@ public class DashboardController implements Serializable{
     private String selectedDomainsStr="*";
     
     // Figures 
-    private BigInteger NS;
-    private BigInteger COS;
-    private BigInteger UM;
+    private BigDecimal NS;
+    private BigDecimal COS;
+    private BigDecimal UM;
     private Double UMPercent;
     private List<VendorInvoice> NS_invoices;
     private List<AspGrn> COS_Grns;
     // Remaining Not Yet invoiced
     private List<VendorMd> remainingNotyetInvoiced;
-    private BigInteger remainingNotyetInvoiced_Value;
+    private BigDecimal remainingNotyetInvoiced_Value;
     // Commited Cost
      private List<AspPo> committedCost;
-    private BigInteger committedCost_Value;
+    private BigDecimal committedCost_Value;
     
     
     private List<CustomerSummary> customerSummary;
@@ -226,8 +226,8 @@ public class DashboardController implements Serializable{
     public void calculateDashboardFigues(){
         NS_invoices = vendorInvoiceController.findDashboardItems(start, end,getSelectedDomainsStr());
         COS_Grns = aspGrnController.getDashboardItems(start, end,getSelectedDomainsStr());
-        NS = BigInteger.ZERO;
-        COS = BigInteger.ZERO;
+        NS = BigDecimal.ZERO;
+        COS = BigDecimal.ZERO;
         for (VendorInvoice NS_invoice : NS_invoices) {
             NS = NS.add(NS_invoice.getInvoiceValue());
         }
@@ -235,39 +235,41 @@ public class DashboardController implements Serializable{
             COS = COS.add(COS_Grn.getGrnValue());
         }
         UM = NS.subtract(COS);
-        if(NS.compareTo(BigInteger.ZERO)==1){
+        if(NS.compareTo(BigDecimal.ZERO)==1){
         UMPercent = round(Double.valueOf((UM.floatValue()/NS.floatValue())*100),1);
-        }else{
+        }else if(NS.compareTo(BigDecimal.ZERO)==0 && COS.compareTo(BigDecimal.ZERO)==1){
+        UMPercent = -100.0;
+        }else if(NS.compareTo(BigDecimal.ZERO)==0 && COS.compareTo(BigDecimal.ZERO)==0){
         UMPercent = 0.0;
         }
     }
     public void calculateRemainingNotYetInvoiced(){
         remainingNotyetInvoiced = vendorMdController.getDashboardItems(getSelectedDomainsStr());
-        remainingNotyetInvoiced_Value = BigInteger.ZERO;
-        BigInteger totalMdValue = BigInteger.ZERO;
-        BigInteger totalInvoiceValue = BigInteger.ZERO;
-        remainingNotyetInvoiced_Value = BigInteger.ZERO;
+        remainingNotyetInvoiced_Value = BigDecimal.ZERO;
+        BigDecimal totalMdValue = BigDecimal.ZERO;
+        BigDecimal totalInvoiceValue = BigDecimal.ZERO;
+        remainingNotyetInvoiced_Value = BigDecimal.ZERO;
         for (VendorMd vendorMd : remainingNotyetInvoiced) {
-           totalMdValue = totalMdValue.add(vendorMd.getMdValue()!=null?vendorMd.getMdValue():BigInteger.ZERO);
+           totalMdValue = totalMdValue.add(vendorMd.getMdValue()!=null?vendorMd.getMdValue():BigDecimal.ZERO);
            vendorMdController.setSelected(vendorMd);
            List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
             for (VendorInvoice invoice : invoices) {
-                totalInvoiceValue = totalInvoiceValue.add(invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigInteger.ZERO);
+                totalInvoiceValue = totalInvoiceValue.add(invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigDecimal.ZERO);
             }
         }
         remainingNotyetInvoiced_Value = totalMdValue.subtract(totalInvoiceValue);
     }
     public void calculateCommitedCost(){
         committedCost = aspPoController.getDashboardCommittedCost(getSelectedDomainsStr());
-        committedCost_Value = BigInteger.ZERO;
+        committedCost_Value = BigDecimal.ZERO;
         for (AspPo committedCost1 : committedCost) {
-            BigInteger totalWorkValue = 
-                    BigDecimal.valueOf(committedCost1.getWorkDone().floatValue()*committedCost1.getServiceValue().floatValue()).toBigInteger();
+            BigDecimal totalWorkValue = 
+                    BigDecimal.valueOf(committedCost1.getWorkDone().floatValue()*committedCost1.getServiceValue().floatValue());
             aspPoController.setSelected(committedCost1);
             List<AspGrn> grns = aspGrnController.getSelectedPoItems();
-            BigInteger grnValues = BigInteger.ZERO;
+            BigDecimal grnValues = BigDecimal.ZERO;
             for (int i = 0; i < grns.size(); i++) {
-                grnValues = grnValues.add(grns.get(i).getGrnValue()!=null?grns.get(i).getGrnValue():BigInteger.ZERO);
+                grnValues = grnValues.add(grns.get(i).getGrnValue()!=null?grns.get(i).getGrnValue():BigDecimal.ZERO);
             }
             committedCost_Value = committedCost_Value.add((totalWorkValue.subtract(grnValues)));
             
@@ -306,7 +308,7 @@ public class DashboardController implements Serializable{
         this.remainingNotyetInvoiced = remainingNotyetInvoiced;
     }
 
-    public BigInteger getRemainingNotyetInvoiced_Value() {
+    public BigDecimal getRemainingNotyetInvoiced_Value() {
         return remainingNotyetInvoiced_Value;
     }
 
@@ -314,7 +316,7 @@ public class DashboardController implements Serializable{
         return committedCost;
     }
 
-    public BigInteger getCommittedCost_Value() {
+    public BigDecimal getCommittedCost_Value() {
         return committedCost_Value;
     }
     
@@ -339,16 +341,16 @@ public class DashboardController implements Serializable{
         return end;
     }
     
-    public BigInteger getNS() {
-        return BigDecimal.valueOf(NS.floatValue()*getSekConversionRate()).toBigInteger();
+    public BigDecimal getNS() {
+        return BigDecimal.valueOf(NS.floatValue()*getSekConversionRate());
     }
 
-    public void setNS(BigInteger NS) {
+    public void setNS(BigDecimal NS) {
         this.NS = NS;
     }
 
-    public BigInteger getCOS() {
-        return BigDecimal.valueOf(COS.floatValue()*getSekConversionRate()).toBigInteger();
+    public BigDecimal getCOS() {
+        return BigDecimal.valueOf(COS.floatValue()*getSekConversionRate());
     }
 
     public String getStartStr() {
@@ -370,15 +372,15 @@ public class DashboardController implements Serializable{
     }
     
 
-    public void setCOS(BigInteger COS) {
+    public void setCOS(BigDecimal COS) {
         this.COS = COS;
     }
 
-    public BigInteger getUM() {
-        return BigDecimal.valueOf(UM.floatValue()*getSekConversionRate()).toBigInteger();
+    public BigDecimal getUM() {
+        return BigDecimal.valueOf(UM.floatValue()*getSekConversionRate());
     }
 
-    public void setUM(BigInteger UM) {
+    public void setUM(BigDecimal UM) {
         this.UM = UM;
     }
 
@@ -685,31 +687,31 @@ public class DashboardController implements Serializable{
        List<AspPo> aspPos = aspPoController.findAll();
        customerSummary = new ArrayList<>();
        CustomerSummary summary = new CustomerSummary();
-       BigInteger totalPoValue=BigInteger.ZERO;
-       BigInteger totalRemainingFromPo=BigInteger.ZERO;
-       BigInteger totalMdRecieved=BigInteger.ZERO;
-       BigInteger totalMdDeserved=BigInteger.ZERO;
-       BigInteger totalInvoiceDeserved=BigInteger.ZERO;
-       BigInteger totalInvoiceValue=BigInteger.ZERO;
-       BigInteger totalRemainingFromInvoice=BigInteger.ZERO;
-       BigInteger totalRemainingFromMd=BigInteger.ZERO;
+       BigDecimal totalPoValue=BigDecimal.ZERO;
+       BigDecimal totalRemainingFromPo=BigDecimal.ZERO;
+       BigDecimal totalMdRecieved=BigDecimal.ZERO;
+       BigDecimal totalMdDeserved=BigDecimal.ZERO;
+       BigDecimal totalInvoiceDeserved=BigDecimal.ZERO;
+       BigDecimal totalInvoiceValue=BigDecimal.ZERO;
+       BigDecimal totalRemainingFromInvoice=BigDecimal.ZERO;
+       BigDecimal totalRemainingFromMd=BigDecimal.ZERO;
         for (VendorPo customerPo : customerPos) {
             totalPoValue = totalPoValue.add(customerPo.getPoValue());
             totalRemainingFromPo = totalRemainingFromPo.add(customerPo.getRemainingInPo()!=null?
-                                customerPo.getRemainingInPo():BigInteger.ZERO);
+                                customerPo.getRemainingInPo():BigDecimal.ZERO);
             totalMdDeserved = totalMdDeserved.add(
-                    BigDecimal.valueOf(customerPo.getWorkDone()*customerPo.getServiceValue().floatValue()).toBigInteger());
+                    BigDecimal.valueOf(customerPo.getWorkDone()*customerPo.getServiceValue().floatValue()));
             vendorPoController.setSelected(customerPo);
             List<VendorMd> mds=vendorMdController.getSelectedPoItems();
            for (VendorMd md : mds) {
-               totalMdRecieved = totalMdRecieved.add(md.getMdValue()!=null?md.getMdValue():BigInteger.ZERO);
+               totalMdRecieved = totalMdRecieved.add(md.getMdValue()!=null?md.getMdValue():BigDecimal.ZERO);
                vendorMdController.setSelected(md);
                List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
                 for (VendorInvoice invoice : invoices) {
                     totalInvoiceValue = totalInvoiceValue.add(
-                            invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigInteger.ZERO);
+                            invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigDecimal.ZERO);
                     totalInvoiceDeserved = totalInvoiceDeserved.add(
-                            invoice.getInvoiceDeserved()!=null?invoice.getInvoiceDeserved():BigInteger.ZERO);
+                            invoice.getInvoiceDeserved()!=null?invoice.getInvoiceDeserved():BigDecimal.ZERO);
                     
                 }
            }
@@ -718,7 +720,7 @@ public class DashboardController implements Serializable{
         totalRemainingFromMd = totalMdDeserved.subtract(totalMdRecieved);
         
         for (AspPo aspPo : aspPos) {
-            summary.setTotalCommittedCost((aspPo.getGrnDeserved()!=null?aspPo.getGrnDeserved():BigInteger.ZERO));
+            summary.setTotalCommittedCost((aspPo.getGrnDeserved()!=null?aspPo.getGrnDeserved():BigDecimal.ZERO));
         }
         summary.setTotalMdDeserved(totalMdDeserved);
         summary.setTotalMdRecieved(totalMdRecieved);

@@ -29,13 +29,13 @@ import javax.inject.Inject;
 public class VendorMdController implements Serializable {
     
     private Double editMdFactor;
-    private BigInteger editMdValue;
-    private BigInteger editMdDeserved;
+    private BigDecimal editMdValue;
+    private BigDecimal editMdDeserved;
     private Date editMdDate;
     private String editMdNumber;
-    private BigInteger editRemainingInMd;
-    private BigInteger selectedMdInvoiceValue;
-    private BigInteger selectedPoInvoiceValue;
+    private BigDecimal editRemainingInMd;
+    private BigDecimal selectedMdInvoiceValue;
+    private BigDecimal selectedPoInvoiceValue;
     private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.VendorMdFacade ejbFacade;
@@ -187,9 +187,9 @@ public class VendorMdController implements Serializable {
         return getFacade().findDashboardItems(domains);
     }
 
-    public BigInteger getSelectedMdInvoiceValue() {
-        selectedMdInvoiceValue = BigInteger.ZERO;
-        BigInteger totalInvoices = BigInteger.ZERO;
+    public BigDecimal getSelectedMdInvoiceValue() {
+        selectedMdInvoiceValue = BigDecimal.ZERO;
+        BigDecimal totalInvoices = BigDecimal.ZERO;
         if(selected!=null){
         List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
         for (int i = 0; i < invoices.size(); i++) {
@@ -203,10 +203,10 @@ public class VendorMdController implements Serializable {
         return selectedMdInvoiceValue;
     }
     
-    public BigInteger getSelectedPoInvoiceValue() {
-        selectedPoInvoiceValue = BigInteger.ZERO;
-        BigInteger totalInvoices = BigInteger.ZERO;
-        BigInteger totalMdValue = BigInteger.ZERO;
+    public BigDecimal getSelectedPoInvoiceValue() {
+        selectedPoInvoiceValue = BigDecimal.ZERO;
+        BigDecimal totalInvoices = BigDecimal.ZERO;
+        BigDecimal totalMdValue = BigDecimal.ZERO;
         if(vendorPoController.getSelected()!=null){
         List<VendorMd> mds = getSelectedPoItems();
         for (VendorMd md : mds) {
@@ -278,7 +278,7 @@ public class VendorMdController implements Serializable {
         return editMdDate;
     }
 
-    public BigInteger getEditMdDeserved() {
+    public BigDecimal getEditMdDeserved() {
         return editMdDeserved;
     }
 
@@ -290,11 +290,11 @@ public class VendorMdController implements Serializable {
         return editMdNumber;
     }
 
-    public BigInteger getEditMdValue() {
+    public BigDecimal getEditMdValue() {
         return editMdValue;
     }
 
-    public BigInteger getEditRemainingInMd() {
+    public BigDecimal getEditRemainingInMd() {
         return editRemainingInMd;
     }
 
@@ -306,7 +306,7 @@ public class VendorMdController implements Serializable {
         this.editMdDate = editMdDate;
     }
 
-    public void setEditMdDeserved(BigInteger editMdDeserved) {
+    public void setEditMdDeserved(BigDecimal editMdDeserved) {
         this.editMdDeserved = editMdDeserved;
     }
 
@@ -320,19 +320,19 @@ public class VendorMdController implements Serializable {
         this.editMdNumber = editMdNumber;
     }
 
-    public void setEditMdValue(BigInteger editMdValue) {
+    public void setEditMdValue(BigDecimal editMdValue) {
         this.editMdValue = editMdValue;
         calculateFactor();
         calculateRemaining();
     }
 
-    public void setEditRemainingInMd(BigInteger editRemainingInMd) {
+    public void setEditRemainingInMd(BigDecimal editRemainingInMd) {
         this.editRemainingInMd = editRemainingInMd;
     }
 
     private void calculateValue() {
         if(editMdFactor!=null)
-        editMdValue = BigInteger.valueOf(BigDecimal.valueOf(editMdFactor).multiply(BigDecimal.valueOf(editMdDeserved.intValue())).intValue());
+        editMdValue = BigDecimal.valueOf(BigDecimal.valueOf(editMdFactor).multiply(BigDecimal.valueOf(editMdDeserved.intValue())).intValue());
     }
     
     private void calculateFactor() {
@@ -347,13 +347,13 @@ public class VendorMdController implements Serializable {
     
     public void clearSelected(){
         selected = null;
-        selectedMdInvoiceValue = BigInteger.ZERO;
+        selectedMdInvoiceValue = BigDecimal.ZERO;
     }
     
    
     public void createInvoice(){
         if(selected!=null){
-            if(getSelectedMdInvoiceValue().compareTo(BigInteger.ZERO)==1){
+            if(getSelectedMdInvoiceValue().compareTo(BigDecimal.ZERO)==1){
                 vendorInvoiceController.prepareCreate();
                 vendorInvoiceController.getSelected().setMdId(selected);
                 vendorInvoiceController.getSelected().setCreator(usersController.getLoggedInUser());

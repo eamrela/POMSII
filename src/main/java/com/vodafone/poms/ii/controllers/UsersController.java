@@ -28,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class UsersController implements Serializable {
     
     private String role;
+    
     @EJB
     private com.vodafone.poms.ii.beans.UsersFacade ejbFacade;
     private List<Users> items = null;
@@ -191,5 +192,58 @@ public class UsersController implements Serializable {
         }
 
     }
+    //'ROLE_ADMIN','ROLE_SYSADMIN','ROLE_BUSINESSPROVIDER','ROLE_FINANCEADMIN'
+    public boolean isDashboard(){
+        if(getRole().equals("ROLE_ADMIN")
+                || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_FINANCEADMIN") ){
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isSettings(){
+        if(getRole().equals("ROLE_SYSADMIN")){
+            return true;
+        }
+        return false;
+    }
+   
+    public boolean isActivities(){
+        if(getRole().equals("ROLE_ADMIN")
+                || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_BUSINESSPROVIDER")){
+            return true;
+        }
+        return false;
+    }
+   
+    public boolean isCustomer(){
+        if(getRole().equals("ROLE_ADMIN")
+                || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_FINANCEADMIN")){
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isSubcontractor(){
+        if(getRole().equals("ROLE_ADMIN")
+                || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_FINANCEADMIN")){
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isExport(){
+        if(getRole().equals("ROLE_ADMIN")
+                || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_FINANCEADMIN")){
+            return true;
+        }
+        return false;
+    }
+    
 
 }

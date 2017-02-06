@@ -19,8 +19,9 @@
                         <p:outputLabel value="#{bundle.CreateSubcontractorsLabel_subcontractorDetails}" for="subcontractorDetails" />
                         <p:inputText id="subcontractorDetails" value="#{subcontractorsController.selected.subcontractorDetails}" title="#{bundle.CreateSubcontractorsTitle_subcontractorDetails}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{subcontractorsController.create}" value="#{bundle.Save}" update="display,@([id$=growl]) @([id$=datalist])" oncomplete="handleSubmit(args,'SubcontractorsCreateDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton styleClass="btn btn-raised" actionListener="#{subcontractorsController.create}" value="#{bundle.Save}" update="display,@([id$=growl]) @([id$=datalist])" oncomplete="handleSubmit(args,'SubcontractorsCreateDialog');"/>
+                    <p:commandButton styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":SubcontractorsCreateForm"/>
                         <p:ajax listener="#{subcontractorsController.resetSelection}" oncomplete="PF('SubcontractorsCreateDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton]) @([id$=datalistfooter])" />
                     </p:commandButton>
                 </h:panelGroup>

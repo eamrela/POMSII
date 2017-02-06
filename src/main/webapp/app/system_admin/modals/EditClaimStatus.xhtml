@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.EditClaimStatusLabel_description}" for="description" />
                         <p:inputText id="description" value="#{claimStatusController.selected.description}" title="#{bundle.EditClaimStatusTitle_description}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{claimStatusController.update}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args, 'ClaimStatusEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}" >
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{claimStatusController.update}" value="#{bundle.Save}" update="display,:ClaimStatusListForm:datalist,:ClaimStatusListForm:growl" oncomplete="handleSubmit(args, 'ClaimStatusEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}" >
+                        <p:resetInput target=":ClaimStatusEditForm"/>
                         <p:ajax listener="#{claimStatusController.resetSelection}" oncomplete="PF('ClaimStatusEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
                     </p:commandButton>
                 </h:panelGroup>

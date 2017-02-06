@@ -18,8 +18,9 @@
                         <p:outputLabel value="#{bundle.EditDomainNamesLabel_description}" for="description" />
                         <p:inputText id="description" value="#{domainNamesController.selected.description}" title="#{bundle.EditDomainNamesTitle_description}" />
                     </p:panelGrid>
-                    <p:commandButton actionListener="#{domainNamesController.update}" value="#{bundle.Save}" update="display,:DomainNamesListForm:datalist,:DomainNamesListForm:growl" oncomplete="handleSubmit(args, 'DomainNamesEditDialog');"/>
-                    <p:commandButton value="#{bundle.Cancel}">
+                    <p:commandButton  styleClass="btn btn-raised" actionListener="#{domainNamesController.update}" value="#{bundle.Save}" update="display,:DomainNamesListForm:datalist,:DomainNamesListForm:growl" oncomplete="handleSubmit(args, 'DomainNamesEditDialog');"/>
+                    <p:commandButton  styleClass="btn btn-raised" value="#{bundle.Cancel}">
+                        <p:resetInput target=":DomainsEditForm"/>
                         <p:ajax listener="#{domainNamesController.resetSelection}" oncomplete="PF('DomainNamesEditDialog').hide();" update="@([id$=datalist]) @([id$=createButton]) @([id$=editButton])" />
                     </p:commandButton>
                 </h:panelGroup>

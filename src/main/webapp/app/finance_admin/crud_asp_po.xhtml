@@ -36,11 +36,15 @@
 }
 .fixed-size {
     table-layout: auto;
-    white-space: normal;
+    white-space: nowrap;
     word-wrap: normal;
+    overflow: hidden;
     font-size: 0.7vw;
     text-align: left;
     float: left;
+}
+.correlated{
+    background-color: #1BF36A;
 }
 
         </style>
@@ -56,7 +60,13 @@
                         <div class="sidebar">
                             <POMSII:ProfileInfo username="#{usersController.loggedInUser.firstLastName}" email="#{usersController.loggedInUser.email}"/> 
                             <div class="widget stay-on-collapse" id="widget-sidebar">
-                                <POMSII:NavigationMenu/>
+                                <POMSII:NavigationMenu
+                                    dashboard="#{usersController.dashboard}"
+                                    settings="#{usersController.settings}"
+                                    activities="#{usersController.activities}"
+                                    customer="#{usersController.customer}"
+                                    subcontractor="#{usersController.subcontractor}"
+                                    export="#{usersController.export}"/>
                             </div>
                         </div>
                     </div>
@@ -71,7 +81,7 @@
                                 <p:growl id="growl" sticky="true"/>
                                 <!--Page start content here-->
                                 <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-12">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
                                                         <h2>All ASP POs</h2>
@@ -88,6 +98,7 @@
                                                                     rows="10"
                                                                     rowsPerPageTemplate="5,10,15,20,25"
                                                                     styleClass="fixed-size"
+                                                                    rowStyleClass="#{aspPoController.correlationStatus(item) ? 'correlated' : null}"
                                                                     >
 
                                                            <p:ajax event="rowSelect"   update="editButton, deleteButton, closeButton,:ASPPOListForm:selectedCorrelation,
@@ -106,117 +117,101 @@
                                                                <f:facet name="header">
                                                                    <h:outputText value="PO#"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poNumber}"/>
+                                                               <h:outputText id="poNumber" value="#{item.poNumber}"/>
+                                                               <p:tooltip value="#{item.poNumber}" for="poNumber"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poDate}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Date"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poDate}">
+                                                               <h:outputText id="poDate" value="#{item.poDate}">
                                                                    <f:convertDateTime pattern="MM/dd/yyyy" />
                                                                </h:outputText>
+                                                               <p:tooltip value="#{item.poDate}" for="poDate"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" filterBy="#{item.poDescription}" 
                                                                      filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Description"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poDescription}"/>
+                                                               <h:outputText id="poDescription" value="#{item.poDescription}"/>
+                                                               <p:tooltip value="#{item.poDescription}" for="poDescription"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.factor}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Factor"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.factor}"/>
+                                                               <h:outputText id="factor" value="#{item.factor}"/>
+                                                               <p:tooltip value="#{item.factor}" for="factor"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.serviceValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Service Value"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.serviceValue}">
+                                                               <h:outputText id="serviceValue" value="#{item.serviceValue}">
                                                                    <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.serviceValue}" for="serviceValue"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.poValue}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="PO Value"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poValue}">
+                                                               <h:outputText id="poValue" value="#{item.poValue}">
                                                                    <f:convertNumber currencySymbol="" type="currency"  minFractionDigits="0"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.poValue}" for="poValue"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;" sortBy="#{item.poValueTaxes}">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="PO Value Taxes"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.poValueTaxes}">
-                                                                   <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
-                                                                </h:outputText>
-                                                           </p:column>
+                                                           
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Work Done"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.workDone}">
+                                                               <h:outputText id="workDone" value="#{item.workDone}">
                                                                    <f:convertNumber groupingUsed="false" minFractionDigits="1" />
                                                                </h:outputText>
+                                                               <p:tooltip value="#{item.workDone}" for="workDone"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;" sortBy="#{item.remainingInPo}">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Remaining"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.remainingInPo}">
+                                                               <h:outputText id="remainingInPo" value="#{item.remainingInPo}">
                                                                    <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
+                                                               <p:tooltip value="#{item.remainingInPo}" for="remainingInPo"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;" sortBy="#{item.poMargin}">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="Margin"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.poMargin}">
-                                                                   <f:convertNumber groupingUsed="false" minFractionDigits="1" />
-                                                               </h:outputText>
-                                                           </p:column>
-                                                           <p:column style="font-size: 9px;">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="Taxes"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.taxes}">
-                                                                   <f:convertNumber groupingUsed="false" minFractionDigits="1" />
-                                                               </h:outputText>%
-                                                           </p:column>
+                                                           
+                                                           
                                                            <p:column style="font-size: 9px;" filterBy="#{item.domainName.domainName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Domain"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.domainName.domainName}"/>
+                                                               <h:outputText id="domainName" value="#{item.domainName.domainName}"/>
+                                                               <p:tooltip value="#{item.domainName.domainName}" for="domainName"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.poType.typeName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Type"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.poType.typeName}"/>
+                                                               <h:outputText id="typeName" value="#{item.poType.typeName}"/>
+                                                               <p:tooltip value="#{item.poType.typeName}" for="typeName"/>
                                                            </p:column>
                                                            <p:column style="font-size: 9px;"
                                                                      filterBy="#{item.asp.subcontractorName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="ASP"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.asp.subcontractorName}"/>
+                                                               <h:outputText id="subcontractorName" value="#{item.asp.subcontractorName}"/>
+                                                               <p:tooltip value="#{item.asp.subcontractorName}" for="subcontractorName"/>
                                                            </p:column>
-                                                           <p:column style="font-size: 9px;"
-                                                                     filterBy="#{item.poChaser.chaserName}" filterMatchMode="contains" filterStyle="width: 70%;">
-                                                               <f:facet name="header">
-                                                                   <h:outputText value="Chaser"/>
-                                                               </f:facet>
-                                                               <h:outputText value="#{item.poChaser.chaserName}"/>
-                                                           </p:column>
+                                                           
                                                            <p:column style="font-size: 9px;">
                                                                <f:facet name="header">
                                                                    <h:outputText value="Customer PO"/>
                                                                </f:facet>
-                                                               <h:outputText value="#{item.vendorPoCollection.size()>0?'Correlated':'Not Correlated'}"/>
+                                                               <h:outputText value="#{aspPoController.correlationStatus(item)?'Correlated':'Not/Partial Correlated'}"/>
                                                            </p:column>
                                                            <f:facet name="footer">
                                                                <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" actionListener="#{aspPoWorkDoneController.prepareCreate}"
@@ -243,7 +238,7 @@
                                                 </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-12">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
                                                         <h2>Correlate/Check Customer POs</h2>
@@ -252,35 +247,40 @@
                                                 <div class="panel-body">
                                                      <p:outputPanel id="selectedCorrelation">
                                                          <h:panelGroup rendered="#{aspPoController.selectedItems!=null}">
-                                                            <h:panelGroup rendered="#{aspPoController.selected.vendorPoCollection.size()>0}">
+                                                             <h:panelGroup rendered="#{aspPoController.correlationStatus(aspPoController.selected)}">
                                                                 <label>This PO is correlated</label>
                                                                 <p:dataTable 
                                                                 id="vendorDataTableCorrelated"
                                                                 var="vendorPOC" 
-                                                                value="#{aspPoController.selected.vendorPoCollection}"
+                                                                value="#{aspPoController.selected.vendorPoJAspPoValueCollection}"
                                                                 emptyMessage="No POs found matching this ASP PO"
-                                                                rowKey="#{vendorPOC.poNumber}"
+                                                                rowKey="#{vendorPOC.vendorPo.poNumber}"
                                                                 styleClass="fixed-size">
 
                                                                 
                                                                 <p:column headerText="PO#" style="font-size:0.7vw;">
-                                                                    <h:outputText value="#{vendorPOC.poNumber}"/>
+                                                                    <h:outputText value="#{vendorPOC.vendorPo.poNumber}"/>
                                                                 </p:column>
 
                                                                 <p:column headerText="Remaining" style="font-size:0.7vw;">
-                                                                    <h:outputText value="#{vendorPOC.remainingInPo}" style="float: left;font-size:0.7vw;" >
+                                                                    <h:outputText value="#{vendorPOC.vendorPo.remainingInPo}" style="float: left;font-size:0.7vw;" >
                                                                         <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column headerText="PO Value" style="font-size:0.7vw;">
-                                                                    <h:outputText value="#{vendorPOC.poValue}" style="font-size:0.7vw;" >
+                                                                    <h:outputText value="#{vendorPOC.vendorPo.poValue}" style="font-size:0.7vw;" >
+                                                                        <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                                                </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="valueTaken" style="font-size:0.7vw;">
+                                                                    <h:outputText value="#{vendorPOC.valueToTake}" style="font-size:0.7vw;" >
                                                                         <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
                                                                 </h:outputText>
                                                                 </p:column>
                                                             </p:dataTable>
                                                             </h:panelGroup>
-                                                            <h:panelGroup rendered="#{aspPoController.selected.vendorPoCollection.size()==0}">
+                                                             <h:panelGroup rendered="#{not aspPoController.correlationStatus(aspPoController.selected)}">
                                                                 <label> Total Price: 
                                                                  <h:outputText value="#{aspPoController.totalPOASPPrice}">
                                                                      <f:convertNumber type="currency"  minFractionDigits="0" currencySymbol=""/>
@@ -292,10 +292,10 @@
                                                                 var="vendorPO" 
                                                                 value="#{vendorPoController.findMatchingPOForASP()}"
                                                                 emptyMessage="No POs found matching this ASP PO"
-                                                                selection="#{aspPoController.selectedVendorPo}"
-                                                                selectionMode="single"
                                                                 rowKey="#{vendorPO.poNumber}"
-                                                                styleClass="fixed-size">
+                                                                styleClass="fixed-size"
+                                                                selection="#{aspPoController.selectedVendorPoList}"
+                                                                selectionMode="multiple">
                                                                 
                                                                 <p:ajax event="rowSelect" update=":ASPPOListForm:selectedCorrelationPO,
                                                                             :ASPPOListForm:growl,
@@ -318,18 +318,26 @@
                                                                 </p:column>
                                                             </p:dataTable>
                                                             <h:panelGroup id="selectedCorrelationPO">
-                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPo!=null}">
-                                                           <p:commandButton 
+                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPoList.size()>0}">
+                                                                <h:panelGroup rendered="#{aspPoController.selectedVendorPoList.size()>1}">
+                                                            <p:commandButton 
                                                                class="btn-raised btn-primary btn"
-                                                               actionListener="#{aspPoController.correlate}" 
+                                                               value="Correlate All" 
+                                                               actionListener="#{aspPoController.prepareCorrelate}"
+                                                               update=":AspPoCorrelationForm" oncomplete="PF('AspPoCorrelationDlg').show()"/>
+                                                             </h:panelGroup>
+                                                            <h:panelGroup rendered="#{aspPoController.selectedVendorPoList.size()==1}">
+                                                            <p:commandButton 
+                                                               class="btn-raised btn-primary btn"
                                                                value="Correlate" 
-                                                               ajax="false"
-                                                               disabled="#{aspPoController.disabled}"
-                                                               update=" :ASPPOListForm:datalistASPPO,
-                                                                        :ASPPOListForm:growl,
-                                                                        :ASPPOListForm:selectedASPPOGRN,
-                                                                        :ASPPOListForm:selectedCorrelationPO,
-                                                                        :ASPPOListForm:vendorDataTable" />
+                                                               actionListener="#{aspPoController.correlateSingle}"
+                                                             update=" :ASPPOListForm:datalistASPPO,
+                                                            :ASPPOListForm:growl,
+                                                            :ASPPOListForm:selectedASPPOGRN,
+                                                            :ASPPOListForm:selectedCorrelationPO,
+                                                            :ASPPOListForm:vendorDataTable" 
+                                                            ajax="false"/>
+                                                             </h:panelGroup>
                                                             </h:panelGroup>
                                                             </h:panelGroup>
                                                             </h:panelGroup>
@@ -554,6 +562,7 @@
                                                 </p:inputText>
                                                 <p:outputLabel value="Work Date" for="insertionDate" />
                                                 <p:calendar id="insertionDate" pattern="MM/dd/yyyy"  value="#{aspPoWorkDoneController.selected.insertionDate}" title="Work Date"  showOn="button"/>
+                                                
                                             </p:panelGrid>
                                             <p:commandButton actionListener="#{aspPoWorkDoneController.createWD}" value="Add Work Done" 
                                                              update="display,:ASPPOListForm:datalistASPPO,:ASPPOListForm:growl,
@@ -597,6 +606,7 @@
                                                                            itemLabel="#{poTypeItem.typeName}"
                                                                         />
                                                         </h:selectOneMenu>
+                                                        
                                                         <p:outputLabel for="podomain" value="Domain" />
                                                         <h:selectOneMenu id="podomain" 
                                                                          value="#{aspPoController.selected.domainName}" 
@@ -631,6 +641,19 @@
                                                                             itemLabel="#{ASPItem.subcontractorName}"
                                                                         />
                                                         </h:selectOneMenu>
+                                                        
+                                                        <p:outputLabel for="poValueTaxes" value="PO Value with Taxes" />
+                                                        <h:outputText id="poValueTaxes" value="#{aspPoController.selected.poValueTaxes}">
+                                                                    <f:convertNumber currencySymbol="" maxFractionDigits="0" type="currency"/>
+                                                        </h:outputText>
+                                                        <p:outputLabel for="poChaser" value="PO Chaser" />
+                                                        <h:outputText id="poChaser" value="#{aspPoController.selected.poChaser.chaserName}"/>
+                                                        
+                                                        <p:outputLabel for="taxes" value="Taxes" />
+                                                        <h:outputText id="taxes" value="#{aspPoController.selected.taxes}"/>
+                                                        
+                                                        <p:outputLabel for="margin" value="Margin" />
+                                                        <h:outputText id="margin" value="#{aspPoController.selected.poMargin}"/>
                                                     </p:panelGrid>
                                                     
                                                 <p:commandButton actionListener="#{aspPoController.update}" value="Update" 
@@ -709,7 +732,7 @@
                                     </h:panelGroup>
                                 </h:form>
                             </p:dialog>
-                            <p:dialog id="AspGrnEditDlg" widgetVar="AspGrnEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspGrnTitle}">
+                             <p:dialog id="AspGrnEditDlg" widgetVar="AspGrnEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAspGrnTitle}">
                             <h:form id="AspGrnEditForm">
                                 <h:panelGroup id="display">
                                     <p:panelGrid columns="2" rendered="#{aspGrnController.selected != null}">
@@ -735,7 +758,85 @@
                                                                             :ASPPOListForm:selectedASPPOGRN,:ASPPOListForm:growl,:ASPPOListForm:selectedASPPOGRN:associatedGRN"/>
                                 </h:panelGroup>
                             </h:form>
-                        </p:dialog>
+                        </p:dialog> 
+                        <p:dialog id="AspPoCorrelationDlg" widgetVar="AspPoCorrelationDlg" closable="true" closeOnEscape="true"
+                                  modal="true" resizable="false" appendTo="@(body)" header="Correlate PO">
+                                <h:form id="AspPoCorrelationForm">
+                                    <h:panelGroup rendered="#{not aspPoController.correlationStatus(aspPoController.selected)}">
+                                    <div class="row">
+                                    <div class="col-md-12">
+                                        <label> Total Price: 
+                                             <h:outputText id="totalASPPrice" value="#{aspPoController.totalPOASPPrice}">
+                                                 <f:convertNumber type="currency"  minFractionDigits="0" currencySymbol=""/>
+                                             </h:outputText>                       
+                                        </label>
+                                        <br></br>
+                                        <label >Please select a PO to correlate ASP PO (#{aspPoController.poIds})</label>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-md-12">
+                                        <p:dataTable 
+                                    id="vendorDataTable"
+                                    var="vendorPO2" 
+                                    value="#{aspPoController.selectedItemsToBeCorrelated}"
+                                    emptyMessage="No POs found matching this ASP PO"
+                                    rowKey="#{vendorPO2.vendorPo.poNumber}"
+                                    styleClass="fixed-size"
+                                    selection="#{aspPoController.itemToCorrelate}"
+                                    selectionMode="single"
+                                    style="width: 600px;">
+
+                                            <p:ajax event="rowSelect" 
+                                            update="correlateBtn,:ASPPOListForm:selectedCorrelationPO,
+                                                :ASPPOListForm:growl,
+                                                                   :ASPPOListForm:datalistASPPO"/>
+
+                                    <p:column headerText="PO#" style="font-size:0.7vw;">
+                                        <h:outputText value="#{vendorPO2.vendorPo.poNumber}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="Description" style="font-size:0.7vw;">
+                                        <h:outputText value="#{vendorPO2.vendorPo.poDescription}" />
+                                    </p:column>
+                                    <p:column headerText="Remaining" style="font-size:0.7vw;">
+                                        <h:outputText value="#{vendorPO2.vendorPo.remainingInPo}" >
+                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                    </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="PO Value" style="font-size:0.7vw;">
+                                        <h:outputText value="#{vendorPO2.vendorPo.poValue}" >
+                                            <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0"/>
+                                    </h:outputText>
+                                    </p:column>
+                                    <p:column   headerText="Value to take" style="font-size:0.7vw;">
+                                        <h:inputText id="max" style="color:black;width:70%;" value="#{vendorPO2.valueToTake}" >
+                                            <p:ajax event="blur"  listener="#{aspPoController.updateSelectedItem(vendorPO2)}" 
+                                                    update="correlateBtn,:AspPoCorrelationForm:vendorDataTable"/>
+                                        </h:inputText>
+                                    </p:column>
+                                    <p:column  style="font-size:0.7vw;">
+                                        <f:facet name="header">
+                                            <h:outputText value="Correlate"/>
+                                        </f:facet>
+                                        <p:commandButton 
+                                                   id="correlateBtn"
+                                                   actionListener="#{aspPoController.correlateItem}" 
+                                                   value="Correlate" 
+                                                   rendered="#{aspPoController.itemToCorrelate.vendorPo.poNumber == vendorPO2.vendorPo.poNumber}"
+                                                   update=" :ASPPOListForm:datalistASPPO,
+                                                            :ASPPOListForm:growl,
+                                                            :ASPPOListForm:selectedASPPOGRN,
+                                                            :ASPPOListForm:selectedCorrelationPO,
+                                                            :AspPoCorrelationForm:vendorDataTable,
+                                                            :AspPoCorrelationForm:totalASPPrice" />
+                                    </p:column>
+                                    </p:dataTable>
+                                    </div>
+                                    </div>
+                               </h:panelGroup>
+                                </h:form>
+                            </p:dialog>
                             
                             </div>
                         </div>

@@ -7,7 +7,6 @@ package com.vodafone.poms.ii.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -53,12 +52,12 @@ public class AspGrn implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "grn_deserved")
-    private BigInteger grnDeserved;
+    private BigDecimal grnDeserved;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "grn_factor")
     private Double grnFactor;
     @Column(name = "grn_value")
-    private BigInteger grnValue;
+    private BigDecimal grnValue;
     @Column(name = "grn_date")
     @Temporal(TemporalType.DATE)
     private Date grnDate;
@@ -68,7 +67,7 @@ public class AspGrn implements Serializable {
     @Column(name = "invoiced")
     private Boolean invoiced;
     @Column(name = "remaining_in_grn")
-    private BigInteger remainingInGrn;
+    private BigDecimal remainingInGrn;
     @Basic(optional = false)
     @NotNull
     @Column(name = "sys_date")
@@ -101,11 +100,11 @@ public class AspGrn implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getGrnDeserved() {
+    public BigDecimal getGrnDeserved() {
         return grnDeserved;
     }
 
-    public void setGrnDeserved(BigInteger grnDeserved) {
+    public void setGrnDeserved(BigDecimal grnDeserved) {
         this.grnDeserved = grnDeserved;
     }
 
@@ -119,11 +118,11 @@ public class AspGrn implements Serializable {
         calculateRemaining();
     }
 
-    public BigInteger getGrnValue() {
+    public BigDecimal getGrnValue() {
         return grnValue;
     }
 
-    public void setGrnValue(BigInteger grnValue) {
+    public void setGrnValue(BigDecimal grnValue) {
         this.grnValue = grnValue;
         calculateFactor();
         calculateRemaining();
@@ -153,11 +152,11 @@ public class AspGrn implements Serializable {
         this.invoiced = invoiced;
     }
 
-    public BigInteger getRemainingInGrn() {
+    public BigDecimal getRemainingInGrn() {
         return remainingInGrn;
     }
 
-    public void setRemainingInGrn(BigInteger remainingInGrn) {
+    public void setRemainingInGrn(BigDecimal remainingInGrn) {
         this.remainingInGrn = remainingInGrn;
     }
 
@@ -212,7 +211,7 @@ public class AspGrn implements Serializable {
 
     private void calculateValue() {
         if(grnFactor!=null)
-        grnValue = BigInteger.valueOf(BigDecimal.valueOf(grnFactor).multiply(BigDecimal.valueOf(grnDeserved.intValue())).intValue());
+        grnValue = BigDecimal.valueOf(BigDecimal.valueOf(grnFactor).multiply(BigDecimal.valueOf(grnDeserved.intValue())).intValue());
     }
     
     private void calculateFactor() {

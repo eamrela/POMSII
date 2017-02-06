@@ -31,11 +31,11 @@ import javax.inject.Inject;
 public class VendorInvoiceController implements Serializable {
 
     private Double editinvoiceFactor;
-    private BigInteger editInvoiceValue;
-    private BigInteger editInvoiceDeserved;
+    private BigDecimal editInvoiceValue;
+    private BigDecimal editInvoiceDeserved;
     private Date editInvoiceDate;
     private String editInvoiceNumber;
-    private BigInteger editRemainingInInvoice;
+    private BigDecimal editRemainingInInvoice;
     private Boolean editInvoiced;
     @EJB
     private com.vodafone.poms.ii.beans.VendorInvoiceFacade ejbFacade;
@@ -208,7 +208,7 @@ public class VendorInvoiceController implements Serializable {
         this.editInvoiceDate = editInvoiceDate;
     }
 
-    public void setEditInvoiceDeserved(BigInteger editInvoiceDeserved) {
+    public void setEditInvoiceDeserved(BigDecimal editInvoiceDeserved) {
         this.editInvoiceDeserved = editInvoiceDeserved;
     }
 
@@ -216,7 +216,7 @@ public class VendorInvoiceController implements Serializable {
         this.editInvoiceNumber = editInvoiceNumber;
     }
 
-    public void setEditInvoiceValue(BigInteger editInvoiceValue) {
+    public void setEditInvoiceValue(BigDecimal editInvoiceValue) {
         this.editInvoiceValue = editInvoiceValue;
         calculateFactor();
         calculateRemaining();
@@ -226,7 +226,7 @@ public class VendorInvoiceController implements Serializable {
         this.editInvoiced = editInvoiced;
     }
 
-    public void setEditRemainingInInvoice(BigInteger editRemainingInInvoice) {
+    public void setEditRemainingInInvoice(BigDecimal editRemainingInInvoice) {
         this.editRemainingInInvoice = editRemainingInInvoice;
     }
 
@@ -240,7 +240,7 @@ public class VendorInvoiceController implements Serializable {
         return editInvoiceDate;
     }
 
-    public BigInteger getEditInvoiceDeserved() {
+    public BigDecimal getEditInvoiceDeserved() {
         return editInvoiceDeserved;
     }
 
@@ -248,7 +248,7 @@ public class VendorInvoiceController implements Serializable {
         return editInvoiceNumber;
     }
 
-    public BigInteger getEditInvoiceValue() {
+    public BigDecimal getEditInvoiceValue() {
         return editInvoiceValue;
     }
 
@@ -256,7 +256,7 @@ public class VendorInvoiceController implements Serializable {
         return editInvoiced;
     }
 
-    public BigInteger getEditRemainingInInvoice() {
+    public BigDecimal getEditRemainingInInvoice() {
         return editRemainingInInvoice;
     }
 
@@ -266,7 +266,7 @@ public class VendorInvoiceController implements Serializable {
     
     private void calculateValue() {
         if(editinvoiceFactor!=null)
-        editInvoiceValue = BigInteger.valueOf(BigDecimal.valueOf(editinvoiceFactor).multiply(BigDecimal.valueOf(editInvoiceDeserved.intValue())).intValue());
+        editInvoiceValue = BigDecimal.valueOf(BigDecimal.valueOf(editinvoiceFactor).multiply(BigDecimal.valueOf(editInvoiceDeserved.intValue())).intValue());
     }
     
     private void calculateFactor() {
