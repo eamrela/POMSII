@@ -9,6 +9,7 @@ import com.vodafone.poms.ii.entities.VendorPo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -74,7 +75,10 @@ public class VendorPoWorkDone implements Serializable {
     }
 
     public Double getWorkDone() {
-        return workDone;
+        if(workDone!=null){
+        DecimalFormat df=new DecimalFormat("#.00");
+        return Double.valueOf(df.format(workDone));
+        }return workDone;
     }
 
     public void setWorkDone(Double workDone) {

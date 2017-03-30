@@ -8,6 +8,7 @@ package com.vodafone.poms.ii.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -157,7 +158,10 @@ public class VendorPo implements Serializable {
     }
 
     public Double getFactor() {
-        return factor;
+        if(factor!=null){
+        DecimalFormat df=new DecimalFormat("#.00");
+        return Double.valueOf(df.format(factor));
+        }return factor;
     }
 
     public void setFactor(Double factor) {

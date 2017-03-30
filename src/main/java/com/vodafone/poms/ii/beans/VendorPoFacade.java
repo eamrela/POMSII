@@ -86,7 +86,7 @@ public class VendorPoFacade extends AbstractFacade<VendorPo> {
                                         " and 	(select sum(remaining_in_po)  " +
                                         "	from vendor_po  " +
                                         "	where po_status != 'COMPLETED'  " +
-                                        "	and po_type = '"+domain+"'   " +
+                                        "	and po_type = '"+poType+"'   " +
                                         "	and extract(month from po_date) ="+MonthNumber+" " +
                                         "	) >= "+ totalPOASPPrice, VendorPo.class).getResultList();
             }

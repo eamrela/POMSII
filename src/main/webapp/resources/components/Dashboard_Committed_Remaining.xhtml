@@ -25,6 +25,9 @@
                                      emptyMessage="No remaining invoices for this period!"
                                      sortBy="#{NSRItems.vendorPoId.poNumber}"
                                      styleClass="fixed-size"
+                                     paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5"
                                      >
                             <p:column headerText="PO#" style="font-size: 9px;">
                                 <h:outputText value="#{NSRItems.vendorPoId.poNumber}" />
@@ -74,6 +77,9 @@
                                      emptyMessage="No committed cost for this period!"
                                      sortBy="#{COSCItems.poNumber}"
                                      styleClass="fixed-size"
+                                     paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5"
                                      >
                             <p:column headerText="PO#" style="font-size: 9px;">
                                 <h:outputText value="#{COSCItems.poNumber}" />

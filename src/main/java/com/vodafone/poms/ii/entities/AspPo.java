@@ -173,7 +173,10 @@ public class AspPo implements Serializable {
     }
 
     public Double getFactor() {
-        return factor;
+        if(factor!=null){
+        DecimalFormat df=new DecimalFormat("#.00");
+        return Double.valueOf(df.format(factor));
+        }return factor;
     }
 
     public void setFactor(Double factor) {

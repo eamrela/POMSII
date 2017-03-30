@@ -22,11 +22,8 @@
             <link type="text/css" href="../../resources/assets/css/styles.css"  rel="stylesheet"/>
             <h:outputStylesheet name="assets/plugins/progress-skylo/skylo.css"  />
         <h:outputStylesheet name="css/jsfcrud.css"/>
-        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
-        <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
-        <h:outputScript library="js" name="jsfcrud.js" target="head" />
+        
         <title>POMS-II</title>
-        <h:outputStylesheet name="css/jsfcrud.css"/>
         <f:metadata>
             <f:viewAction action="#{aspPoController.prepareCreate}"/>
         </f:metadata>
@@ -297,18 +294,14 @@
             </div>
         </div>
 
-
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript library="js" name="jsfcrud.js" target="head" />
         <script src="#{resource['assets/js/bootstrap.min.js']}"></script>
         <script src="#{resource['assets/js/enquire.min.js']}"></script>
         <script src="#{resource['assets/plugins/velocityjs/velocity.min.js']}"></script>
-        <script src="#{resource['assets/plugins/velocityjs/velocity.ui.min.js']}"></script>
         <script src="#{resource['assets/plugins/progress-skylo/skylo.js']}"></script>
-        <script src="#{resource['assets/plugins/bootstrap-tabdrop/js/bootstrap-tabdrop.js']}"></script>
-        <script src="#{resource['assets/plugins/nanoScroller/js/jquery.nanoscroller.min.js']}"></script>
         <script src="#{resource['assets/plugins/bootstrap-material-design/js/material.min.js']}"></script>
-        <script src="#{resource['assets/plugins/bootstrap-material-design/js/ripples.min.js']}"></script>
         <script src="#{resource['assets/js/application.js']}"></script>
-        <script src="#{resource['assets/plugins/form-daterangepicker/moment.min.js']}"></script>
         <script src="#{resource['assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js']}"></script>
 
     </h:body>

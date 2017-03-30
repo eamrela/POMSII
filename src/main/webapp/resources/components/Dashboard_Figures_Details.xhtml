@@ -25,6 +25,9 @@
                                      emptyMessage="No Invoices for this period!"
                                      sortBy="#{NSItems.invoiceNumber}"
                                      styleClass="fixed-size"
+                                     paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5"
                                      >
                             <p:column headerText="Invoice#" style="font-size: 9px;">
                                 <h:outputText value="#{NSItems.invoiceNumber}" />
@@ -78,6 +81,9 @@
                                      emptyMessage="No GRN for this period!"
                                      sortBy="#{COSItems.grnNumber}"
                                      styleClass="fixed-size"
+                                     paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5"
                                      >
                             <p:column headerText="GRN#" style="font-size: 9px;">
                                 <h:outputText value="#{COSItems.grnNumber}" />

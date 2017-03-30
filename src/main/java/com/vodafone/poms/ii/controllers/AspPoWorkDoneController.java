@@ -30,6 +30,7 @@ public class AspPoWorkDoneController implements Serializable {
     private List<AspPoWorkDone> items = null;
     private List<AspPoWorkDone> selectedPoItems = null;
     private AspPoWorkDone selected;
+    private AspPoWorkDone selectedWD;
     
     @Inject 
     private AspPoController aspPoController;
@@ -45,6 +46,15 @@ public class AspPoWorkDoneController implements Serializable {
         this.selected = selected;
     }
 
+    public AspPoWorkDone getSelectedWD() {
+        return selectedWD;
+    }
+
+    public void setSelectedWD(AspPoWorkDone selectedWD) {
+        this.selectedWD = selectedWD;
+    }
+
+    
     protected void setEmbeddableKeys() {
     }
 
@@ -81,6 +91,7 @@ public class AspPoWorkDoneController implements Serializable {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
             selectedPoItems = null;
+            selectedWD = null;
         }
     }
 
@@ -98,6 +109,34 @@ public class AspPoWorkDoneController implements Serializable {
         return selectedPoItems;
     }
 
+    private AspPoWorkDone persistWD(PersistAction persistAction, String successMessage) {
+        if (selectedWD != null) {
+            setEmbeddableKeys();
+            try {
+                if (persistAction != PersistAction.DELETE) {
+                    selectedWD = getFacade().merge(selectedWD);
+                } else {
+                    getFacade().remove(selectedWD);
+                }
+                JsfUtil.addSuccessMessage(successMessage);
+            } catch (EJBException ex) {
+                String msg = "";
+                Throwable cause = ex.getCause();
+                if (cause != null) {
+                    msg = cause.getLocalizedMessage();
+                }
+                if (msg.length() > 0) {
+                    JsfUtil.addErrorMessage(msg);
+                } else {
+                    JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            }
+        }
+        return selectedWD;
+    }
     
     private AspPoWorkDone persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -183,9 +222,25 @@ public class AspPoWorkDoneController implements Serializable {
 
     public void createWD(){
         if(selected!=null){
+             if(selected.getWorkDone().compareTo(aspPoController.getSelected().getFactor())<=0){
+                 if(selected.getWorkValue().compareTo(aspPoController.getSelected().getRemainingInPo())<=0){
             aspPoController.getSelected().setWorkDone(aspPoController.getSelected().getWorkDone()+selected.getWorkDone());
             aspPoController.update();
             create();
+                 }else{
+                     JsfUtil.addErrorMessage("Work done value can't exceed the remaining from PO");
+                 }
+             }else{
+                 JsfUtil.addErrorMessage("Work done factor can't be more than PO Factor");
+             }
+        }
+    }
+    
+     public void deleteWD(){
+        if(selectedWD!=null && aspPoController.getSelected()!=null){
+            aspPoController.getSelected().setWorkDone(aspPoController.getSelected().getWorkDone()-selectedWD.getWorkDone());
+            aspPoController.update();
+            persistWD(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("AspPoWorkDoneDeleted"));
         }
     }
 }

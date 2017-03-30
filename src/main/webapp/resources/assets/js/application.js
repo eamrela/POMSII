@@ -118,12 +118,12 @@ var Utility = {
             $(window).trigger('resize');        // so toggle happens faster instead of
         }, 500);                                // sticking out
     },
-    initScroller: function() {
-        $(".scroll-pane").nanoScroller({ paneClass: 'scroll-track',  sliderClass: 'scroll-thumb', contentClass: 'scroll-content' });
-    },
-    destroyScroller: function(elem) {
-        $(elem).nanoScroller({ destroy: true });
-    },
+//    initScroller: function() {
+//        $(".scroll-pane").nanoScroller({ paneClass: 'scroll-track',  sliderClass: 'scroll-thumb', contentClass: 'scroll-content' });
+//    },
+//    destroyScroller: function(elem) {
+//        $(elem).nanoScroller({ destroy: true });
+//    },
     animateContent: function () {
         if ($.fn.velocity) {
             $('.animated-content .info-tile, .animated-content .alert, .animated-content .card, .animated-content .panel:not(.no-animate)')
@@ -319,7 +319,7 @@ $(document).ready(function () {
                 $('.static-sidebar > .sidebar').removeClass('scroll-content');
                 $('.static-sidebar > .sidebar').css('margin-right','');
                 $('.static-sidebar > .sidebar').css('right','');
-                $('.static-sidebar.scroll-pane').nanoScroller({ stop: true });
+//                $('.static-sidebar.scroll-pane').nanoScroller({ stop: true });
             }
 
             // $('.sidebar-collapsed #trigger-sidebar i.fa').removeClass('fa-arrow-right').addClass('.fa-arrow-left');
@@ -327,17 +327,17 @@ $(document).ready(function () {
     });
 
     // Add These To support nanoScroller
-    if ($('body').hasClass('sidebar-scroll')) {
-        $('.static-sidebar').addClass('scroll-pane');
-        $('.sidebar').addClass('scroll-content');
-    }
+//    if ($('body').hasClass('sidebar-scroll')) {
+//        $('.static-sidebar').addClass('scroll-pane');
+//        $('.sidebar').addClass('scroll-content');
+//    }
 
 
     // Scrollbar and reinitting scrollbars
-    Utility.initScroller();
-    $('.toolbar').on('shown.bs.dropdown', function () {Utility.initScroller();});
-    $('.widget').on('shown.bs.collapse', function () {Utility.initScroller();});
-    $('.widget').on('hidden.bs.collapse', function () {Utility.initScroller();});
+//    Utility.initScroller();
+//    $('.toolbar').on('shown.bs.dropdown', function () {Utility.initScroller();});
+//    $('.widget').on('shown.bs.collapse', function () {Utility.initScroller();});
+//    $('.widget').on('hidden.bs.collapse', function () {Utility.initScroller();});
 
 
 
@@ -480,7 +480,7 @@ $(document).ready(function () {
     // Spread the Material
     // ---------------------------------
 
-    $.material.init();
+//    $.material.init();
 
     // ---------------------------------
     // Collapse on small screen

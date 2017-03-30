@@ -7,6 +7,7 @@ import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -30,6 +31,7 @@ public class VendorPoWorkDoneController implements Serializable {
     private List<VendorPoWorkDone> items = null;
     private List<VendorPoWorkDone> selectedPoItems = null;
     private VendorPoWorkDone selected;
+    private VendorPoWorkDone selectedWD;
 
     @Inject
     private VendorPoController vendorPoController;
@@ -45,6 +47,15 @@ public class VendorPoWorkDoneController implements Serializable {
         this.selected = selected;
     }
 
+    public VendorPoWorkDone getSelectedWD() {
+        return selectedWD;
+    }
+
+    public void setSelectedWD(VendorPoWorkDone selectedWD) {
+        this.selectedWD = selectedWD;
+    }
+
+    
     protected void setEmbeddableKeys() {
     }
 
@@ -81,6 +92,7 @@ public class VendorPoWorkDoneController implements Serializable {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
             selectedPoItems = null;
+            selectedWD = null;
         }
     }
 
@@ -126,6 +138,35 @@ public class VendorPoWorkDoneController implements Serializable {
             }
         }
         return selected;
+    }
+    
+     private VendorPoWorkDone persistWD(PersistAction persistAction, String successMessage) {
+        if (selectedWD != null) {
+            setEmbeddableKeys();
+            try {
+                if (persistAction != PersistAction.DELETE) {
+                   selectedWD =  getFacade().merge(selectedWD);
+                } else {
+                    getFacade().remove(selectedWD);
+                }
+                JsfUtil.addSuccessMessage(successMessage);
+            } catch (EJBException ex) {
+                String msg = "";
+                Throwable cause = ex.getCause();
+                if (cause != null) {
+                    msg = cause.getLocalizedMessage();
+                }
+                if (msg.length() > 0) {
+                    JsfUtil.addErrorMessage(msg);
+                } else {
+                    JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            }
+        }
+        return selectedWD;
     }
 
     public VendorPoWorkDone getVendorPoWorkDone(java.lang.Long id) {
@@ -183,9 +224,28 @@ public class VendorPoWorkDoneController implements Serializable {
 
     public void createWD(){
         if(selected!=null){
+            if(selected.getWorkDone().compareTo(vendorPoController.getSelected().getFactor())<=0){
+                if(selected.getWorkValue().compareTo(vendorPoController.getSelected().getRemainingInPo())<=0){
             vendorPoController.getSelected().setWorkDone(vendorPoController.getSelected().getWorkDone()+selected.getWorkDone());
             vendorPoController.update();
             create();
+                }else{
+                    JsfUtil.addErrorMessage("Work done value can't exceed the remaining from PO");
+                }
+            }else{
+                JsfUtil.addErrorMessage("Work done factor can't be more than PO Factor");
+            }
+        }
+    }
+    
+    public void deleteWD(){
+        if(selectedWD!=null && vendorPoController.getSelected()!=null){
+            System.out.println(vendorPoController.getSelected().toString());
+            System.out.println("WD: "+vendorPoController.getSelected().getWorkDone());
+            System.out.println("WD - WD: "+selectedWD.getWorkDone());
+            vendorPoController.getSelected().setWorkDone(vendorPoController.getSelected().getWorkDone()-selectedWD.getWorkDone());
+            vendorPoController.update();
+            persistWD(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("VendorPoWorkDoneDeleted"));
         }
     }
 }

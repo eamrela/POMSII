@@ -23,7 +23,10 @@
                         <div class="row">
                             <p:dataTable var="ucActivity" 
                                          value="#{activityController.itemsUncorrelated}"
-                                         styleClass="fixed-size">
+                                         styleClass="fixed-size"
+                                         paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5">
                                 <p:column headerText="Id" style="font-size: 9px;">
                                     <h:outputText value="#{ucActivity.activityId}" />
                                 </p:column>
@@ -34,9 +37,6 @@
 
                                 <p:column headerText="ASP" style="font-size: 9px;"> 
                                     <h:outputText value="#{ucActivity.asp.subcontractorName}" />
-                                </p:column>
-                                <p:column headerText="Details" style="font-size: 9px;" >
-                                    <h:outputText value="#{ucActivity.activityDetails}" />
                                 </p:column>
                                 <p:column headerText="Price ASP" style="font-size: 9px;">
                                     <h:outputText value="#{ucActivity.totalPriceAsp*dashboardManager.sekConversionRate}" >
@@ -67,6 +67,9 @@
                             <p:dataTable var="ucAspPo" 
                                          value="#{aspPoController.itemsUncorrelated}"
                                          styleClass="fixed-size"
+                                         paginator="true"
+                                     paginatorPosition="bottom"
+                                     rows="5"
                                          >
                                 <p:column headerText="Id" style="font-size: 9px;">
                                     <h:outputText value="#{ucAspPo.poNumber}" />

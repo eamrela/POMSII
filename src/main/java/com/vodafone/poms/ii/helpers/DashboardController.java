@@ -246,22 +246,34 @@ public class DashboardController implements Serializable{
     public void calculateRemainingNotYetInvoiced(){
         remainingNotyetInvoiced = vendorMdController.getDashboardItems(getSelectedDomainsStr());
         remainingNotyetInvoiced_Value = BigDecimal.ZERO;
+        List<VendorMd> temp = new ArrayList<>();
         BigDecimal totalMdValue = BigDecimal.ZERO;
+        BigDecimal MdValue = BigDecimal.ZERO;
         BigDecimal totalInvoiceValue = BigDecimal.ZERO;
+        BigDecimal InvoiceValue = BigDecimal.ZERO;
         remainingNotyetInvoiced_Value = BigDecimal.ZERO;
         for (VendorMd vendorMd : remainingNotyetInvoiced) {
+           MdValue = vendorMd.getMdValue()!=null?vendorMd.getMdValue():BigDecimal.ZERO;
            totalMdValue = totalMdValue.add(vendorMd.getMdValue()!=null?vendorMd.getMdValue():BigDecimal.ZERO);
            vendorMdController.setSelected(vendorMd);
            List<VendorInvoice> invoices = vendorInvoiceController.getSelectedMdItems();
             for (VendorInvoice invoice : invoices) {
+                InvoiceValue = InvoiceValue.add(invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigDecimal.ZERO);
                 totalInvoiceValue = totalInvoiceValue.add(invoice.getInvoiceValue()!=null?invoice.getInvoiceValue():BigDecimal.ZERO);
             }
+            if(!(MdValue.subtract(InvoiceValue)).equals(BigDecimal.ZERO)){
+                temp.add(vendorMd);
+            }
+            MdValue = BigDecimal.ZERO;
+            InvoiceValue = BigDecimal.ZERO;
         }
+        remainingNotyetInvoiced = temp;
         remainingNotyetInvoiced_Value = totalMdValue.subtract(totalInvoiceValue);
     }
     public void calculateCommitedCost(){
         committedCost = aspPoController.getDashboardCommittedCost(getSelectedDomainsStr());
         committedCost_Value = BigDecimal.ZERO;
+        List<AspPo> temp = new ArrayList<>();
         for (AspPo committedCost1 : committedCost) {
             BigDecimal totalWorkValue = 
                     BigDecimal.valueOf(committedCost1.getWorkDone().floatValue()*committedCost1.getServiceValue().floatValue());
@@ -271,9 +283,13 @@ public class DashboardController implements Serializable{
             for (int i = 0; i < grns.size(); i++) {
                 grnValues = grnValues.add(grns.get(i).getGrnValue()!=null?grns.get(i).getGrnValue():BigDecimal.ZERO);
             }
+            if((totalWorkValue.subtract(grnValues)).compareTo(BigDecimal.TEN)>0){
+                temp.add(committedCost1);
+            }
             committedCost_Value = committedCost_Value.add((totalWorkValue.subtract(grnValues)));
             
         }
+        committedCost = temp;
     }
 //</editor-fold>
     
