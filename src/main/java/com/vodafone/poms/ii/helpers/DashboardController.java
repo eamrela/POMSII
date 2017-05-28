@@ -16,7 +16,10 @@ import com.vodafone.poms.ii.entities.DomainNames;
 import com.vodafone.poms.ii.entities.VendorInvoice;
 import com.vodafone.poms.ii.entities.VendorMd;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -471,43 +474,37 @@ public class DashboardController implements Serializable{
     public String getMasterGraphData() {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM-YYYY");
         //<editor-fold defaultstate="collapsed" desc="Data Access">
-        masterGraph = em.createNativeQuery(" select target_month,ns_t,cos_t,um_t,ns_iso,cos_iso,  "+
-" case when um_iso is null then 0.0 else um_iso end um_iso  "+
-" from (  "+
-" select target_month,ns_t,cos_t,um_t,  "+
-" case when ns_iso is null then 0.0 else ns_iso end ns_iso,  "+
-" case when cos_iso is null then 0.0 else cos_iso end cos_iso,  "+
-" (ns_iso-cos_iso) um_iso  "+
-" from (  "+
-" select target_month,ns_t,cos_t,um_t,  "+
-" round(vendor.ns_iso/1000000,2) ns_iso,  "+
-" round(asp.cos_iso/1000000,2) cos_iso  "+
-" from targets  "+
-" left join   "+
-" (select extract(month from invoice_date) month_no,sum(invoice_value) ns_iso  "+
-" from vendor_invoice  "+
-" where invoice_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
-(!getSelectedDomainsStr().contains("*")?"and  md_id in " +
+        masterGraph = em.createNativeQuery(" select target_month,ns_t,cos_t,um_t,ns_iso,cos_iso,   "+
+" case when um_iso is null then 0.0 else um_iso end um_iso   "+
+" from (   select target_month,ns_t,cos_t,um_t,   "+
+"         case when ns_iso is null then 0.0 else ns_iso end ns_iso,   "+
+"         case when cos_iso is null then 0.0 else cos_iso end cos_iso,   "+
+"         (ns_iso-cos_iso) um_iso   "+
+"  from (   "+
+" select target_month,ns_t,cos_t,um_t,   "+
+" round(vendor.ns_iso/1000000,2) ns_iso,   "+
+" round(asp.cos_iso/1000000,2) cos_iso   "+
+" from targets   "+
+" left join    "+
+" (select extract(month from invoice_date) month_no,"+
+" 	    sum(invoice_value) ns_iso   "+
+"  from vendor_invoice   "+
+"  where invoice_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).withDayOfMonth(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).withDayOfMonth(31).toDate())+"'   "+
+ (!getSelectedDomainsStr().contains("*")?"and  md_id in " +
 " (select id from vendor_md where vendor_po_id in  " +
 " (select po_number from vendor_po where domain_name in ("+getSelectedDomainsStr()+")))":"")+
-" group by extract(month from invoice_date)) vendor  "+
-" on target_month=vendor.month_no  "+
-" left join   "+
-" (select month_no,sum(cos_iso) cos_iso  "+
-" from (  "+
-" select extract(month from grn_date) month_no,sum(grn_value) cos_iso  "+
-" from asp_grn  "+
-" where grn_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
+"  group by extract(month from invoice_date) "+
+"  ) vendor   on target_month=vendor.month_no    "+
+" left join     "+
+" (select extract(month from grn_date) month_no, "+
+" sum(grn_value) cos_iso    "+
+" from asp_grn    "+
+" where grn_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).withDayOfMonth(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).withDayOfMonth(31).toDate())+"'    "+
 (!getSelectedDomainsStr().contains("*")?" and asp_po_id in (select po_number from asp_po where domain_name in ("+getSelectedDomainsStr()+"))":"")+
-" group by extract(month from grn_date)   "+
-" union   "+
-" select extract(month from po_date) month_no,sum(grn_deserved) cos_iso   "+
-" from asp_po   "+
-" where po_date between '"+sdf.format(DateTime.now().withMonthOfYear(1).toDate())+"' and '"+sdf.format(DateTime.now().withMonthOfYear(12).toDate())+"'  "+
-" group by extract(month from po_date) ) a  "+
-" group by a.month_no) asp  "+
-" on target_month=asp.month_no) master_initial)  "+
-" master ", MasterGraph.class).getResultList();
+"group by extract(month from grn_date)   "+
+") asp   on target_month=asp.month_no) master_initial)   master", MasterGraph.class).getResultList();
+        
+       
 //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Start of string">
         
@@ -806,7 +803,149 @@ public class DashboardController implements Serializable{
         return this.currency;
     }
     
+    public void exportNSDetails(){
+        if(NS_invoices!=null){
+          
+            
+             try {
+            File FB = new File("NS_Details.csv");
+            PrintWriter pw = new PrintWriter(FB);
+            pw.println("Invoice #, Deserved, Value, PO#, Type, Domain, Description");
+            for (VendorInvoice NS_invoice : NS_invoices) {
+                pw.print(NS_invoice.getInvoiceNumber()+",");
+                pw.print(NS_invoice.getInvoiceDeserved()+",");
+                pw.print(NS_invoice.getInvoiceValue()+",");
+                pw.print(NS_invoice.getMdId().getVendorPoId().getPoNumber()+",");
+                pw.print(NS_invoice.getMdId().getVendorPoId().getPoType().getTypeName()+",");
+                pw.print(NS_invoice.getMdId().getVendorPoId().getDomainName().getDomainName()+",");
+                pw.print("\""+NS_invoice.getMdId().getVendorPoId().getPoDescription()+"\",");
+                pw.print("\n");
+            }
+            pw.close();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = facesContext.getExternalContext();
+            externalContext.setResponseContentType("application/csv");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+FB.getName()+""+"\"");
+            FileInputStream fin = new FileInputStream(FB);
+            byte[] data;
+                data = new byte[fin.available()];
+            fin.read(data);
+            externalContext.getResponseOutputStream().write(data);
+            externalContext.getResponseOutputStream().flush();
+            externalContext.getResponseOutputStream().close();
+            } catch (IOException ex) {
+                Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
+    public void exportCOSDetails(){
+        if(COS_Grns!=null){
+          
+            
+             try {
+            File FB = new File("COS_Details.csv");
+            PrintWriter pw = new PrintWriter(FB);
+            pw.println("GRN #, Deserved, Value, PO#, Type, Domain, Description");
+            for (AspGrn COS_grn : COS_Grns) {
+                pw.print(COS_grn.getGrnNumber()+",");
+                pw.print(COS_grn.getGrnDeserved()+",");
+                pw.print(COS_grn.getGrnValue()+",");
+                pw.print(COS_grn.getAspPoId().getPoNumber()+",");
+                pw.print(COS_grn.getAspPoId().getPoType().getTypeName()+",");
+                pw.print(COS_grn.getAspPoId().getDomainName().getDomainName()+",");
+                pw.print("\""+COS_grn.getAspPoId().getPoDescription()+"\",");
+                pw.print("\n");
+            }
+            pw.close();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = facesContext.getExternalContext();
+            externalContext.setResponseContentType("application/csv");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+FB.getName()+""+"\"");
+            FileInputStream fin = new FileInputStream(FB);
+            byte[] data;
+                data = new byte[fin.available()];
+            fin.read(data);
+            externalContext.getResponseOutputStream().write(data);
+            externalContext.getResponseOutputStream().flush();
+            externalContext.getResponseOutputStream().close();
+            } catch (IOException ex) {
+                Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
+    public void exportRemainingDetails(){
+        if(remainingNotyetInvoiced!=null){
+          
+            
+             try {
+            File FB = new File("RemainingNYI_Details.csv");
+            PrintWriter pw = new PrintWriter(FB);
+            pw.println("PO #, Value, Deserved, Type, Domain, Description");
+            for (VendorMd RNYI : remainingNotyetInvoiced) {
+                pw.print(RNYI.getVendorPoId().getPoNumber()+",");
+                pw.print(RNYI.getMdValue()+",");
+                pw.print(RNYI.getMdDeserved()+",");
+                pw.print(RNYI.getVendorPoId().getPoType().getTypeName()+",");
+                pw.print(RNYI.getVendorPoId().getDomainName().getDomainName()+",");
+                pw.print("\""+RNYI.getVendorPoId().getPoDescription()+"\",");
+                pw.print("\n");
+            }
+            pw.close();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = facesContext.getExternalContext();
+            externalContext.setResponseContentType("application/csv");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+FB.getName()+""+"\"");
+            FileInputStream fin = new FileInputStream(FB);
+            byte[] data;
+                data = new byte[fin.available()];
+            fin.read(data);
+            externalContext.getResponseOutputStream().write(data);
+            externalContext.getResponseOutputStream().flush();
+            externalContext.getResponseOutputStream().close();
+            } catch (IOException ex) {
+                Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
+    public void exportCommittedCostDetails(){
+        if(committedCost!=null){
+          
+            
+             try {
+            File FB = new File("CommittedCost_Details.csv");
+            PrintWriter pw = new PrintWriter(FB);
+            pw.println("PO #, Value, Deserved, Type, Domain, Description");
+            for (AspPo COSC : committedCost) {
+                pw.print(COSC.getPoNumber()+",");
+                pw.print(COSC.getPoValue()+",");
+                pw.print(COSC.getGrnDeserved()+",");
+                pw.print(COSC.getPoType().getTypeName()+",");
+                pw.print(COSC.getDomainName().getDomainName()+",");
+                pw.print("\""+COSC.getPoDescription()+"\",");
+                pw.print("\n");
+            }
+            pw.close();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = facesContext.getExternalContext();
+            externalContext.setResponseContentType("application/csv");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+FB.getName()+""+"\"");
+            FileInputStream fin = new FileInputStream(FB);
+            byte[] data;
+                data = new byte[fin.available()];
+            fin.read(data);
+            externalContext.getResponseOutputStream().write(data);
+            externalContext.getResponseOutputStream().flush();
+            externalContext.getResponseOutputStream().close();
+            } catch (IOException ex) {
+                Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
     
 }

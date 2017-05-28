@@ -239,6 +239,7 @@ public class UsersController implements Serializable {
     public boolean isExport(){
         if(getRole().equals("ROLE_ADMIN")
                 || getRole().equals("ROLE_SYSADMIN")
+                || getRole().equals("ROLE_BUSINESSPROVIDER")
                 || getRole().equals("ROLE_FINANCEADMIN")){
             return true;
         }

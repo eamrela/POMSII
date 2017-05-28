@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle10.ListActivityAttachmentsTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="ActivityAttachmentsListForm">
+                <p:panel header="#{bundle10.ListActivityAttachmentsTitle}">
+                    <p:dataTable id="datalist" value="#{activityAttachmentsController.items}" var="item"
+                                 selectionMode="single" selection="#{activityAttachmentsController.selected}"
+                                 paginator="true"
+                                 rowKey="#{item.attachmentId}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 >
+
+                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_attachmentId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.attachmentId}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_attachmentName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.attachmentName}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_attachmentLocation}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.attachmentLocation}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_uploadedOn}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.uploadedOn}">
+                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_activityId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.activityId}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle10.ListActivityAttachmentsTitle_uploadedBy}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.uploadedBy}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle10.Create}" actionListener="#{activityAttachmentsController.prepareCreate}" update=":ActivityAttachmentsCreateForm" oncomplete="PF('ActivityAttachmentsCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle10.View}" update=":ActivityAttachmentsViewForm" oncomplete="PF('ActivityAttachmentsViewDialog').show()" disabled="#{empty activityAttachmentsController.selected}"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle10.Edit}" update=":ActivityAttachmentsEditForm" oncomplete="PF('ActivityAttachmentsEditDialog').show()" disabled="#{empty activityAttachmentsController.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle10.Delete}" actionListener="#{activityAttachmentsController.destroy}" update=":growl,datalist" disabled="#{empty activityAttachmentsController.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="View.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

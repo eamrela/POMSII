@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -151,6 +153,8 @@ public class Activity implements Serializable {
     @JoinColumn(name = "vendor_owner", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private VendorOwner vendorOwner;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activityId")
+    private Collection<ActivityAttachments> activityAttachmentsCollection;
 
     public Activity() {
     }
@@ -415,7 +419,14 @@ public class Activity implements Serializable {
     }
 
     public void setQty(double qty) {
+        //activitytpricev,activitytprivea,
+//                                                               activitypricet,activitytum,activitytump
         this.qty = qty;
+        getTotalPriceVendor();
+        getTotalPriceVendorTaxes();
+        getTotalPriceAsp();
+        getTotalUm();
+        getTotalUmPercent();
     }
 
     public double getTaxes() {
@@ -478,4 +489,12 @@ public class Activity implements Serializable {
         this.acUmPercent = acUmPercent;
     }
     
+    @XmlTransient
+    public Collection<ActivityAttachments> getActivityAttachmentsCollection() {
+        return activityAttachmentsCollection;
+    }
+
+    public void setActivityAttachmentsCollection(Collection<ActivityAttachments> activityAttachmentsCollection) {
+        this.activityAttachmentsCollection = activityAttachmentsCollection;
+    }
 }

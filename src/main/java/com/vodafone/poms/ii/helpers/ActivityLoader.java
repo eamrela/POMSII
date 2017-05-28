@@ -222,6 +222,9 @@ public class ActivityLoader implements Serializable{
     }
     
     public String getCellValue(Cell cell){
+        if(cell==null){
+            return "";
+        }
         cell.setCellType(Cell.CELL_TYPE_STRING);
         return cell.getStringCellValue();
     }

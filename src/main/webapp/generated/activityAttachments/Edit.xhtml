@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityAttachmentsEditDlg" widgetVar="ActivityAttachmentsEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle10.EditActivityAttachmentsTitle}">
+            <h:form id="ActivityAttachmentsEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityAttachmentsController.selected != null}">
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_attachmentId}" for="attachmentId" />
+                        <p:inputText id="attachmentId" value="#{activityAttachmentsController.selected.attachmentId}" title="#{bundle10.EditActivityAttachmentsTitle_attachmentId}" required="true" requiredMessage="#{bundle10.EditActivityAttachmentsRequiredMessage_attachmentId}"/>
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_attachmentName}" for="attachmentName" />
+                        <p:inputText id="attachmentName" value="#{activityAttachmentsController.selected.attachmentName}" title="#{bundle10.EditActivityAttachmentsTitle_attachmentName}" />
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_attachmentLocation}" for="attachmentLocation" />
+                        <p:inputText id="attachmentLocation" value="#{activityAttachmentsController.selected.attachmentLocation}" title="#{bundle10.EditActivityAttachmentsTitle_attachmentLocation}" />
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_uploadedOn}" for="uploadedOn" />
+                        <p:calendar id="uploadedOn" pattern="MM/dd/yyyy HH:mm:ss" value="#{activityAttachmentsController.selected.uploadedOn}" title="#{bundle10.EditActivityAttachmentsTitle_uploadedOn}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_activityId}" for="activityId" />
+                        <p:selectOneMenu id="activityId" value="#{activityAttachmentsController.selected.activityId}" required="true" requiredMessage="#{bundle10.EditActivityAttachmentsRequiredMessage_activityId}">
+                            <f:selectItem itemLabel="#{bundle10.SelectOneMessage}"/>
+                            <f:selectItems value="#{activityController.itemsAvailableSelectOne}"
+                                           var="activityIdItem"
+                                           itemValue="#{activityIdItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle10.EditActivityAttachmentsLabel_uploadedBy}" for="uploadedBy" />
+                        <p:selectOneMenu id="uploadedBy" value="#{activityAttachmentsController.selected.uploadedBy}" >
+                            <f:selectItem itemLabel="#{bundle10.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="uploadedByItem"
+                                           itemValue="#{uploadedByItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{activityAttachmentsController.update}" value="#{bundle10.Save}" update="display,:ActivityAttachmentsListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ActivityAttachmentsEditDialog');"/>
+                    <p:commandButton value="#{bundle10.Cancel}" onclick="ActivityAttachmentsEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

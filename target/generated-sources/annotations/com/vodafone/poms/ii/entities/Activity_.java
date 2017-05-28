@@ -1,5 +1,6 @@
 package com.vodafone.poms.ii.entities;
 
+import com.vodafone.poms.ii.entities.ActivityAttachments;
 import com.vodafone.poms.ii.entities.ActivityCode;
 import com.vodafone.poms.ii.entities.ApprovalStatus;
 import com.vodafone.poms.ii.entities.Area;
@@ -18,7 +19,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-03-08T13:20:20")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-05-25T15:11:53")
 @StaticMetamodel(Activity.class)
 public class Activity_ { 
 
@@ -50,6 +51,7 @@ public class Activity_ {
     public static volatile SingularAttribute<Activity, Float> acUm;
     public static volatile CollectionAttribute<Activity, VendorPo> vendorPoCollection;
     public static volatile SingularAttribute<Activity, Float> acSubcontractorPrice;
+    public static volatile CollectionAttribute<Activity, ActivityAttachments> activityAttachmentsCollection;
     public static volatile SingularAttribute<Activity, DomainNames> activityType;
     public static volatile SingularAttribute<Activity, ClaimStatus> claimStatus;
     public static volatile SingularAttribute<Activity, Subcontractors> asp;

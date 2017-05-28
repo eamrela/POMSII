@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ConfigurationsEditDlg" widgetVar="ConfigurationsEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle6.EditConfigurationsTitle}">
+            <h:form id="ConfigurationsEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{configurationsController.selected != null}">
+                        <p:outputLabel value="#{bundle6.EditConfigurationsLabel_configurationsPK_confName}" for="configurationsPK_confName" />
+                        <p:inputText id="configurationsPK_confName" value="#{configurationsController.selected.configurationsPK.confName}" title="#{bundle6.EditConfigurationsTitle_configurationsPK_confName}" required="true" requiredMessage="#{bundle6.EditConfigurationsRequiredMessage_configurationsPK_confName}"/>
+                        <p:outputLabel value="#{bundle6.EditConfigurationsLabel_configurationsPK_confEnviroment}" for="configurationsPK_confEnviroment" />
+                        <p:inputText id="configurationsPK_confEnviroment" value="#{configurationsController.selected.configurationsPK.confEnviroment}" title="#{bundle6.EditConfigurationsTitle_configurationsPK_confEnviroment}" required="true" requiredMessage="#{bundle6.EditConfigurationsRequiredMessage_configurationsPK_confEnviroment}"/>
+                        <p:outputLabel value="#{bundle6.EditConfigurationsLabel_confValue}" for="confValue" />
+                        <p:inputText id="confValue" value="#{configurationsController.selected.confValue}" title="#{bundle6.EditConfigurationsTitle_confValue}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{configurationsController.update}" value="#{bundle6.Save}" update="display,:ConfigurationsListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ConfigurationsEditDialog');"/>
+                    <p:commandButton value="#{bundle6.Cancel}" onclick="ConfigurationsEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

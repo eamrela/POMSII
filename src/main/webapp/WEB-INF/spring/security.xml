@@ -12,10 +12,11 @@
         <intercept-url pattern="/javax.faces.resource/**" access="permitAll"/>
         <intercept-url pattern="/resources/**" access="permitAll"/>
         <intercept-url pattern="/app/common/**" access="hasAnyRole('ROLE_ADMIN','ROLE_SYSADMIN','ROLE_BUSINESSPROVIDER','ROLE_FINANCEADMIN')" />
-        <intercept-url pattern="/app/exporter/**" access="hasAnyRole('ROLE_ADMIN','ROLE_SYSADMIN','ROLE_FINANCEADMIN')" />
+        <intercept-url pattern="/app/exporter/**" access="hasAnyRole('ROLE_ADMIN','ROLE_SYSADMIN','ROLE_FINANCEADMIN','ROLE_BUSINESSPROVIDER')" />
         <intercept-url pattern="/app/business_provider/**" access="hasAnyRole('ROLE_ADMIN','ROLE_SYSADMIN','ROLE_BUSINESSPROVIDER')"/> 
         <intercept-url pattern="/app/finance_admin/**" access="hasAnyRole('ROLE_ADMIN','ROLE_SYSADMIN','ROLE_FINANCEADMIN')" />
         <intercept-url pattern="/app/system_admin/**" access="hasAnyRole('ROLE_SYSADMIN')" />
+        <intercept-url pattern="/app/system_admin/sites.xhtml" access="hasAnyRole('ROLE_SYSADMIN','ROLE_BUSINESSPROVIDER')" />
         
 	
         <access-denied-handler error-page="/app/public/403.xhtml" />
@@ -23,7 +24,7 @@
 <!--        <logout logout-success-url="/app/public/login.xhtml" />-->
         
         <session-management invalid-session-url="/app/public/login.xhtml">
-        <concurrency-control max-sessions="2" error-if-maximum-exceeded="true" />
+        <concurrency-control max-sessions="50" error-if-maximum-exceeded="true" />
         </session-management>
         
         <csrf disabled="true"/>

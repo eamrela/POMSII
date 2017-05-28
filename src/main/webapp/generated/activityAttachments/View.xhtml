@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ActivityAttachmentsViewDlg" widgetVar="ActivityAttachmentsViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle10.ViewActivityAttachmentsTitle}">
+            <h:form id="ActivityAttachmentsViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{activityAttachmentsController.selected != null}">
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_attachmentId}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.attachmentId}" title="#{bundle10.ViewActivityAttachmentsTitle_attachmentId}"/>
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_attachmentName}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.attachmentName}" title="#{bundle10.ViewActivityAttachmentsTitle_attachmentName}"/>
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_attachmentLocation}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.attachmentLocation}" title="#{bundle10.ViewActivityAttachmentsTitle_attachmentLocation}"/>
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_uploadedOn}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.uploadedOn}" title="#{bundle10.ViewActivityAttachmentsTitle_uploadedOn}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_activityId}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.activityId}" title="#{bundle10.ViewActivityAttachmentsTitle_activityId}"/>
+                        <h:outputText value="#{bundle10.ViewActivityAttachmentsLabel_uploadedBy}"/>
+                        <h:outputText value="#{activityAttachmentsController.selected.uploadedBy}" title="#{bundle10.ViewActivityAttachmentsTitle_uploadedBy}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle10.Close}" onclick="ActivityAttachmentsViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

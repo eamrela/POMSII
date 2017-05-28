@@ -42,6 +42,7 @@ public class VendorInvoiceController implements Serializable {
     private List<VendorInvoice> items = null;
     private List<VendorInvoice> selectedMdItems = null;
     private VendorInvoice selected;
+    private VendorInvoice dummy;
     
     @Inject 
     private VendorMdController vendorMdController;
@@ -49,6 +50,15 @@ public class VendorInvoiceController implements Serializable {
     public VendorInvoiceController() {
     }
 
+    public VendorInvoice getDummy() {
+        return dummy;
+    }
+
+    public void setDummy(VendorInvoice dummy) {
+        this.dummy = dummy;
+    }
+
+    
     public VendorInvoice getSelected() {
         return selected;
     }

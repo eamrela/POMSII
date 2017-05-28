@@ -96,11 +96,13 @@
 
                                                                     <p:ajax event="rowSelect"   
                                                                             update=":ActivityListForm:selectedActivityCode,
+                                                                                    :ActivityListForm:selectedAttachment,
                                                                                     :ActivityListForm:selectedCorrelation,editButton, exportButton
                                                                                     ,:ActivityListForm:growl,
                                                                                     :ActivityListForm:datalistActivity"/>
                                                                     <p:ajax event="rowUnselect"   
                                                                             update=":ActivityListForm:selectedActivityCode,
+                                                                                    :ActivityListForm:selectedAttachment,
                                                                                     :ActivityListForm:selectedCorrelation,editButton, exportButton
                                                                                     ,:ActivityListForm:growl,
                                                                                     :ActivityListForm:datalistActivity"/>
@@ -225,7 +227,7 @@
                                                                     </p:column>
                                                                     <p:column style="font-size: 9px;" filterBy="#{item.phase.phaseName}" filterMatchMode="contains" filterStyle="width: 70%;">
                                                                         <f:facet name="header">
-                                                                            <h:outputText value="Phase"/>
+                                                                            <h:outputText value="Budget"/>
                                                                         </f:facet>
                                                                         <h:outputText id="phaseName" value="#{item.phase.phaseName}"/>
                                                                         <p:tooltip value="#{item.phase.phaseName}" for="phaseName"/>
@@ -263,6 +265,7 @@
                                                                         <p:commandButton id="deleteButton" icon="ui-icon-trash"  
                                                                                          value="#{bundle.Delete}" actionListener="#{activityController.destroy}" 
                                                                                          update=":ActivityListForm:selectedActivityCode,
+                                                                                                 :ActivityListForm:selectedAttachment,
                                                                                                 :ActivityListForm:selectedCorrelation,editButton
                                                                                                 ,:ActivityListForm:growl,
                                                                                                 :ActivityListForm:datalistActivity" 
@@ -342,8 +345,9 @@
                                                 </div>
                                         </div>
                                         </div>
-                                    <h:panelGroup rendered="#{usersController.customer}">
                                         <div class="col-md-6">
+                                            <div class="row">
+                                    <h:panelGroup rendered="#{usersController.customer}">
                                         <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
                                                 <div class="panel-heading">
                                                     <h2>Correlation</h2>
@@ -462,8 +466,58 @@
                                                     </p:outputPanel>
                                                 </div>
                                         </div>
-                                        </div>
                                     </h:panelGroup>    
+                                        </div>
+                                            <div class="row">
+                                                <div class="panel panel-primary" data-widget='{"draggable": "false"}'>
+                                                <div class="panel-heading">
+                                                    <h2>Attachments</h2>
+                                                    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'>
+                                                        
+                                                    </div>
+                                                </div>
+                                                    <div class="panel-body">
+                                                <p:outputPanel id="selectedAttachment">
+                                                <h:panelGroup rendered="#{activityController.selected!=null}">
+                                                    <p:fileUpload label="Upload" 
+                                                                  fileUploadListener="#{activityController.uploadAttachment}"
+                                                            update=":ActivityListForm:attachmentTable"
+                                                            skinSimple="true"
+                                                        /> 
+                                                    <p:dataTable    id="attachmentTable"
+                                                                    var="attachment" 
+                                                                    value="#{activityController.selected.activityAttachmentsCollection}"
+                                                                    rowKey="#{attachment.attachmentId}"
+                                                                    selectionMode="single"
+                                                                    selection="#{activityAttachmentsController.selected}">
+                                                        
+                                                            <p:column headerText="Name">
+                                                                <h:outputText value="#{attachment.attachmentName}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Location">
+                                                                <h:outputText value="#{attachment.attachmentLocation}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Uploader">
+                                                                <h:outputText value="#{attachment.uploadedBy.username}" />
+                                                            </p:column>
+                                                            <p:column headerText="Date">
+                                                                <h:outputText value="#{attachment.uploadedOn}">
+                                                                    <f:convertDateTime pattern="yyy-MM-dd HH:mm:ss"/>
+                                                                </h:outputText>
+                                                            </p:column>
+                                                            <p:column headerText="Download">
+                                                                <h:commandButton value="Download"
+                                                                                 action="#{activityController.downloadAttachment(attachment)}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                </h:panelGroup>
+                                                </p:outputPanel>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                        </div>
                                     </div>
                                         
                                 <!--page content end here--> 
@@ -504,7 +558,7 @@
                                                                    itemLabel="#{claimStatusItem.claimName}"
                                                                    itemValue="#{claimStatusItem}"/>
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="#{bundle.EditActivityLabel_phase}" for="phase" />
+                                                <p:outputLabel value="Budget" for="phase" />
                                                 <p:selectOneMenu id="phase" value="#{activityController.selected.phase}" 
                                                                  converter="PhasesControllerConverter">
                                                     <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
@@ -524,6 +578,43 @@
                                                                    itemLabel="#{vendorOwnerItem.ownerName}"
                                                                    itemValue="#{vendorOwnerItem}"/>
                                                 </p:selectOneMenu>
+                                                <p:outputLabel value="Site" for="activitysite" />
+                                                <p:autoComplete id="activitysite"  
+                                                            value="#{activityController.selected.site}" 
+                                                            completeMethod="#{sitesController.autoCompleteSite}" 
+                                                            var="siteItem" 
+                                                            itemLabel="#{siteItem.sitePhysical}" 
+                                                            itemValue="#{siteItem}" 
+                                                            converter="SitesControllerConverter" 
+                                                            forceSelection="true"
+                                                            styleClass="form-control"
+                                                            maxResults="10">
+                                                    <p:ajax event="itemSelect" listener="#{activityController.onItemSelectSetSite}" 
+                                                            update=":ActivityListForm:growl" />
+                                                </p:autoComplete>
+                                                <p:outputLabel value="ASP" for="activityasp" />
+                                                <h:selectOneMenu id="activityasp" 
+                                                                 value="#{activityController.selected.asp}" 
+                                                                 converter="SubcontractorsControllerConverter"
+                                                                 styleClass="form-control">
+                                                    <f:selectItem itemLabel="" 
+                                                                  itemValue="#{null}" noSelectionOption="true" />
+                                                    <f:selectItems value="#{subcontractorsController.itemsAvailableSelectOne}"
+                                                                   var="aspItem"
+                                                                   itemLabel="#{aspItem.subcontractorName}"
+                                                                   itemValue="#{aspItem}"/>
+                                                </h:selectOneMenu>
+                                                <p:outputLabel value="Date" for="activitydate" />
+                                                <p:calendar id="activitydate" 
+                                                            value="#{activityController.selected.activityDate}">
+                                                </p:calendar>
+                                                <p:outputLabel value="Qty" for="activityQTY" />
+                                                <h:inputText required="true" 
+                                                                value="#{activityController.selected.qty}"
+                                                                class="form-control" 
+                                                                id="activityQTY">
+                                                       <p:ajax event="keyup" update=":ActivityListForm:growl"/>
+                                                 </h:inputText>
                                             </p:panelGrid>
                                             <p:commandButton actionListener="#{activityController.update}" value="#{bundle.Save}" update="display,:ActivityListForm:datalistActivity,:ActivityListForm:growl" oncomplete="handleSubmit(args, 'ActivityEditDialog');"/>
                                             <p:commandButton value="#{bundle.Cancel}" onclick="ActivityEditDialog.hide()"/>

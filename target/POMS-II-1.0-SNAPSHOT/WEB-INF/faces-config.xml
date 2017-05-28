@@ -67,5 +67,13 @@
             <base-name>/Bundle</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <resource-bundle>
+            <base-name>/Bundle6</base-name>
+            <var>bundle6</var>
+        </resource-bundle>
+        <resource-bundle>
+            <base-name>/Bundle10</base-name>
+            <var>bundle10</var>
+        </resource-bundle>
     </application>
 </faces-config>

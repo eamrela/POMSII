@@ -20,50 +20,70 @@
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
-                        <p:dataTable var="NSItems" 
+                        <p:dataTable id="nsTable"
+                                     var="NSItems" 
                                      value="#{dashboardManager.NS_invoices}"
                                      emptyMessage="No Invoices for this period!"
                                      sortBy="#{NSItems.invoiceNumber}"
-                                     styleClass="fixed-size"
                                      paginator="true"
                                      paginatorPosition="bottom"
                                      rows="5"
                                      >
-                            <p:column headerText="Invoice#" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.invoiceNumber}" />
+                            <p:column  style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="Invoice#"/>
+                                </f:facet>
+                                <h:outputText id="invoiceNo" value="#{NSItems.invoiceNumber}" />
+                                <p:tooltip for="invoiceNo" value="#{NSItems.mdId.vendorPoId.poDescription}" />  
                             </p:column>
 
-                            <p:column headerText="Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.invoiceDeserved*dashboardManager.sekConversionRate}" >
+                            <p:column style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="Deserved"/>
+                                </f:facet>
+                                <h:outputText id="ns_deserved"  value="#{NSItems.invoiceDeserved*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="ns_deserved" value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
 
-                            <p:column headerText="Value" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.invoiceValue*dashboardManager.sekConversionRate}" >
+                            <p:column style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="Value"/>
+                                </f:facet>
+                                <h:outputText id="ns_value" value="#{NSItems.invoiceValue*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="ns_value" value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
 
-                            <p:column headerText="PO#" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.mdId.vendorPoId}" />
+                            <p:column style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="PO#"/>
+                                </f:facet>
+                                <h:outputText id="ns_poNo" value="#{NSItems.mdId.vendorPoId}" />
+                                <p:tooltip for="ns_poNo" value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
-                            <p:column headerText="Remaining in Po" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.mdId.vendorPoId.remainingInPo*dashboardManager.sekConversionRate}" />
+                            <p:column style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="Type"/>
+                                </f:facet>
+                                <h:outputText id="ns_type" value="#{NSItems.mdId.vendorPoId.poType.typeName}" />
+                                <p:tooltip for="ns_type" value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
-                            <p:column headerText="Type" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.mdId.vendorPoId.poType.typeName}" />
-                            </p:column>
-                            <p:column headerText="domain" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.mdId.vendorPoId.domainName.domainName}" />
-                            </p:column>
-                            <p:column headerText="Description" style="font-size: 9px;">
-                                <h:outputText value="#{NSItems.mdId.vendorPoId.poDescription}" />
+                            <p:column style="font-size: 9px;">
+                                <f:facet name="header">
+                                    <h:outputText value="Domain"/>
+                                </f:facet>
+                                <h:outputText id="ns_domain"  value="#{NSItems.mdId.vendorPoId.domainName.domainName}" />
+                                <p:tooltip for="ns_domain" value="#{NSItems.mdId.vendorPoId.poDescription}" />
                             </p:column>
                             <f:facet name="footer">
                                  <h:outputText value="#{dashboardManager.NS}">
                                      <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
+                                <h:commandLink value="Export" class="btn btn-primary" actionListener="#{dashboardManager.exportNSDetails}"/>
+                                     
                             </f:facet>
                         </p:dataTable>
                     </div>
@@ -76,7 +96,8 @@
                         <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
                     </div>
                     <div class="panel-body">
-                        <p:dataTable var="COSItems" 
+                        <p:dataTable id="cosTable"
+                                     var="COSItems" 
                                      value="#{dashboardManager.COS_Grns}"
                                      emptyMessage="No GRN for this period!"
                                      sortBy="#{COSItems.grnNumber}"
@@ -85,41 +106,44 @@
                                      paginatorPosition="bottom"
                                      rows="5"
                                      >
+                            
+
                             <p:column headerText="GRN#" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.grnNumber}" />
+                                <h:outputText id="cos_grn_no" value="#{COSItems.grnNumber}" />
+                                <p:tooltip for="cos_grn_no" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
 
                             <p:column headerText="Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.grnDeserved*dashboardManager.sekConversionRate}" >
+                                <h:outputText id="cos_deserved" value="#{COSItems.grnDeserved*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="cos_deserved" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
 
                             <p:column headerText="Value" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.grnValue*dashboardManager.sekConversionRate}" >
+                                <h:outputText id="cos_value" value="#{COSItems.grnValue*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="cos_value" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
 
                             <p:column headerText="PO#" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.aspPoId.poNumber}" />
+                                <h:outputText id="cos_po_no" value="#{COSItems.aspPoId.poNumber}" />
+                                <p:tooltip for="cos_po_no" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
-                            <p:column headerText="Remaining in Po" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.aspPoId.remainingInPo*dashboardManager.sekConversionRate}" />
-                            </p:column>
-                            <p:column headerText="Type" style="font-size: 9px;">
+                            <p:column id="cos_type" headerText="Type" style="font-size: 9px;">
                                 <h:outputText value="#{COSItems.aspPoId.poType.typeName}" />
+                                <p:tooltip for="cos_type" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
                             <p:column headerText="Domain" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.aspPoId.domainName.domainName}" />
-                            </p:column>
-                            <p:column headerText="Description" style="font-size: 9px;">
-                                <h:outputText value="#{COSItems.aspPoId.poDescription}" />
+                                <h:outputText id="cos_domain" value="#{COSItems.aspPoId.domainName.domainName}" />
+                                <p:tooltip for="cos_domain" value="#{COSItems.aspPoId.poDescription}" />  
                             </p:column>
                             <f:facet name="footer">
                                  <h:outputText value="#{dashboardManager.COS}">
                                         <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
+                                <h:commandLink value="Export" class="btn btn-primary" actionListener="#{dashboardManager.exportCOSDetails}"/>
                             </f:facet>
                         </p:dataTable>
                     </div>

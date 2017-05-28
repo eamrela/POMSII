@@ -30,36 +30,37 @@
                                      rows="5"
                                      >
                             <p:column headerText="PO#" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.poNumber}" />
+                                <h:outputText  id="nsr_invoiceNo" value="#{NSRItems.vendorPoId.poNumber}" />
+                                <p:tooltip for="nsr_invoiceNo" value="#{NSRItems.vendorPoId.poDescription}" />  
                             </p:column>
 
                             <p:column headerText="PO Value" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.poValue*dashboardManager.sekConversionRate}" >
+                                <h:outputText  id="nsr_poValue" value="#{NSRItems.vendorPoId.poValue*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="nsr_poValue" value="#{NSRItems.vendorPoId.poDescription}" /> 
                             </p:column>
 
                             <p:column headerText="MD Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.mdDeserved*dashboardManager.sekConversionRate}" >
+                                <h:outputText  id="nsr_deserved" value="#{NSRItems.mdDeserved*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
-                            </p:column>
-                            <p:column headerText="Remaining in PO" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.remainingInPo*dashboardManager.sekConversionRate}" />
+                                <p:tooltip for="nsr_deserved" value="#{NSRItems.vendorPoId.poDescription}" /> 
                             </p:column>
                             <p:column headerText="Type" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.poType.typeName}" />
+                                <h:outputText id="nsr_type" value="#{NSRItems.vendorPoId.poType.typeName}" />
+                                <p:tooltip for="nsr_type" value="#{NSRItems.vendorPoId.poDescription}" /> 
                             </p:column>
                             <p:column headerText="Domain" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.domainName.domainName}" />
+                                <h:outputText id="nsr_domain" value="#{NSRItems.vendorPoId.domainName.domainName}" />
+                                <p:tooltip for="nsr_domain" value="#{NSRItems.vendorPoId.poDescription}" /> 
                             </p:column>
-                            <p:column headerText="Description" style="font-size: 9px;">
-                                <h:outputText value="#{NSRItems.vendorPoId.poDescription}" />
-                            </p:column>
+
                             <f:facet name="footer">
                                 <h:outputText value="#{dashboardManager.remainingNotyetInvoiced_Value*dashboardManager.sekConversionRate}">
                                         <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
+                                <h:commandLink value="Export" class="btn btn-primary" actionListener="#{dashboardManager.exportRemainingDetails}"/>
                             </f:facet>
                         </p:dataTable>
                     </div>
@@ -82,36 +83,37 @@
                                      rows="5"
                                      >
                             <p:column headerText="PO#" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.poNumber}" />
+                                <h:outputText  id="cosc_poNo" value="#{COSCItems.poNumber}" />
+                                <p:tooltip for="cosc_poNo" value="#{COSCItems.poDescription}" /> 
                             </p:column>
 
                             <p:column headerText="POValue" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.poValue*dashboardManager.sekConversionRate}" >
+                                <h:outputText  id="cosc_poValue" value="#{COSCItems.poValue*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
+                                <p:tooltip for="cosc_poValue" value="#{COSCItems.poDescription}" /> 
                             </p:column>
 
                             <p:column headerText="GRN Deserved" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.grnDeserved*dashboardManager.sekConversionRate}" >
+                                <h:outputText  id="cosc_deserved" value="#{COSCItems.grnDeserved*dashboardManager.sekConversionRate}" >
                                     <f:convertNumber currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" type="currency"/>
                                 </h:outputText>
-                            </p:column>
-                            <p:column headerText="Remaining in Po" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.remainingInPo*dashboardManager.sekConversionRate}" />
+                                <p:tooltip for="cosc_deserved" value="#{COSCItems.poDescription}" /> 
                             </p:column>
                             <p:column headerText="Type" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.poType.typeName}" />
+                                <h:outputText id="cosc_type"  value="#{COSCItems.poType.typeName}" />
+                                <p:tooltip for="cosc_type" value="#{COSCItems.poDescription}" /> 
                             </p:column>
                             <p:column headerText="Domain" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.domainName.domainName}" />
+                                <h:outputText id="cosc_domain" value="#{COSCItems.domainName.domainName}" />
+                                <p:tooltip for="cosc_domain" value="#{COSCItems.poDescription}" /> 
                             </p:column>
-                            <p:column headerText="Description" style="font-size: 9px;">
-                                <h:outputText value="#{COSCItems.poDescription}" />
-                            </p:column>
+  
                             <f:facet name="footer">
                                 <h:outputText value="#{dashboardManager.committedCost_Value*dashboardManager.sekConversionRate}">
                                         <f:convertNumber type="currency" currencySymbol="#{dashboardManager.currency}" maxFractionDigits="0" />
                                 </h:outputText>
+                                <h:commandLink value="Export" class="btn btn-primary" actionListener="#{dashboardManager.exportCommittedCostDetails}"/>
                             </f:facet>
                         </p:dataTable>
                     </div>

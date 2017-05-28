@@ -1,6 +1,7 @@
 com\vodafone\poms\ii\entities\VendorPo.class
 com\vodafone\poms\ii\entities\VendorPoWorkDone.class
 com\vodafone\poms\ii\beans\PoOwnerFacade.class
+com\vodafone\poms\ii\controllers\ActivityAttachmentsController$ActivityAttachmentsControllerConverter.class
 com\vodafone\poms\ii\beans\VendorOwnerFacade.class
 com\vodafone\poms\ii\entities\Subcontractors_.class
 com\vodafone\poms\ii\beans\AreaFacade.class
@@ -8,9 +9,11 @@ com\vodafone\poms\ii\controllers\PoStatusController.class
 com\vodafone\poms\ii\entities\Targets_.class
 com\vodafone\poms\ii\entities\Activity.class
 com\vodafone\poms\ii\controllers\ActivityController$1.class
+com\vodafone\poms\ii\controllers\ConfigurationsController.class
 com\vodafone\poms\ii\helpers\SiteLoader.class
 com\vodafone\poms\ii\helpers\MasterGraph.class
 com\vodafone\poms\ii\controllers\TaxesController.class
+com\vodafone\poms\ii\beans\ConfigurationsFacade.class
 com\vodafone\poms\ii\beans\PoStatusFacade.class
 com\vodafone\poms\ii\controllers\ActivityController$ActivityControllerConverter.class
 com\vodafone\poms\ii\entities\Phases.class
@@ -18,6 +21,7 @@ com\vodafone\poms\ii\entities\AspGrn_.class
 com\vodafone\poms\ii\helpers\ExportManager.class
 com\vodafone\poms\ii\beans\EricssonPoChaserFacade.class
 com\vodafone\poms\ii\controllers\AspGrnController$AspGrnControllerConverter.class
+com\vodafone\poms\ii\entities\Configurations_.class
 com\vodafone\poms\ii\beans\PoTypesFacade.class
 com\vodafone\poms\ii\entities\PoTypes_.class
 com\vodafone\poms\ii\controllers\EricssonPoChaserController$EricssonPoChaserControllerConverter.class
@@ -37,6 +41,7 @@ com\vodafone\poms\ii\controllers\PhasesController.class
 com\vodafone\poms\ii\helpers\ActivityLoader.class
 com\vodafone\poms\ii\controllers\TaxesController$TaxesControllerConverter.class
 com\vodafone\poms\ii\controllers\ClaimStatusController$ClaimStatusControllerConverter.class
+com\vodafone\poms\ii\controllers\ConfigurationsController$ConfigurationsControllerConverter.class
 com\vodafone\poms\ii\entities\PoOwner.class
 com\vodafone\poms\ii\entities\PoStatus.class
 com\vodafone\poms\ii\entities\VendorOwner_.class
@@ -75,10 +80,13 @@ com\vodafone\poms\ii\controllers\ActivityCodeController.class
 com\vodafone\poms\ii\controllers\AspPoController$1.class
 com\vodafone\poms\ii\entities\AspGrn.class
 com\vodafone\poms\ii\controllers\util\JsfUtil.class
+com\vodafone\poms\ii\entities\ConfigurationsPK_.class
 com\vodafone\poms\ii\entities\AspPo.class
 com\vodafone\poms\ii\entities\Area.class
+com\vodafone\poms\ii\entities\ActivityAttachments_.class
 com\vodafone\poms\ii\controllers\PoOwnerController$PoOwnerControllerConverter.class
 com\vodafone\poms\ii\beans\ActivityFacade.class
+com\vodafone\poms\ii\entities\ConfigurationsPK.class
 com\vodafone\poms\ii\entities\PoTypes.class
 com\vodafone\poms\ii\controllers\EricssonPoChaserController.class
 com\vodafone\poms\ii\entities\PoStatus_.class
@@ -109,6 +117,7 @@ com\vodafone\poms\ii\entities\Area_.class
 com\vodafone\poms\ii\beans\AspPoWorkDoneFacade.class
 com\vodafone\poms\ii\controllers\VendorMdController$VendorMdControllerConverter.class
 com\vodafone\poms\ii\entities\VendorMd_.class
+com\vodafone\poms\ii\controllers\ActivityAttachmentsController.class
 com\vodafone\poms\ii\controllers\SubcontractorsController.class
 com\vodafone\poms\ii\entities\Users.class
 com\vodafone\poms\ii\controllers\DomainNamesController$DomainNamesControllerConverter.class
@@ -133,7 +142,9 @@ com\vodafone\poms\ii\controllers\AspPoController$2.class
 com\vodafone\poms\ii\controllers\VendorPoWorkDoneController$VendorPoWorkDoneControllerConverter.class
 com\vodafone\poms\ii\helpers\FileLoaderBean.class
 com\vodafone\poms\ii\entities\VendorPoWorkDone_.class
+com\vodafone\poms\ii\entities\ActivityAttachments.class
 com\vodafone\poms\ii\beans\DomainNamesFacade.class
+com\vodafone\poms\ii\beans\ActivityAttachmentsFacade.class
 com\vodafone\poms\ii\controllers\UsersController.class
 com\vodafone\poms\ii\controllers\VendorPoJAspPoValueController.class
 com\vodafone\poms\ii\entities\UsersRoles_.class
@@ -147,6 +158,7 @@ com\vodafone\poms\ii\controllers\PhasesController$PhasesControllerConverter.clas
 com\vodafone\poms\ii\controllers\ClaimStatusController.class
 com\vodafone\poms\ii\controllers\SitesController$SitesControllerConverter.class
 com\vodafone\poms\ii\controllers\UsersController$UsersControllerConverter.class
+com\vodafone\poms\ii\entities\Configurations.class
 com\vodafone\poms\ii\controllers\AreaController.class
 com\vodafone\poms\ii\entities\DomainNames.class
 com\vodafone\poms\ii\helpers\ActivityCodeLoader.class

@@ -4,10 +4,17 @@ import com.vodafone.poms.ii.entities.Activity;
 import com.vodafone.poms.ii.controllers.util.JsfUtil;
 import com.vodafone.poms.ii.controllers.util.JsfUtil.PersistAction;
 import com.vodafone.poms.ii.beans.ActivityFacade;
+import com.vodafone.poms.ii.entities.ActivityAttachments;
 import com.vodafone.poms.ii.entities.AspPo;
+import com.vodafone.poms.ii.entities.ConfigurationsPK;
 import com.vodafone.poms.ii.entities.Sites;
 import com.vodafone.poms.ii.entities.VendorPo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,11 +28,13 @@ import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
+import org.apache.commons.io.IOUtils;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 
 @Named("activityController")
@@ -55,6 +64,10 @@ public class ActivityController implements Serializable {
     private AspPoController aspPOController;
     @Inject
     private VendorPoController vendorPOController;
+    @Inject
+    private ActivityAttachmentsController attachmentController;
+    @Inject
+    private ConfigurationsController configurationController;
    
 
     public ActivityController() {
@@ -440,9 +453,74 @@ public class ActivityController implements Serializable {
     
     public void validateUMPercent(){
         if(selected!=null && !usersController.getRole().equals("ROLE_SYSADMIN")){
-            if(selected.getAcUmPercent().compareTo(0.2f)==-1){
+            if(selected.getAcUmPercent().compareTo(0.12f)==-1){
                 selected.setActivityCode(selected.getActivityCode());
-                JsfUtil.addErrorMessage("UM% Can't be less than 20%, Please contact your manager");
+                JsfUtil.addErrorMessage("UM% Can't be less than 12%, Please contact your manager");
+            }
+        }
+    }
+
+    public void uploadAttachment(FileUploadEvent event){
+        if(selected!=null){
+            if(event.getFile() != null) {
+                String path = configurationController.getConfigurations(new ConfigurationsPK("ACTIVITY_ATTACHMENT", "PROD")).getConfValue();
+                new File(path+"\\"+selected.getActivityId()).mkdir();
+                File file = new File(path+"\\"+selected.getActivityId()+"\\"+event.getFile().getFileName());
+                OutputStream outputStream;
+                try {
+                    outputStream = new FileOutputStream(file);
+                    IOUtils.copy(event.getFile().getInputstream(), outputStream);
+                    outputStream.close();
+                    attachmentController.prepareCreate();
+                    attachmentController.getSelected().setActivityId(selected);
+                    attachmentController.getSelected().setAttachmentLocation(file.getAbsolutePath());
+                    attachmentController.getSelected().setAttachmentName(file.getName());
+                    attachmentController.getSelected().setUploadedBy(usersController.getLoggedInUser());
+                    attachmentController.getSelected().setUploadedOn(new Date());
+                    
+                    if(selected.getActivityAttachmentsCollection()!=null){
+                        selected.getActivityAttachmentsCollection().add(attachmentController.create());
+                        update();
+                    }else{
+                        selected.setActivityAttachmentsCollection(new ArrayList<>());
+                        selected.getActivityAttachmentsCollection().add(attachmentController.create());
+                        update();
+                    }
+                    
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+               
+            }
+        }
+    }
+    
+    public void downloadAttachment(ActivityAttachments item){
+        if(selected!=null){
+            try {
+
+                System.out.println("Downloading Attachment");
+                File FB = new File(item.getAttachmentLocation());
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                ExternalContext externalContext =  facesContext.getExternalContext();
+                externalContext.responseReset();
+                
+                externalContext.setResponseContentType("application/csv");
+                externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+FB.getName()+""+"\"");
+                
+                FileInputStream fin = new FileInputStream(FB);
+                OutputStream output = externalContext.getResponseOutputStream();
+                byte[] data;
+                data = new byte[fin.available()];
+                fin.read(data);
+                output.write(data);
+                output.flush();
+                output.close();
+                facesContext.responseComplete();
+            } catch (IOException ex) {
+                Logger.getLogger(ActivityController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
